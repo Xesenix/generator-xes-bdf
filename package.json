@@ -1,0 +1,94 @@
+{
+  "name": "generator-xes-bdf",
+  "version": "0.0.0",
+  "description": "Generating projects that use xes-core as base library for application configuration.",
+  "homepage": "",
+  "author": {
+    "name": "Paweł Kapalla",
+    "email": "js@xesenix.pl",
+    "url": "xesenix.pl"
+  },
+  "files": [
+    "generators"
+  ],
+  "main": "generators/index.js",
+  "keywords": [
+    "webpack",
+    "babel",
+    "typescript",
+    "karma",
+    "jasmine",
+    "yeoman-generator"
+  ],
+  "devDependencies": {
+    "coveralls": "^3.0.0",
+    "eslint": "^5.8.0",
+    "eslint-config-prettier": "^3.0.1",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-config-xo": "^0.24.2",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-node": "^8.0.0",
+    "eslint-plugin-prettier": "^2.6.0",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "husky": "^0.14.3",
+    "jest": "^23.5.0",
+    "lint-staged": "^7.2.2",
+    "prettier": "^1.11.1",
+    "yeoman-assert": "^3.1.0",
+    "yeoman-test": "^1.7.0"
+  },
+  "engines": {
+    "npm": ">= 4.0.0"
+  },
+  "dependencies": {
+    "@types/axios": "^0.14.0",
+    "@types/chalk": "^2.2.0",
+    "axios": "^0.18.0",
+    "chalk": "^2.1.0",
+    "editorconfig": "^0.15.2",
+    "yeoman-generator": "^2.0.1",
+    "yosay": "^2.0.1"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "git add"
+    ],
+    "*.json": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "eslintConfig": {
+    "extends": [
+      "xo",
+      "prettier"
+    ],
+    "env": {
+      "jest": true,
+      "node": true
+    },
+    "rules": {
+      "prettier/prettier": [
+        "error",
+        {
+          "singleQuote": true,
+          "printWidth": 120
+        }
+      ]
+    },
+    "plugins": [
+      "prettier"
+    ]
+  },
+  "scripts": {
+    "pretest": "eslint .",
+    "precommit": "lint-staged",
+    "test": "jest"
+  },
+  "license": "ISC"
+}

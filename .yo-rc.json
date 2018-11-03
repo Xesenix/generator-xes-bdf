@@ -1,0 +1,9 @@
+{
+  "generator-node": {
+    "promptValues": {
+      "authorName": "Paweł Kapalla",
+      "authorEmail": "js@xesenix.pl",
+      "authorUrl": "xesenix.pl"
+    }
+  }
+}
