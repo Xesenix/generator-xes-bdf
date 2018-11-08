@@ -9,6 +9,8 @@ const scriptColor = chalk.keyword('lime');
 
 module.exports = class extends Generator {
   async prompting() {
+    this.log(`\n${ progressColor(`GIT`) } General configuration...\n`);
+
     const prompts = [
       {
         type: 'list',
@@ -29,14 +31,9 @@ module.exports = class extends Generator {
     ];
 
     this.props = await this.prompt(prompts);
-    this.config.save();
   }
 
   async writing() {
-    this.npmInstall([
-      'husky',
-    ], { saveDev: true });
-
     if (this.props.initGitIgnore !== 'yes') {
       return;
     }
@@ -51,11 +48,24 @@ module.exports = class extends Generator {
     );
   }
 
-  install() {
+  configuring() {
     if (this.props.initGit !== 'yes') {
       return;
     }
     this.log(`\n${ progressColor(`GIT`) } Initializing git...\n`);
-    this.spawnCommand('git', ['init']);
+    this.spawnCommandSync('git', ['init']);
+  }
+
+  install() {
+    const { promptValues: { npmInstall } } = this.config.getAll();
+
+    if (npmInstall === 'yes') {
+      this.log(`\n${ progressColor(`GIT`) } Running ${ scriptColor('npm install') }...\n`);
+      this.npmInstall([
+        'husky',
+      ], { saveDev: true });
+    } else {
+      this.log(`\n${ progressColor(`GIT`) } Skiping ${ scriptColor('npm install') }...\n`);
+    }
   }
 };

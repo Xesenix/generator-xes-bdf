@@ -6,7 +6,7 @@ const webpackBase = require('webpack');
 const { application, webpack } = require('xes-webpack-core');
 
 const app = application.getEnvApp();
-const appWebpack = `./webpack.${app}.config.js`;
+const appWebpack = `./${app}/webpack.config.js`;
 
 const factoryConfig = {
 	useBabelrc: true,
