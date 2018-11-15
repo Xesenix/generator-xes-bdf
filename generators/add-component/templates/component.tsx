@@ -106,9 +106,9 @@ class <%= name % > Component; extends React.PureComponent < I < ;%= name % > Pro
 	},
 };
 
-export default hot(module)(connectToInjector < I < %= name % > Props > (withStyles(styles)( < %= name % > Component), {
+export default hot(module)(connectToInjector < I < %= name % > Props > ({
 	'data-store:provider': {
 		name: 'store',
 		value: (provider: IDataStoreProvider<IUIState, IValueAction>) => provider(),
 	},
-}));
+})(withStyles(styles)( < %= name % > Component)));

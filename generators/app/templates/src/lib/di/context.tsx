@@ -34,38 +34,40 @@ export function connectToDI<T>(Consumer) {
  * @returns component with injected values from DI container
  */
 export function connectToInjector<T>(
-	Consumer: React.Component,
+	// prettier-ignore
 	select: { [key: string]: { name: string, value: (value: any) => Promise<any> } },
 	Preloader: React.ReactNode = () => <>{ `loading...` }</>,
 ) {
-	class DIInjector extends React.Component<T & { di: Container }, {}> {
-		public componentDidMount() {
-			const { di } = this.props;
+	return (Consumer: React.Component) => {
+		class DIInjector extends React.Component<T & { di: Container }, {}> {
+			public componentDidMount() {
+				const { di } = this.props;
 
-			if (!!di) {
-				const keys = Object.keys(select);
-				const configs = Object.values(select);
+				if (!!di) {
+					const keys = Object.keys(select);
+					const configs = Object.values(select);
 
-				Promise.all(
-					keys.map((key) => select[key].value(di.get(key))),
-				).then((values: any[]) => {
-					const state = values.reduce((result, value, index) => {
-						result[configs[index].name] = value;
-						return result;
-					}, {});
-					this.setState(state);
-				});
+					Promise.all(
+						keys.map((key) => select[key].value(di.get(key))),
+					).then((values: any[]) => {
+						const state = values.reduce((result, value, index) => {
+							result[configs[index].name] = value;
+							return result;
+						}, {});
+						this.setState(state);
+					});
+				}
+			}
+
+			public render() {
+				if (!!this.state) {
+					return <Consumer {...this.props} {...this.state}/>;
+				}
+
+				return <Preloader/>;
 			}
 		}
 
-		public render() {
-			if (!!this.state) {
-				return <Consumer {...this.props} {...this.state}/>;
-			}
-
-			return <Preloader/>;
-		}
-	}
-
-	return connectToDI<T>(DIInjector);
+		return connectToDI<T>(DIInjector);
+	};
 }

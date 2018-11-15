@@ -205,9 +205,9 @@ class GameViewComponent extends React.PureComponent<IGameViewProps & WithStyles<
 	}
 }
 
-export default hot(module)(connectToInjector<IGameViewProps>(withStyles(styles)(GameViewComponent), {
+export default hot(module)(connectToInjector<IGameViewProps>({
 	'data-store:provider': {
 		name: 'store',
 		value: (provider: IDataStoreProvider<IUIState, IValueAction>) => provider(),
 	},
-}));
+})(withStyles(styles)(GameViewComponent)));

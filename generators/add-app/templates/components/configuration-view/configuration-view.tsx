@@ -205,9 +205,9 @@ export class ConfigurationViewComponent extends React.Component<IConfigurationPr
 	}
 }
 
-export default hot(module)(connectToInjector<IConfigurationProps>(withStyles(styles)(ConfigurationViewComponent), {
+export default hot(module)(connectToInjector<IConfigurationProps>({
 	'data-store:provider': {
 		name: 'store',
 		value: (provider: IDataStoreProvider<IUIState & II18nState, IValueAction>) => provider(),
 	},
-}));
+})(withStyles(styles)(ConfigurationViewComponent)));

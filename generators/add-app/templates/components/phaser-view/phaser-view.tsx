@@ -80,9 +80,9 @@ class PhaserViewComponent extends React.PureComponent<IPhaserViewProps & WithSty
 	private bindContainer = (el: HTMLDivElement): void => { gameContainer = el; };
 }
 
-export default hot(module)(connectToInjector<IPhaserViewProps>(withStyles(styles)(PhaserViewComponent), {
+export default hot(module)(connectToInjector<IPhaserViewProps>({
 	'data-store:provider': {
 		name: 'store',
 		value: (provider: IDataStoreProvider<IUIState, IValueAction>) => provider(),
 	},
-}));
+})(withStyles(styles)(PhaserViewComponent)));

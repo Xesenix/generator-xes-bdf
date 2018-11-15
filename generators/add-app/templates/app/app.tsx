@@ -106,9 +106,9 @@ class App extends React.Component<IAppProps & WithStyles<typeof styles>, IAppSta
 	}
 }
 
-export default hot(module)(connectToInjector<IAppProps>(withStyles(styles)(App), {
+export default hot(module)(connectToInjector<IAppProps>({
 	'data-store:provider': {
 		name: 'store',
 		value: (provider: IDataStoreProvider<IUIState, IValueAction>) => provider(),
 	},
-}));
+})(withStyles(styles)(App)));

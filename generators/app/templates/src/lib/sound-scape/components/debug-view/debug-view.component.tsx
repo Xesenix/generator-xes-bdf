@@ -272,7 +272,7 @@ class SoundScapeDebugViewComponent extends React.PureComponent<ISoundScapeDebugV
 	private bindTimelineContainer = (viewContainer: HTMLDivElement): void => { this.setState({ viewContainer }); };
 }
 
-export default hot(module)(connectToInjector<ISoundScapeDebugViewProps>(withStyles(styles)(SoundScapeDebugViewComponent), {
+export default hot(module)(connectToInjector<ISoundScapeDebugViewProps>({
 	'sound-scape:soundtrack-player': {
 		name: 'soundtrackPlayer',
 		value: (soundtrackPlayer: ISoundtrackPlayer) => Promise.resolve(soundtrackPlayer),
@@ -285,4 +285,4 @@ export default hot(module)(connectToInjector<ISoundScapeDebugViewProps>(withStyl
 		name: 'audioContext',
 		value: (audioContext: AudioContext) => Promise.resolve(audioContext),
 	},
-}));
+})(withStyles(styles)(SoundScapeDebugViewComponent)));
