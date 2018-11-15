@@ -12,6 +12,7 @@ export class AudioMixer implements IStateAwareAudioMixer {
 	private tracks: { [key: string]: IStateAwareAudioTrack } = {};
 
 	constructor(
+		// prettier-ignore
 		private context: AudioContext,
 		music: IStateAwareAudioTrack,
 		effects: IStateAwareAudioTrack,

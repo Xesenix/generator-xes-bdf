@@ -10,6 +10,7 @@ export class AudioMixerTrack implements IStateAwareAudioTrack {
 	private trackAutomationGain: GainNode;
 
 	constructor(
+		// prettier-ignore
 		private context: AudioContext,
 		private sounds: IAudioBufferRepository,
 	) {

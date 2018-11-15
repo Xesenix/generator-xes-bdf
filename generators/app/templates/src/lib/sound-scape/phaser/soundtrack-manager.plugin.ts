@@ -6,6 +6,7 @@ export const phaserSoundtrackManagerPluginFactory = (
 	public soundtrackPlayer: ISoundtrackPlayer = soundtrackPlayer;
 
 	constructor(
+		// prettier-ignore
 		public pluginManager: Phaser.Plugins.PluginManager,
 	) {
 		super(pluginManager);

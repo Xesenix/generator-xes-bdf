@@ -13,6 +13,7 @@ export class ReactRenderer implements IRenderer {
 	private outlets: { [key: string]: any } = {};
 
 	constructor(
+		// prettier-ignore
 		private uiRoot: HTMLElement,
 		private outletFactory: React.ComponentFactory<any, any>,
 

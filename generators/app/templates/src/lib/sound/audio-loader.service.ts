@@ -8,6 +8,7 @@ export class AudioLoaderService implements IAudioFileLoader {
 	private loadQueue: { [key: string]: IAudioFile } = {};
 
 	constructor(
+		// prettier-ignore
 		private repository: AudioBufferRepository,
 		private context: IAudioContextFactory,
 	) {

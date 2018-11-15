@@ -9,6 +9,7 @@ import {
 } from '../interfaces';
 
 export const phaserAudioManagerPluginFactory = <T extends IAudioConfigurationState>(
+	// prettier-ignore
 	store: Store,
 	context: AudioContext,
 	audioMixer: IStateAwareAudioMixer,
@@ -24,6 +25,7 @@ export const phaserAudioManagerPluginFactory = <T extends IAudioConfigurationSta
 	private unsubscribe: any;
 
 	constructor(
+		// prettier-ignore
 		public pluginManager: Phaser.Plugins.PluginManager,
 	) {
 		super(pluginManager);

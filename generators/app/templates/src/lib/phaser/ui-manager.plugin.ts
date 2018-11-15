@@ -16,6 +16,7 @@ class UIManagerPlugin extends Phaser.Plugins.BasePlugin {
 	private unsubscribe: any;
 
 	constructor(
+		// prettier-ignore
 		public pluginManager: Phaser.Plugins.PluginManager,
 	) {
 		super(pluginManager);

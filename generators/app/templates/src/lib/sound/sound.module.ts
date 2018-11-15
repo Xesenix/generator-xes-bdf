@@ -21,6 +21,7 @@ export class SoundModule<T extends IAudioConfigurationState> {
 	}
 
 	constructor(
+		// prettier-ignore
 		private app: IApplication,
 		phaser: boolean = true,
 	) {

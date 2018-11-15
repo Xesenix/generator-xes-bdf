@@ -8,6 +8,7 @@ export class PhaserAudioLoaderService implements IAudioFileLoader {
 	private loadQueue: boolean[] = [];
 
 	constructor(
+		// prettier-ignore
 		private repository: IAudioBufferRepository,
 		private context: IAudioContextFactory,
 	) {

@@ -4,6 +4,7 @@ import { Action, DeepPartial, Reducer } from 'redux';
 import { DataStoreProvider, IDataStoreProvider } from './data-store.provider';
 
 export const DataStoreModule = <T, A extends Action>(
+	// prettier-ignore
 	initialValue: DeepPartial<T>,
 	reducer: Reducer<T, A>,
 ) => new ContainerModule((bind: interfaces.Bind) => {

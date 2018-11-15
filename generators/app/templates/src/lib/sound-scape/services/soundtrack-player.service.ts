@@ -10,6 +10,7 @@ export class SoundtrackPlayer {
 	private layers: { [key: number]: IScheduledSoundtrack[] } = { 0: [] };
 
 	constructor(
+		// prettier-ignore
 		private music: IAudioTrack,
 		private context: Pick<AudioContext, 'currentTime'>,
 		private eventsManager: EventEmitter,
