@@ -13,8 +13,7 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 
 import { connectToInjector } from 'lib/di';
-
-import { IScheduledSoundtrack, ISoundtrackPlayer } from '../../interfaces';
+import { IScheduledSoundtrack, ISoundtrackPlayer } from 'lib/sound-scape/interfaces';
 
 const styles = (theme: Theme) => createStyles({
 	root: {
