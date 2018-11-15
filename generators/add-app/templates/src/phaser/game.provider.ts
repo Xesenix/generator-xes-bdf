@@ -4,6 +4,8 @@ import { Store } from 'redux';
 import { IAudioManagerPlugin } from 'lib/sound';
 import { IUIStoreProvider } from 'lib/ui';
 
+import { IPhaserProvider } from './game.module';
+
 export type IPhaserGameProvider = (forceNew?: boolean) => Promise<Phaser.Game>;
 
 // singleton
@@ -16,11 +18,12 @@ export function PhaserGameProvider(context: interfaces.Context) {
 	return (forceNew: boolean = false): Promise<Phaser.Game> => {
 		const parent = context.container.get<HTMLElement>('phaser:container');
 		const storeProvider = context.container.get<IUIStoreProvider>('data-store:provider');
+		const phaserProvider = context.container.get<IPhaserProvider>('phaser:provider');
 		console.debug('PhaserGameProvider:provide', parent, storeProvider);
 
 		// preload phaser module that is needed by subsequential modules
 		// TODO: convert to observable so it can return progress on loading
-		return import('phaser').then(() => Promise.all([
+		return phaserProvider().then(() => Promise.all([
 			import('lib/phaser/store.plugin'),
 			import('lib/phaser/ui-manager.plugin'),
 			import('./scene/intro.scene'),

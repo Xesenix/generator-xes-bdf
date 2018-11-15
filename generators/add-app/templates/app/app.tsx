@@ -51,8 +51,9 @@ class App extends React.Component<IAppProps & WithStyles<typeof styles>, IAppSta
 	}
 
 	public componentDidMount(): void {
+		const { di } = this.props;
 		// optional preloading
-		import('phaser').then(() => this.setState({ phaserReady: true }));
+		di.get<IPhaserProvider>('phaser:provider')().then(() => this.setState({ phaserReady: true }));
 		this.bindToStore();
 	}
 
