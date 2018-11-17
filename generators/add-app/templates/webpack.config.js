@@ -28,14 +28,5 @@ module.exports = (config) => {
 
 	// config.devtool = 'cheap-module-source-map';
 
-	// all externals need to be manually added in template
-
-	config.plugins.push(new CopyWebpackPlugin([
-		{
-			from: './node_modules/phaser/dist/phaser.min.js',
-			to: 'phaser.min.js',
-		},
-	]));
-
 	return config;
 };
