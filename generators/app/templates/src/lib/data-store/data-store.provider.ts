@@ -22,11 +22,12 @@ export function DataStoreProvider<T, A extends Action>(context: interfaces.Conte
 				duration: true,
 				timestamp: true,
 			});
+			// prettier-ignore
 			const composeEnhancers = debug && typeof window === 'object'
 				&& typeof window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ !== 'undefined'
 				? (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
-					// Specify extension’s options like name, actionsBlacklist, actionsCreators, serialize...
-				})
+						// Specify extension’s options like name, actionsBlacklist, actionsCreators, serialize...
+					})
 				: compose;
 
 			store = createStore<T | undefined, A, any, any>(reducer, initialState, composeEnhancers(applyMiddleware(logger, thunk)));

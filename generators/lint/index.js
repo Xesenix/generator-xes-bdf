@@ -1,8 +1,8 @@
 'use strict';
 const Generator = require('yeoman-generator');
 const chalk = require('chalk');
-const editorconfig = require('editorconfig');
 
+const { getIgnoredPaths } = require('../../helpers/functions');
 const validateNotEmpty = require('../../validators/not-empty');
 
 const promptColor = chalk.magenta;
@@ -46,33 +46,37 @@ module.exports = class extends Generator {
     this.props = await this.prompt(prompts);
   }
 
+  async writing() {
+    this.log(`\n${ progressColor(`LINT`) } Downloading ${ scriptColor('.gitignore') }\n`);
+    const ignoreContent = await getIgnoredPaths();
+
+    this.log(`\n${ progressColor(`LINT`) } Initializing ${ scriptColor('.prettierignore') }\n`);
+    this.fs.write(
+      this.destinationPath('.prettierignore'),
+      ignoreContent,
+    );
+  }
+
   configuring() {
-    this.log(`\n${ progressColor(`LINT`) } Setting up editorconfig...\n`);
+    this.log(`\n${ progressColor(`LINT`) } Setting up ${ scriptColor('.editorconfig') }...\n`);
     this.fs.copyTpl(
       this.templatePath('.editorconfig'),
       this.destinationPath('.editorconfig'),
       { ...this.props },
     );
 
-    this.log(`\n${ progressColor(`LINT`) } Setting up tslint...\n`);
+    this.log(`\n${ progressColor(`LINT`) } Setting up ${ scriptColor('tslint.json') }...\n`);
     this.fs.copyTpl(
       this.templatePath('tslint.json'),
       this.destinationPath('tslint.json'),
-      {
-        indentStyle: this.props.indentStyle === 'tab' ? 'tabs' : 'spaces',
-        indentSize: parseFloat(this.props.indentSize),
-        quote: this.props.quote,
-      }
+      { ...this.props },
     );
 
+    this.log(`\n${ progressColor(`LINT`) } Setting up ${ scriptColor('.prettierrc') }...\n`);
     this.fs.copyTpl(
       this.templatePath('.prettierrc.json'),
       this.destinationPath('.prettierrc.json'),
-      {
-        useTabs: this.props.indentStyle === 'tab',
-        indentSize: parseFloat(this.props.indentSize),
-        singleQuotes: this.props.quote === 'single',
-      },
+      { ...this.props },
     );
 
     this.log(`\n${ progressColor(`LINT`) } Adding ${ scriptColor('lint:*') } scripts...\n`);
@@ -107,8 +111,10 @@ module.exports = class extends Generator {
     this.npmInstall([
       'tslint',
       'eclint',
+      'eslint',
       'prettier',
       'tslint-config-prettier',
+      'tslint-eslint-rules',
     ], { saveDev: true });
   }
 

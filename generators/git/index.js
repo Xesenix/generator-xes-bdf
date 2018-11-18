@@ -1,7 +1,8 @@
 'use strict';
 const Generator = require('yeoman-generator');
-const axios = require('axios');
 const chalk = require('chalk');
+
+const { getIgnoredPaths } = require('../../helpers/functions');
 
 const promptColor = chalk.magenta;
 const progressColor = chalk.blue;
@@ -39,12 +40,12 @@ module.exports = class extends Generator {
     }
 
     this.log(`\n${ progressColor(`GIT`) } Downloading ${ scriptColor('.gitignore') }\n`);
-    const { data } = await axios.get('https://raw.githubusercontent.com/github/gitignore/master/Node.gitignore');
+    const ignoreContent = await getIgnoredPaths();
 
     this.log(`\n${ progressColor(`GIT`) } Initializing ${ scriptColor('.gitignore') }\n`);
     this.fs.write(
       this.destinationPath('.gitignore'),
-      data
+      ignoreContent,
     );
   }
 

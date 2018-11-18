@@ -83,7 +83,10 @@ export interface ISoundScapeDebugViewState {
 class SoundScapeDebugViewComponent extends React.PureComponent<ISoundScapeDebugViewProps & WithStyles<typeof styles>, ISoundScapeDebugViewState> {
 	private subscription: Subscription = new Subscription();
 
-	constructor(props: ISoundScapeDebugViewProps & WithStyles<typeof styles>) {
+	constructor(
+		// prettier-ignore
+		props: ISoundScapeDebugViewProps & WithStyles<typeof styles>,
+	) {
 		super(props);
 
 		this.state = {

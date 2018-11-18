@@ -10,6 +10,7 @@ export class SoundScapeModule {
 	}
 
 	constructor(
+		// prettier-ignore
 		private app: IApplication,
 	) {
 		this.app = app;

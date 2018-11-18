@@ -2,10 +2,11 @@
 	"defaultSeverity": "error",
 	"extends": [
 		"tslint:recommended",
-		"tslint-config-prettier"
+		"tslint-config-prettier",
+		"tslint-eslint-rules"
 	],
 	"jsRules": {
-		"indent": [true, "<%= indentStyle %>", <%= indentSize %>],
+		"indent": [true, "<%= indentStyle === 'tab' ? 'tabs' : 'spaces' %>", <%= parseFloat(indentSize) %>],
 		"quotemark": [true, "<%= quote %>", "jsx-double"]
 	},
 	"rules": {
@@ -13,7 +14,7 @@
 		"max-line-length": {
 			"options": [180]
 		},
-		"indent": [true, "<%= indentStyle %>", <%= indentSize %>],
+		"indent": [true, "<%= indentStyle === 'tab' ? 'tabs' : 'spaces' %>", <%= parseFloat(indentSize) %>],
 		"trailing-comma": [
 			true,
 			{
@@ -27,10 +28,13 @@
 		"no-console": false,
 		"no-empty": false,
 		"no-empty-interface": false,
+		"no-extra-semi": true,
+		"no-invalid-regexp": true,
 		"no-namespace": false,
 		"no-internal-module": false,
 		"prefer-template": [true, "allow-single-concat"],
 		"quotemark": [true, "<%= quote %>", "jsx-double"],
+		"valid-typeof": true,
 		"semicolon": [true, "always"],
 		"whitespace": [true, "check-branch", "check-decl", "check-operator", "check-module", "check-rest-spread", "check-type", "check-typecast", "check-type-operator"],
 		"ordered-imports": [true, "lowercase-first"],

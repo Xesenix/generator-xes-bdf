@@ -1,8 +1,9 @@
-import { inject } from 'lib/di';
 import * as React from 'react';
 import { render } from 'react-dom';
 
-// tODO: decouple interface from implementation
+import { inject } from 'lib/di';
+
+// TODO: decouple interface from implementation
 export interface IRenderer {
 	setOutlet(component: any, outlet?: string): IRenderer;
 	render(): IRenderer;

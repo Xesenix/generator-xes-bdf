@@ -1,10 +1,10 @@
 {
 	"arrowParens": "always",
   "trailingComma": "all",
-  "useTabs": <%= useTabs %>,
-  "tabWidth": <%= indentSize %>,
+  "useTabs": <%= indentStyle === 'tab' %>,
+  "tabWidth": <%= parseFloat(indentSize) %>,
   "semi": true,
-	"singleQuote": <%= singleQuotes %>,
+	"singleQuote": <%= quote === 'single' %>,
 	"bracketSpacing": true,
   "jsxBracketSameLine": false,
   "printWidth": 180

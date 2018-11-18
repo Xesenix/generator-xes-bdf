@@ -1,5 +1,6 @@
 const fs = require('fs').promises;
 const path = require('path');
+const axios = require('axios');
 
 const listFiles = async (dir, filelist = []) => {
   const files = await fs.readdir(dir);
@@ -19,3 +20,14 @@ const listFiles = async (dir, filelist = []) => {
 }
 
 module.exports.listFiles = listFiles;
+
+const getIgnoredPaths = async () => {
+  const { data } = await axios.get('https://raw.githubusercontent.com/github/gitignore/master/Node.gitignore');
+
+  return data + `
+# xes-bdf build directory
+dist/
+`;
+}
+
+module.exports.getIgnoredPaths = getIgnoredPaths;
