@@ -41,7 +41,7 @@ export class AppModule extends Container {
 		super();
 
 		// console
-		if (process.env.DEBUG) {
+		if (process.env.DEBUG === 'true') {
 			this.bind<Console>('debug:console').toConstantValue(console);
 		} else {
 			// tslint:disable:no-empty

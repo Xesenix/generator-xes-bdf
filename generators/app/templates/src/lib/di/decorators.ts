@@ -10,7 +10,7 @@ type DependencyType = string | symbol | ii.Newable<any> | ii.Abstract<any> | vi.
  */
 export function inject(dependencies?: DependencyType[]): any {
 	return (target, key, descriptor) => {
-		if (process.env.DEBUG) {
+		if (process.env.DEBUG === 'true') {
 			console.debug('annotation:inject', target.name, dependencies);
 		}
 		helpers.annotate(target, dependencies);
@@ -22,7 +22,7 @@ export function inject(dependencies?: DependencyType[]): any {
  */
 export function injectable() {
 	return (target, key, descriptor) => {
-		if (process.env.DEBUG) {
+		if (process.env.DEBUG === 'true') {
 			console.debug('annotation:injectable', target.name);
 		}
 		return inversify.decorate(inversify.injectable(), target);

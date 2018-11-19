@@ -6,7 +6,7 @@ import thunk from 'redux-thunk';
 export type IDataStoreProvider<T, A extends Action> = () => Promise<Store<T, A>>;
 
 export function DataStoreProvider<T, A extends Action>(context: interfaces.Context) {
-	const debug: boolean = !!process.env.DEBUG;
+	const debug: boolean = process.env.DEBUG === 'true';
 	const console: Console = context.container.get<Console>('debug:console');
 	let store: Store<T, A>;
 
