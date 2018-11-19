@@ -153,6 +153,7 @@ module.exports = class extends Generator {
       ...await listTemplates('src/lib/renderer'),
       ...await listTemplates('src/lib/sound'),
       ...await listTemplates('src/lib/sound-scape'),
+      ...await listTemplates('src/lib/sound-scape-debug'), // TODO: requires additional dependencies vis.js
       ...await listTemplates('src/lib/ui'),
     ].forEach((path) => {
       this.fs.copy(

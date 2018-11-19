@@ -9,6 +9,7 @@ const { listFiles } = require('../../helpers/functions');
 const promptColor = chalk.magenta;
 const progressColor = chalk.blue;
 const scriptColor = chalk.keyword('lime');
+const rootSrcPath = '';
 
 const listTemplates = async (folder) => (await listFiles(path.resolve(__dirname, `templates/${ folder }`)))
   .map(x => path.relative(path.resolve(__dirname, 'templates'), x))
@@ -42,7 +43,6 @@ module.exports = class extends Generator {
   configuring() {
     const { promptValues: { author } } = this.config.getAll();
     const { appName, title } = this.props;
-    const rootSrcPath = '';
 
     this.log(`\n${ progressColor(`ADD-APP`) } Configuring ${ scriptColor('package.json') }...\n`);
 
@@ -92,7 +92,6 @@ module.exports = class extends Generator {
     this.log(`\n${ progressColor(`ADD-APP`) } Generating files...\n`);
     const { promptValues: { author, usePhaser } } = this.config.getAll();
     const { appName } = this.props;
-    const rootSrcPath = '';
 
     // copy ejs templates without processing
     [
@@ -114,7 +113,7 @@ module.exports = class extends Generator {
       // 'styles',
       'main.test.ts',
       'main.ts',
-      'webpack.config.js',
+      'phaser.ts',
     ].forEach((path) => {
       this.fs.copyTpl(
         this.templatePath(path),
@@ -126,6 +125,18 @@ module.exports = class extends Generator {
         },
       );
     });
+
+    // webpack configuration file needs to be outside of application source code folder
+    // so that it wont be loaded during test execution
+    this.fs.copyTpl(
+      this.templatePath('webpack.config.js'),
+      this.destinationPath(`webpack.${ appName }.config.js`),
+      {
+        author,
+        appName,
+        usePhaser,
+      },
+    );
   }
 
   end() {
