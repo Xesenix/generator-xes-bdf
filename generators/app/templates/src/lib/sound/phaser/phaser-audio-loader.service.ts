@@ -2,7 +2,7 @@ import { inject } from 'lib/di';
 
 import { IAudioBufferRepository, IAudioContextFactory, IAudioFileLoader } from '../interfaces';
 
-@inject(['audio-repository', 'audio-context:factory'])
+@inject(['audio-repository', 'audio-context:factory', 'debug:console'])
 export class PhaserAudioLoaderService implements IAudioFileLoader {
 	public loader?: Phaser.Loader.LoaderPlugin;
 	private loadQueue: boolean[] = [];
@@ -11,9 +11,11 @@ export class PhaserAudioLoaderService implements IAudioFileLoader {
 		// prettier-ignore
 		private repository: IAudioBufferRepository,
 		private context: IAudioContextFactory,
+		private console: Console,
 	) {
 		this.repository = repository;
 		this.context = context;
+		this.console = console;
 	}
 
 	/**
@@ -36,7 +38,7 @@ export class PhaserAudioLoaderService implements IAudioFileLoader {
 	}
 
 	public add(key: string, url: string): void {
-		console.log('add', key, url);
+		this.console.log('add', key, url);
 		if (!this.loadQueue[key]) {
 			this.loadQueue[key] = true;
 		}

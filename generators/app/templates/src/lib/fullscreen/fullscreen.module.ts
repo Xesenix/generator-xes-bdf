@@ -18,6 +18,7 @@ export class FullScreenModule {
 	}
 
 	public boot = () => {
+		const console = this.app.get<Console>('debug:console');
 		return this.app.get<IDataStoreProvider<any, any>>('data-store:provider')().then((store: Store) => {
 			onFullScreenChange(() => {
 				const { fullscreen } = store.getState();

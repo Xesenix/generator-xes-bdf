@@ -80,6 +80,7 @@ export class AppModule extends Container {
 			...defaultUIState,
 			...defaultI18nState,
 		}, (state: IAppState, action: AppAction) => {
+			const console = this.get<Console>('debug:console');
 			console.log('reduce', state, action);
 			state = uiReducer<IAppState, AppAction>(state, action);
 			state = i18nReducer<IAppState, AppAction>(state, action);
@@ -96,6 +97,8 @@ export class AppModule extends Container {
 	}
 
 	public banner() {
+		const console = this.get<Console>('debug:console');
+		// prettier-ignore
 		// tslint:disable:max-line-length
 		console.log('%c  ★★★ Black Dragon Framework ★★★  ',
 			'display: block; line-height: 3rem; border-bottom: 5px double #a02060; font-family: fantasy; font-size: 2rem; color: #f02060; background-color: #000;',

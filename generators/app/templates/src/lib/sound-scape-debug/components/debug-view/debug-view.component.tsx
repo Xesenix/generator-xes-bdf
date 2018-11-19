@@ -95,7 +95,7 @@ class SoundScapeDebugViewComponent extends React.PureComponent<ISoundScapeDebugV
 	}
 
 	public componentDidMount(): void {
-		const { eventsManager, audioContext } = this.props;
+		const { eventsManager, audioContext, console } = this.props;
 		console.log('SoundScapeDebugViewComponent:componentDidMount', eventsManager);
 
 		if (eventsManager) {
@@ -119,6 +119,7 @@ class SoundScapeDebugViewComponent extends React.PureComponent<ISoundScapeDebugV
 
 	public componentDidUpdate(): void {
 		const { viewContainer, timeline: tl } = this.state;
+		const { console } = this.props;
 		// console.log('SoundScapeDebugViewComponent:componentDidUpdate', viewContainer, tl);
 
 		if (viewContainer && !tl) {
@@ -223,7 +224,7 @@ class SoundScapeDebugViewComponent extends React.PureComponent<ISoundScapeDebugV
 	}
 
 	private updateTimeline = (): void => {
-		const { soundtrackPlayer, audioContext: { currentTime = 0 } } = this.props;
+		const { console, soundtrackPlayer, audioContext: { currentTime = 0 } } = this.props;
 		const { timeline, currentAudioTime } = this.state;
 		console.log('SoundScapeDebugViewComponent:componentDidMount:soundtrack:schedule-changed', { currentTime, soundtrackPlayer, timeline });
 		if (soundtrackPlayer && timeline) {
@@ -286,5 +287,9 @@ export default hot(module)(connectToInjector<ISoundScapeDebugViewProps>({
 	'audio-context': {
 		name: 'audioContext',
 		value: (audioContext: AudioContext) => Promise.resolve(audioContext),
+	},
+	'debug:console': {
+		name: 'console',
+		value: (console: Console) => Promise.resolve(console),
 	},
 })(withStyles(styles)(SoundScapeDebugViewComponent)));

@@ -8,7 +8,9 @@ export const DataStoreModule = <T, A extends Action>(
 	initialValue: DeepPartial<T>,
 	reducer: Reducer<T, A>,
 ) => new ContainerModule((bind: interfaces.Bind) => {
-	console.debug('DataStoreModule:init');
+	if (process.env.DEBUG === 'true') {
+		console.debug('DataStoreModule:init');
+	}
 	bind<DeepPartial<T> | undefined>('data-store:initial-data-state').toConstantValue(initialValue);
 	bind<Reducer<T, A>>('data-store:action-reducer').toConstantValue(reducer);
 	bind<IDataStoreProvider<T, A>>('data-store:provider').toProvider(DataStoreProvider);
