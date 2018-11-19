@@ -93,7 +93,7 @@ module.exports = class extends Generator {
   async writing() {
     this.log(`\n${ progressColor(`ADD-APP`) } Generating files...\n`);
     const { promptValues: { author, usePhaser } } = this.config.getAll();
-    const { appName } = this.props;
+    const { appName, title } = this.props;
 
     // copy ejs templates without processing
     [
@@ -125,6 +125,7 @@ module.exports = class extends Generator {
           author,
           appName,
           usePhaser,
+          title,
         },
       );
     });
@@ -138,6 +139,7 @@ module.exports = class extends Generator {
         author,
         appName,
         usePhaser,
+        title,
       },
     );
   }

@@ -81,7 +81,7 @@ class App extends React.Component<IAppProps & WithStyles<typeof styles>, IAppSta
 				<CssBaseline/>
 				<Paper className={ classes.root } elevation={ 1 }>
 					{ loading ? <LinearProgress/> : null }
-					<Typography className={ classes.headline } variant="headline" component="h1">{ __('PHASER 3 Game Test') }</Typography>
+					<Typography className={ classes.headline } variant="headline" component="h1">{ __('<%= title %>') }</Typography>
 					{ gameView }
 				</Paper>
 			</MuiThemeProvider>);
