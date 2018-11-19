@@ -74,10 +74,12 @@ module.exports = class extends Generator {
             author,
           },
           'assets': [
-            'assets'
+            'assets',
           ],
           'template': 'templates/index.html',
-          'styles': [],
+          'styles': [
+            'styles/main.scss',
+          ],
           'stylesImportPaths': [
             `${ rootSrcPath }${ appName }/styles`,
             `${ rootSrcPath }styles`,
@@ -109,6 +111,7 @@ module.exports = class extends Generator {
       ...await listTemplates('assets'),
       ...await listTemplates('components'),
       ...await listTemplates('src'),
+      ...await listTemplates('styles'),
       // 'locales',
       // 'styles',
       'main.test.ts',
