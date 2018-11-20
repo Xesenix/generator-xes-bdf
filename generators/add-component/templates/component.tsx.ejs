@@ -48,7 +48,7 @@ export interface I<%= name % > State; {
 	loading: boolean;
 }
 
-class <%= name % > Component; extends React.PureComponent < I < ;%= name % > Props & WithStyles < typeof styles > , I < ;%= name % > State & IUIState > {
+class <%= name %>Component; extends React.PureComponent < I<%= name %> Props & WithStyles < typeof styles > , I <%= name %> State & IUIState > {
 	private unsubscribe?: any;
 
 	constructor(props) {
@@ -61,10 +61,6 @@ class <%= name % > Component; extends React.PureComponent < I < ;%= name % > Pro
 
 	public componentDidMount(): void {
 		this.bindToStore();
-
-		// optional preloading
-		// this.setState({ loading: true });
-		// import('dependency').then(() => this.setState({ loading: false }));
 	}
 
 	public componentDidUpdate(): void {
@@ -106,9 +102,9 @@ class <%= name % > Component; extends React.PureComponent < I < ;%= name % > Pro
 	},
 };
 
-export default hot(module)(connectToInjector < I < %= name % > Props > ({
+export default hot(module)(connectToInjector < I <%= name %>Props > ({
 	'data-store:provider': {
 		name: 'store',
 		value: (provider: IDataStoreProvider<IUIState, IValueAction>) => provider(),
 	},
-})(withStyles(styles)( < %= name % > Component)));
+})(withStyles(styles)( <%= name %>Component)));
