@@ -31,8 +31,8 @@ import { __ } from 'lib/i18n';
 import { IValueAction } from 'lib/interfaces';
 import {
 	createSetFullscreenAction,
-	createSetMuteAction,
-	createSetPauseAction,
+	createSetMutedAction,
+	createSetPausedAction,
 	defaultUIState,
 	IUIState,
 } from 'lib/ui';
@@ -40,7 +40,7 @@ import {
 import Loadable from 'react-loadable';
 import { styles } from './game-view.styles';
 
-const Loader = () => <LinearProgress/>;
+const Loader = () => <LinearProgress />;
 
 const ConfigurationViewComponent = Loadable({ loading: Loader, loader: () => import('../../components/configuration-view/configuration-view') });
 const PhaserViewComponent = Loadable({ loading: Loader, loader: () => import('../../components/phaser-view/phaser-view') });
@@ -91,62 +91,59 @@ class GameViewComponent extends React.PureComponent<IGameViewProps & WithStyles<
 		const { tab = 'game', fullscreen, paused, mute, loading } = this.state;
 		const { classes } = this.props;
 
-		const menu = (<>
-			{ tab === 'configuration'
-				? <Button variant="extendedFab" className={ classes.button } onClick={ this.backHandle }>
-					<BackIcon className={ classes.extendedIcon }/>
-					{ __('Back') }
+		const menu = (
+			<>
+				{tab === 'configuration' ? (
+					<Button variant="extendedFab" className={classes.button} onClick={this.backHandle}>
+						<BackIcon className={classes.extendedIcon} />
+						{__('Back')}
+					</Button>
+				) : null}
+				{tab === 'game' ? (
+					<Button variant="extendedFab" className={classes.button} onClick={this.openConfigurationHandle}>
+						<ConfigIcon className={classes.extendedIcon} />
+						{__('Configuration')}
+					</Button>
+				) : null}
+				<Button color="secondary" variant="extendedFab" className={classes.button} onClick={this.toggleFullScreen}>
+					{fullscreen ? <FullScreenExitIcon className={classes.extendedIcon} /> : <FullScreenIcon className={classes.extendedIcon} />}
+					{__('Fullscreen')}
 				</Button>
-				: null
-			}
-			{ tab === 'game'
-				? <Button variant="extendedFab" className={ classes.button } onClick={ this.openConfigurationHandle }>
-					<ConfigIcon className={ classes.extendedIcon }/>
-					{ __('Configuration') }
+				<Button color="primary" variant="extendedFab" className={classes.button} onClick={this.togglePause}>
+					{paused ? <PausedIcon className={classes.extendedIcon} /> : <PlayIcon className={classes.extendedIcon} />}
+					{__('Pause')}
 				</Button>
-				: null
-			}
-			<Button color="secondary" variant="extendedFab" className={ classes.button } onClick={ this.toggleFullScreen }>
-				{ fullscreen ? <FullScreenExitIcon className={ classes.extendedIcon }/> : <FullScreenIcon className={ classes.extendedIcon } /> }
-				{ __('Fullscreen') }
-			</Button>
-			<Button color="primary" variant="extendedFab" className={ classes.button } onClick={ this.togglePause }>
-				{ paused ? <PausedIcon className={ classes.extendedIcon }/> : <PlayIcon className={ classes.extendedIcon }/> }
-				{ __('Pause') }
-			</Button>
-			<Button color="primary" variant="extendedFab" className={ classes.button } onClick={ this.toggleMute }>
-				{ mute ? <MuteOnIcon className={ classes.extendedIcon }/> : <MuteOffIcon className={ classes.extendedIcon }/> }
-				{ __('Mute') }
-			</Button>
-		</>);
+				<Button color="primary" variant="extendedFab" className={classes.button} onClick={this.toggleMute}>
+					{mute ? <MuteOnIcon className={classes.extendedIcon} /> : <MuteOffIcon className={classes.extendedIcon} />}
+					{__('Mute')}
+				</Button>
+			</>
+		);
 
 		return (
-			<Grid container spacing={ 0 } alignItems="center">
-				<Grid item xs={ 12 }>
-					<Paper className={ classes.root } elevation={ 2 }>
+			<Grid container spacing={0} alignItems="center">
+				<Grid item xs={12}>
+					<Paper className={classes.root} elevation={2}>
 						<AppBar position="fixed">
 							<Toolbar>
-								<Hidden xsDown>
-									{ menu }
-								</Hidden>
+								<Hidden xsDown>{menu}</Hidden>
 								<Hidden smUp>
-									<Button color="primary" variant="fab" className={ classes.button } onClick={ this.toggleDrawer }>
+									<Button color="primary" variant="fab" className={classes.button} onClick={this.toggleDrawer}>
 										<MenuIcon />
 									</Button>
 								</Hidden>
 							</Toolbar>
-							{ loading ? <LinearProgress/> : null }
+							{loading ? <LinearProgress /> : null}
 						</AppBar>
-						<Drawer
-							anchor="left"
-							open={ this.state.drawer }
-							onClose={ this.toggleDrawer }
-						>{ menu }</Drawer>
-						{ tab === 'configuration' ? <ConfigurationViewComponent/> : null }
-						{ tab === 'game' ? <PhaserViewComponent keepInstanceOnRemove={ true }/> : null }
+						<Drawer anchor="left" open={this.state.drawer} onClose={this.toggleDrawer}>
+							{menu}
+						</Drawer>
+						{tab === 'configuration' ? <ConfigurationViewComponent /> : null}
+						{tab === 'game' ? <PhaserViewComponent keepInstanceOnRemove={true} /> : null}
 					</Paper>
 				</Grid>
-			</Grid>);
+			</Grid>
+		);
 	}
 
 	private bindToStore(): void {
@@ -192,7 +189,7 @@ class GameViewComponent extends React.PureComponent<IGameViewProps & WithStyles<
 		const { store } = this.props;
 		const { paused } = this.state;
 		if (store) {
-			store.dispatch(createSetPauseAction(!paused));
+			store.dispatch(createSetPausedAction(!paused));
 		}
 	}
 
@@ -200,14 +197,16 @@ class GameViewComponent extends React.PureComponent<IGameViewProps & WithStyles<
 		const { store } = this.props;
 		const { mute } = this.state;
 		if (store) {
-			store.dispatch(createSetMuteAction(!mute));
+			store.dispatch(createSetMutedAction(!mute));
 		}
 	}
 }
 
-export default hot(module)(connectToInjector<IGameViewProps>({
-	'data-store:provider': {
-		name: 'store',
-		value: (provider: IDataStoreProvider<IUIState, IValueAction>) => provider(),
-	},
-})(withStyles(styles)(GameViewComponent)));
+export default hot(module)(
+	connectToInjector<IGameViewProps>({
+		'data-store:provider': {
+			name: 'store',
+			value: (provider: IDataStoreProvider<IUIState, IValueAction>) => provider(),
+		},
+	})(withStyles(styles)(GameViewComponent)),
+);

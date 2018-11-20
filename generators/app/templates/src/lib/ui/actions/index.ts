@@ -1,71 +1,61 @@
 import { IValueAction } from 'lib/interfaces';
 
 // tslint:disable:max-classes-per-file
-export const SET_MUTE = 'UI_SET_MUTE';
-export interface ISetMuteAction extends IValueAction {
-	value: boolean;
-}
-export const createSetMuteAction = (value: boolean): ISetMuteAction => ({
-	type: SET_MUTE,
+export const SET_MUTED = 'UI_SET_MUTED';
+
+export const createSetMutedAction = (value: boolean): IValueAction<boolean> => ({
+	type: SET_MUTED,
 	value,
 });
 
-export const SET_MUTE_MUSIC = 'UI_SET_MUTE_MUSIC';
-export const createSetMusicMutedAction = (value: boolean): ISetMuteAction => ({
-	type: SET_MUTE_MUSIC,
+export const SET_MUSIC_MUTED = 'UI_SET_MUSIC_MUTED';
+export const createSetMusicMutedAction = (value: boolean): IValueAction<boolean> => ({
+	type: SET_MUSIC_MUTED,
 	value,
 });
 
 export const SET_EFFECTS_MUTED = 'UI_SET_EFFECTS_MUTED';
-export const createSetEffectsMutedAction = (value: boolean): ISetMuteAction => ({
+export const createSetEffectsMutedAction = (value: boolean): IValueAction<boolean> => ({
 	type: SET_EFFECTS_MUTED,
 	value,
 });
 
-export const SET_PAUSE = 'UI_SET_PAUSE';
-export interface ISetPauseAction extends IValueAction {
-	value: boolean;
-}
-export const createSetPauseAction = (value: boolean): ISetPauseAction => ({
-	type: SET_PAUSE,
+export const SET_PAUSED = 'UI_SET_PAUSED';
+
+export const createSetPausedAction = (value: boolean): IValueAction<boolean> => ({
+	type: SET_PAUSED,
 	value,
 });
 
 export const SET_VOLUME = 'UI_SET_VOLUME';
-export interface ISetVolumeAction extends IValueAction {
-	value: number;
-}
-export const createSetVolumeAction = (value: number): ISetVolumeAction => ({
+
+export const createSetVolumeAction = (value: number): IValueAction<number> => ({
 	type: SET_VOLUME,
 	value,
 });
 
 export const SET_EFFECTS_VOLUME = 'UI_SET_EFFECTS_VOLUME';
-export const createSetEffectsVolumeAction = (value: number): ISetVolumeAction => ({
+export const createSetEffectsVolumeAction = (value: number): IValueAction<number> => ({
 	type: SET_EFFECTS_VOLUME,
 	value,
 });
 
 export const SET_MUSIC_VOLUME = 'UI_SET_MUSIC_VOLUME';
-export const createSetMusicVolumeAction = (value: number): ISetVolumeAction => ({
+export const createSetMusicVolumeAction = (value: number): IValueAction<number> => ({
 	type: SET_MUSIC_VOLUME,
 	value,
 });
 
 export const SET_THEME = 'UI_SET_THEME';
-export interface ISetThemeAction extends IValueAction {
-	value: 'dark' | 'light';
-}
-export const createSetThemeAction = (value: 'dark' | 'light'): ISetThemeAction => ({
+
+export const createSetThemeAction = (value: string): IValueAction<string> => ({
 	type: SET_THEME,
 	value,
 });
 
 export const SET_FULLSCREEN = 'UI_SET_FULLSCREEN';
-export interface ISetFullscreenAction extends IValueAction {
-	value: boolean;
-}
-export const createSetFullscreenAction = (value: boolean): ISetFullscreenAction => ({
+
+export const createSetFullscreenAction = (value: boolean): IValueAction<boolean> => ({
 	type: SET_FULLSCREEN,
 	value,
 });

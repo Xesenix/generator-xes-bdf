@@ -23,7 +23,7 @@ export function UIStoreProvider(context: interfaces.Context) {
 		try {
 			const initialState: IUIState = defaultUIState;
 
-			store = createStore<IUIState, IValueAction, any, any>(uiReducer, initialState, applyMiddleware(thunk));
+			store = createStore<IUIState, IValueAction<any>, any, any>(uiReducer, initialState, applyMiddleware(thunk));
 
 			console.debug('UIStoreProvider:store', store);
 			return Promise.resolve(store);

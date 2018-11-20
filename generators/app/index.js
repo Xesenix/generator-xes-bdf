@@ -143,6 +143,7 @@ module.exports = class extends Generator {
       'webpack.config.js',
       'scripts/extract.ts',
       'src/lib/index.ts',
+      'src/lib/interfaces.ts',
       'src/lib/main.test.ts',
       // TODO: need to move those to separate repositories
       ...await listTemplates('src/lib/data-store'),

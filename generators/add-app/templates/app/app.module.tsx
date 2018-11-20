@@ -7,14 +7,8 @@ import { Container } from 'inversify';
 import { DataStoreModule } from 'lib/data-store';
 import { DIContext } from 'lib/di';
 import { FullScreenModule } from 'lib/fullscreen';
-import {
-	defaultI18nState,
-	I18nModule,
-	i18nReducer,
-	II18nProvider,
-	II18nState,
-} from 'lib/i18n';
-import { IValueAction } from 'lib/interfaces';
+import { defaultI18nState, I18nModule, i18nReducer, II18nState } from 'lib/i18n';
+import { IApplication, IValueAction } from 'lib/interfaces';
 import { IRenderer, ReactRenderer } from 'lib/renderer/react-renderer';
 import { SoundModule } from 'lib/sound';
 import { SoundScapeModule } from 'lib/sound-scape';
@@ -28,7 +22,7 @@ import App from './app';
 declare const process: any;
 
 type IAppState = IUIState & II18nState | undefined;
-type AppAction = IValueAction;
+type AppAction = IValueAction<any>;
 
 /**
  * Main module for application. Defines all dependencies and provides default setup for configuration variables.
@@ -36,7 +30,9 @@ type AppAction = IValueAction;
  * @export
  * @extends {Container}
  */
-export class AppModule extends Container {
+export class AppModule extends Container implements IApplication {
+	public eventManager = new EventEmitter();
+
 	constructor() {
 		super();
 
@@ -58,7 +54,7 @@ export class AppModule extends Container {
 		}
 
 		// event manager
-		this.bind<EventEmitter>('event-manager').toConstantValue(new EventEmitter());
+		this.bind<EventEmitter>('event-manager').toConstantValue(this.eventManager);
 
 		// load modules
 
@@ -70,7 +66,7 @@ export class AppModule extends Container {
 		SoundScapeModule.register(this);
 
 		// translations
-		this.load(I18nModule());
+		I18nModule.register(this);
 
 		// phaser
 		this.load(PhaserGameModule());
@@ -101,12 +97,11 @@ export class AppModule extends Container {
 			.inSingletonScope();
 
 		// ui
-		this.load(UIModule());
+		UIModule.register(this);
 	}
 
 	public banner() {
 		const console = this.get<Console>('debug:console');
-		// prettier-ignore
 		// tslint:disable:max-line-length
 		console.log(
 			'%c  ★★★ Black Dragon Framework ★★★  ',
@@ -121,7 +116,7 @@ export class AppModule extends Container {
 
 	public boot(): Promise<AppModule> {
 		// start all required modules
-		return this.get<II18nProvider>('i18n:provider')()
+		return this.get<I18nModule>('i18n:module').boot()
 			.then(this.get<FullScreenModule>('fullscreen:module').boot)
 			.then(
 				() => {
