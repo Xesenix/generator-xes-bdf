@@ -24,31 +24,51 @@ import MuteOnIcon from '@material-ui/icons/VolumeUp';
 
 import { IDataStoreProvider } from 'lib/data-store';
 import { connectToInjector } from 'lib/di';
-import { __, createSetLanguageAction, II18nState, LanguageType } from 'lib/i18n';
-import { IValueAction } from 'lib/interfaces';
-import {
-	createSetEffectsMutedAction,
-	createSetEffectsVolumeAction,
-	createSetMusicMutedAction,
-	createSetMusicVolumeAction,
-	createSetMutedAction,
-	createSetThemeAction,
-	createSetVolumeAction,
-	defaultUIState,
-	IUIState,
-} from 'lib/ui';
+import { II18nState, LanguageType } from 'lib/i18n';
+import { ICreateSetAction, IValueAction } from 'lib/interfaces';
+import { defaultUIState, IUIState } from 'lib/ui';
 
 import { styles } from './configuration-view.styles';
 
 export interface IConfigurationProps {
 	store?: Store<IUIState & II18nState>;
+	createSetLanguageAction: ICreateSetAction<LanguageType>;
+	createSetEffectsMutedAction: ICreateSetAction<boolean>;
+	createSetEffectsVolumeAction: ICreateSetAction<number>;
+	createSetMusicMutedAction: ICreateSetAction<boolean>;
+	createSetMusicVolumeAction: ICreateSetAction<number>;
+	createSetMutedAction: ICreateSetAction<boolean>;
+	createSetThemeAction: ICreateSetAction<string>;
+	createSetVolumeAction: ICreateSetAction<number>;
+	__: (key: string) => string;
 }
 export interface IConfigurationState {}
 
 export class ConfigurationViewComponent extends React.Component<IConfigurationProps & WithStyles<typeof styles>, IConfigurationState> {
 	public render(): any {
-		const { classes, store = { getState: () => ({ ...defaultUIState, language: 'en' }) } } = this.props;
-		const { mute, musicMuted, effectsMuted, volume, musicVolume, effectsVolume, language, theme } = store.getState();
+		const {
+			classes,
+			store = { getState: () => ({ ...defaultUIState, language: 'en' }) },
+			createSetLanguageAction,
+			createSetEffectsMutedAction,
+			createSetEffectsVolumeAction,
+			createSetMusicMutedAction,
+			createSetMusicVolumeAction,
+			createSetMutedAction,
+			createSetThemeAction,
+			createSetVolumeAction,
+			__,
+		} = this.props;
+		const {
+			mute,
+			musicMuted,
+			effectsMuted,
+			volume,
+			musicVolume,
+			effectsVolume,
+			language,
+			theme,
+		} = store.getState();
 
 		return (
 			<form className={classes.root}>
@@ -61,7 +81,12 @@ export class ConfigurationViewComponent extends React.Component<IConfigurationPr
 							className={classes.margin}
 							label={__('master mute')}
 							control={
-								<Checkbox checkedIcon={<MuteOffIcon />} icon={<MuteOnIcon />} checked={mute} onChange={(event, checked: boolean) => this.dispatch(createSetMutedAction(checked))} />
+								<Checkbox
+									checkedIcon={<MuteOffIcon />}
+									icon={<MuteOnIcon />}
+									checked={mute}
+									onChange={(event, checked: boolean) => this.dispatch(createSetMutedAction(checked))}
+								/>
 							}
 						/>
 					</Grid>
@@ -95,10 +120,20 @@ export class ConfigurationViewComponent extends React.Component<IConfigurationPr
 					</Grid>
 					<Grid item xs={12} container>
 						<Grid item xs={12} md={3}>
-							<FormControlLabel className={classes.margin} label={__('master volume')} control={<span className={classes.icon}>{mute ? <MuteOffIcon /> : <MuteOnIcon />}</span>} />
+							<FormControlLabel
+								className={classes.margin}
+								label={__('master volume')}
+								control={<span className={classes.icon}>{mute ? <MuteOffIcon /> : <MuteOnIcon />}</span>}
+							/>
 						</Grid>
 						<Grid item xs={12} md={9} className={classes.scroll}>
-							<Slider min={0} max={1} step={1 / 32} value={volume} onChange={(event, value) => this.dispatch(createSetVolumeAction(value))} />
+							<Slider
+								min={0}
+								max={1}
+								step={1 / 32}
+								value={volume}
+								onChange={(event, value) => this.dispatch(createSetVolumeAction(value))}
+							/>
 						</Grid>
 					</Grid>
 					<Grid item xs={12} container>
@@ -110,7 +145,13 @@ export class ConfigurationViewComponent extends React.Component<IConfigurationPr
 							/>
 						</Grid>
 						<Grid item xs={12} md={9} className={classes.scroll}>
-							<Slider min={0} max={1} step={1 / 32} value={musicVolume} onChange={(event, value) => this.dispatch(createSetMusicVolumeAction(value))} />
+							<Slider
+								min={0}
+								max={1}
+								step={1 / 32}
+								value={musicVolume}
+								onChange={(event, value) => this.dispatch(createSetMusicVolumeAction(value))}
+							/>
 						</Grid>
 					</Grid>
 					<Grid item xs={12} container>
@@ -122,7 +163,13 @@ export class ConfigurationViewComponent extends React.Component<IConfigurationPr
 							/>
 						</Grid>
 						<Grid item xs={12} md={9} className={classes.scroll}>
-							<Slider min={0} max={1} step={1 / 32} value={effectsVolume} onChange={(event, value) => this.dispatch(createSetEffectsVolumeAction(value))} />
+							<Slider
+								min={0}
+								max={1}
+								step={1 / 32}
+								value={effectsVolume}
+								onChange={(event, value) => this.dispatch(createSetEffectsVolumeAction(value))}
+							/>
 						</Grid>
 					</Grid>
 				</Grid>
@@ -132,14 +179,20 @@ export class ConfigurationViewComponent extends React.Component<IConfigurationPr
 				<Grid item xs={12} container component="section">
 					<FormControl className={classes.formControl}>
 						<InputLabel>{__('language')}</InputLabel>
-						<Select value={language} onChange={(event) => this.dispatch(createSetLanguageAction(event.target.value as LanguageType))}>
+						<Select
+							value={language}
+							onChange={(event) => this.dispatch(createSetLanguageAction(event.target.value as LanguageType))}
+						>
 							<MenuItem value={'en'}>{__('english')}</MenuItem>
 							<MenuItem value={'pl'}>{__('polish')}</MenuItem>
 						</Select>
 					</FormControl>
 					<FormControl className={classes.formControl}>
 						<InputLabel>{__('theme')}</InputLabel>
-						<Select value={theme} onChange={(event) => this.dispatch(createSetThemeAction(event.target.value as 'light' | 'dark'))}>
+						<Select
+							value={theme}
+							onChange={(event) => this.dispatch(createSetThemeAction(event.target.value as 'light' | 'dark'))}
+						>
 							<MenuItem value={'light'}>{__('light')}</MenuItem>
 							<MenuItem value={'dark'}>{__('dark')}</MenuItem>
 						</Select>
@@ -162,7 +215,43 @@ export default hot(module)(
 	connectToInjector<IConfigurationProps>({
 		'data-store:provider': {
 			name: 'store',
-			value: (provider: IDataStoreProvider<IUIState & II18nState, IValueAction>) => provider(),
+			value: (provider: IDataStoreProvider<IUIState & II18nState, IValueAction<any>>) => provider(),
+		},
+		'i18n:translate': {
+			name: '__',
+			value: (translate) => Promise.resolve(translate),
+		},
+		'data-store:action:create:set-language': {
+			name: 'createSetLanguageAction',
+			value: (actionCreator) => Promise.resolve(actionCreator),
+		},
+		'data-store:action:create:set-effects-muted': {
+			name: 'createSetEffectsMutedAction',
+			value: (actionCreator) => Promise.resolve(actionCreator),
+		},
+		'data-store:action:create:set-effects-volume': {
+			name: 'createSetEffectsVolumeAction',
+			value: (actionCreator) => Promise.resolve(actionCreator),
+		},
+		'data-store:action:create:set-music-muted': {
+			name: 'createSetMusicMutedAction',
+			value: (actionCreator) => Promise.resolve(actionCreator),
+		},
+		'data-store:action:create:set-music-volume': {
+			name: 'createSetMusicVolumeAction',
+			value: (actionCreator) => Promise.resolve(actionCreator),
+		},
+		'data-store:action:create:set-muted': {
+			name: 'createSetMutedAction',
+			value: (actionCreator) => Promise.resolve(actionCreator),
+		},
+		'data-store:action:create:set-theme': {
+			name: 'createSetThemeAction',
+			value: (actionCreator) => Promise.resolve(actionCreator),
+		},
+		'data-store:action:create:set-volume': {
+			name: 'createSetVolumeAction',
+			value: (actionCreator) => Promise.resolve(actionCreator),
 		},
 	})(withStyles(styles)(ConfigurationViewComponent)),
 );

@@ -1,212 +1,250 @@
-import { createStyles, Theme, withStyles, WithStyles } from '@material-ui/core/styles';
-
-// elements
-import AppBar from '@material-ui/core/AppBar';
-import Button from '@material-ui/core/Button';
-import Drawer from '@material-ui/core/Drawer';
-import Grid from '@material-ui/core/Grid';
-import Hidden from '@material-ui/core/Hidden';
-import LinearProgress from '@material-ui/core/LinearProgress';
-import Paper from '@material-ui/core/Paper';
-import Toolbar from '@material-ui/core/Toolbar';
-// icons
-import ConfigIcon from '@material-ui/icons/Build';
-import FullScreenIcon from '@material-ui/icons/Fullscreen';
-import FullScreenExitIcon from '@material-ui/icons/FullscreenExit';
-import MenuIcon from '@material-ui/icons/Menu';
-import PausedIcon from '@material-ui/icons/PauseCircleFilled';
-import PlayIcon from '@material-ui/icons/PlayCircleFilled';
-import BackIcon from '@material-ui/icons/Undo';
-import MuteOnIcon from '@material-ui/icons/VolumeOff';
-import MuteOffIcon from '@material-ui/icons/VolumeUp';
-
-import { Container } from 'inversify';
+import { withStyles, WithStyles } from '@material-ui/core/styles';
 import * as React from 'react';
 import { hot } from 'react-hot-loader';
-import { Store } from 'redux';
+import { Action, Store } from 'redux';
+
+// elements
+import Checkbox from '@material-ui/core/Checkbox';
+import FormControl from '@material-ui/core/FormControl';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Grid from '@material-ui/core/Grid';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
+import Typography from '@material-ui/core/Typography';
+import Slider from '@material-ui/lab/Slider';
+
+// icons
+import SoundOffIcon from '@material-ui/icons/FlashOff';
+import SoundOnIcon from '@material-ui/icons/FlashOn';
+import MusicOnIcon from '@material-ui/icons/MusicNote';
+import MusicOffIcon from '@material-ui/icons/MusicOff';
+import MuteOffIcon from '@material-ui/icons/VolumeOff';
+import MuteOnIcon from '@material-ui/icons/VolumeUp';
 
 import { IDataStoreProvider } from 'lib/data-store';
 import { connectToInjector } from 'lib/di';
-import { __ } from 'lib/i18n';
-import { IValueAction } from 'lib/interfaces';
-import {
-	createSetFullscreenAction,
-	createSetMutedAction,
-	createSetPausedAction,
-	defaultUIState,
-	IUIState,
-} from 'lib/ui';
+import { II18nState, LanguageType } from 'lib/i18n';
+import { ICreateSetAction, IValueAction } from 'lib/interfaces';
+import { defaultUIState, IUIState } from 'lib/ui';
 
-import Loadable from 'react-loadable';
-import { styles } from './game-view.styles';
+import { styles } from './configuration-view.styles';
 
-const Loader = () => <LinearProgress />;
-
-const ConfigurationViewComponent = Loadable({ loading: Loader, loader: () => import('../../components/configuration-view/configuration-view') });
-const PhaserViewComponent = Loadable({ loading: Loader, loader: () => import('../../components/phaser-view/phaser-view') });
-
-export interface IGameViewProps {
-	di?: Container;
-	store?: Store<IUIState>;
+export interface IConfigurationProps {
+	store?: Store<IUIState & II18nState>;
+	createSetLanguageAction: ICreateSetAction<LanguageType>;
+	createSetEffectsMutedAction: ICreateSetAction<boolean>;
+	createSetEffectsVolumeAction: ICreateSetAction<number>;
+	createSetMusicMutedAction: ICreateSetAction<boolean>;
+	createSetMusicVolumeAction: ICreateSetAction<number>;
+	createSetMutedAction: ICreateSetAction<boolean>;
+	createSetThemeAction: ICreateSetAction<string>;
+	createSetVolumeAction: ICreateSetAction<number>;
+	__: (key: string) => string;
 }
+export interface IConfigurationState {}
 
-export interface IGameViewState {
-	tab: 'configuration' | 'game';
-	drawer: boolean;
-	loading: boolean;
-}
-
-class GameViewComponent extends React.PureComponent<IGameViewProps & WithStyles<typeof styles>, IGameViewState & IUIState> {
-	private unsubscribe?: any;
-
-	constructor(props) {
-		super(props);
-		this.state = {
-			tab: 'game',
-			drawer: false,
-			loading: false,
-			...defaultUIState,
-		};
-	}
-
-	public componentDidMount(): void {
-		this.bindToStore();
-
-		// optional preloading
-		this.setState({ loading: true });
-		import('phaser').then(() => this.setState({ loading: false }));
-	}
-
-	public componentDidUpdate(): void {
-		this.bindToStore();
-	}
-
-	public componentWillUnmount(): void {
-		if (this.unsubscribe) {
-			this.unsubscribe();
-		}
-	}
-
+export class ConfigurationViewComponent extends React.Component<IConfigurationProps & WithStyles<typeof styles>, IConfigurationState> {
 	public render(): any {
-		const { tab = 'game', fullscreen, paused, mute, loading } = this.state;
-		const { classes } = this.props;
-
-		const menu = (
-			<>
-				{tab === 'configuration' ? (
-					<Button variant="extendedFab" className={classes.button} onClick={this.backHandle}>
-						<BackIcon className={classes.extendedIcon} />
-						{__('Back')}
-					</Button>
-				) : null}
-				{tab === 'game' ? (
-					<Button variant="extendedFab" className={classes.button} onClick={this.openConfigurationHandle}>
-						<ConfigIcon className={classes.extendedIcon} />
-						{__('Configuration')}
-					</Button>
-				) : null}
-				<Button color="secondary" variant="extendedFab" className={classes.button} onClick={this.toggleFullScreen}>
-					{fullscreen ? <FullScreenExitIcon className={classes.extendedIcon} /> : <FullScreenIcon className={classes.extendedIcon} />}
-					{__('Fullscreen')}
-				</Button>
-				<Button color="primary" variant="extendedFab" className={classes.button} onClick={this.togglePause}>
-					{paused ? <PausedIcon className={classes.extendedIcon} /> : <PlayIcon className={classes.extendedIcon} />}
-					{__('Pause')}
-				</Button>
-				<Button color="primary" variant="extendedFab" className={classes.button} onClick={this.toggleMute}>
-					{mute ? <MuteOnIcon className={classes.extendedIcon} /> : <MuteOffIcon className={classes.extendedIcon} />}
-					{__('Mute')}
-				</Button>
-			</>
-		);
+		const {
+			classes,
+			store = { getState: () => ({ ...defaultUIState, language: 'en' }) },
+			createSetLanguageAction,
+			createSetEffectsMutedAction,
+			createSetEffectsVolumeAction,
+			createSetMusicMutedAction,
+			createSetMusicVolumeAction,
+			createSetMutedAction,
+			createSetThemeAction,
+			createSetVolumeAction,
+			__,
+		} = this.props;
+		const {
+			mute,
+			musicMuted,
+			effectsMuted,
+			volume,
+			musicVolume,
+			effectsVolume,
+			language,
+			theme,
+		} = store.getState();
 
 		return (
-			<Grid container spacing={0} alignItems="center">
-				<Grid item xs={12}>
-					<Paper className={classes.root} elevation={2}>
-						<AppBar position="fixed">
-							<Toolbar>
-								<Hidden xsDown>{menu}</Hidden>
-								<Hidden smUp>
-									<Button color="primary" variant="fab" className={classes.button} onClick={this.toggleDrawer}>
-										<MenuIcon />
-									</Button>
-								</Hidden>
-							</Toolbar>
-							{loading ? <LinearProgress /> : null}
-						</AppBar>
-						<Drawer anchor="left" open={this.state.drawer} onClose={this.toggleDrawer}>
-							{menu}
-						</Drawer>
-						{tab === 'configuration' ? <ConfigurationViewComponent /> : null}
-						{tab === 'game' ? <PhaserViewComponent keepInstanceOnRemove={true} /> : null}
-					</Paper>
+			<form className={classes.root}>
+				<Typography variant="headline" component="h1">
+					{__('Sound configuration')}
+				</Typography>
+				<Grid container spacing={0} alignItems="stretch" component="section">
+					<Grid item xs={6} sm={4}>
+						<FormControlLabel
+							className={classes.margin}
+							label={__('master mute')}
+							control={
+								<Checkbox
+									checkedIcon={<MuteOffIcon />}
+									icon={<MuteOnIcon />}
+									checked={mute}
+									onChange={(event, checked: boolean) => this.dispatch(createSetMutedAction(checked))}
+								/>
+							}
+						/>
+					</Grid>
+					<Grid item xs={6} sm={4}>
+						<FormControlLabel
+							className={classes.margin}
+							label={__('music mute')}
+							control={
+								<Checkbox
+									checkedIcon={<MuteOffIcon />}
+									icon={<MuteOnIcon />}
+									checked={musicMuted}
+									onChange={(event, checked: boolean) => this.dispatch(createSetMusicMutedAction(checked))}
+								/>
+							}
+						/>
+					</Grid>
+					<Grid item xs={6} sm={4}>
+						<FormControlLabel
+							className={classes.margin}
+							label={__('fx mute')}
+							control={
+								<Checkbox
+									checkedIcon={<MuteOffIcon />}
+									icon={<MuteOnIcon />}
+									checked={effectsMuted}
+									onChange={(event, checked: boolean) => this.dispatch(createSetEffectsMutedAction(checked))}
+								/>
+							}
+						/>
+					</Grid>
+					<Grid item xs={12} container>
+						<Grid item xs={12} md={3}>
+							<FormControlLabel
+								className={classes.margin}
+								label={__('master volume')}
+								control={<span className={classes.icon}>{mute ? <MuteOffIcon /> : <MuteOnIcon />}</span>} />
+						</Grid>
+						<Grid item xs={12} md={9} className={classes.scroll}>
+							<Slider min={0} max={1} step={1 / 32} value={volume} onChange={(event, value) => this.dispatch(createSetVolumeAction(value))} />
+						</Grid>
+					</Grid>
+					<Grid item xs={12} container>
+						<Grid item xs={12} md={3}>
+							<FormControlLabel
+								className={classes.margin}
+								label={__('music volume')}
+								control={<span className={classes.icon}>{mute || musicMuted ? <MusicOffIcon /> : <MusicOnIcon />}</span>}
+							/>
+						</Grid>
+						<Grid item xs={12} md={9} className={classes.scroll}>
+							<Slider
+								min={0}
+								max={1}
+								step={1 / 32}
+								value={musicVolume}
+								onChange={(event, value) => this.dispatch(createSetMusicVolumeAction(value))}
+							/>
+						</Grid>
+					</Grid>
+					<Grid item xs={12} container>
+						<Grid item xs={12} md={3}>
+							<FormControlLabel
+								className={classes.margin}
+								label={__('sound volume')}
+								control={<span className={classes.icon}>{mute || effectsMuted ? <SoundOffIcon /> : <SoundOnIcon />}</span>}
+							/>
+						</Grid>
+						<Grid item xs={12} md={9} className={classes.scroll}>
+							<Slider
+								min={0}
+								max={1}
+								step={1 / 32}
+								value={effectsVolume}
+								onChange={(event, value) => this.dispatch(createSetEffectsVolumeAction(value))}
+							/>
+						</Grid>
+					</Grid>
 				</Grid>
-			</Grid>
+				<Typography variant="headline" component="h1">
+					{__('User interface configuration')}
+				</Typography>
+				<Grid item xs={12} container component="section">
+					<FormControl className={classes.formControl}>
+						<InputLabel>{__('language')}</InputLabel>
+						<Select
+							value={language}
+							onChange={(event) => this.dispatch(createSetLanguageAction(event.target.value as LanguageType))}
+						>
+							<MenuItem value={'en'}>{__('english')}</MenuItem>
+							<MenuItem value={'pl'}>{__('polish')}</MenuItem>
+						</Select>
+					</FormControl>
+					<FormControl className={classes.formControl}>
+						<InputLabel>{__('theme')}</InputLabel>
+						<Select
+							value={theme}
+							onChange={(event) => this.dispatch(createSetThemeAction(event.target.value as 'light' | 'dark'))}
+						>
+							<MenuItem value={'light'}>{__('light')}</MenuItem>
+							<MenuItem value={'dark'}>{__('dark')}</MenuItem>
+						</Select>
+					</FormControl>
+				</Grid>
+			</form>
 		);
 	}
 
-	private bindToStore(): void {
+	private dispatch(action: Action): void {
 		const { store } = this.props;
 
-		if (!this.unsubscribe && store) {
-			this.unsubscribe = store.subscribe(() => {
-				if (store) {
-					this.setState(store.getState());
-				}
-			});
-			this.setState(store.getState());
-		}
-	}
-
-	private openConfigurationHandle = (): void => {
-		this.setState({
-			tab: 'configuration',
-		});
-	}
-
-	private backHandle = (): void => {
-		this.setState({
-			tab: 'game',
-		});
-	}
-
-	private toggleDrawer = (): void => {
-		this.setState({
-			drawer: !this.state.drawer,
-		});
-	}
-
-	private toggleFullScreen = (): void => {
-		const { store } = this.props;
-		const { fullscreen } = this.state;
 		if (store) {
-			store.dispatch(createSetFullscreenAction(!fullscreen));
-		}
-	}
-
-	private togglePause = (): void => {
-		const { store } = this.props;
-		const { paused } = this.state;
-		if (store) {
-			store.dispatch(createSetPausedAction(!paused));
-		}
-	}
-
-	private toggleMute = (): void => {
-		const { store } = this.props;
-		const { mute } = this.state;
-		if (store) {
-			store.dispatch(createSetMutedAction(!mute));
+			store.dispatch(action);
 		}
 	}
 }
 
 export default hot(module)(
-	connectToInjector<IGameViewProps>({
+	connectToInjector<IConfigurationProps>({
 		'data-store:provider': {
 			name: 'store',
-			value: (provider: IDataStoreProvider<IUIState, IValueAction>) => provider(),
+			value: (provider: IDataStoreProvider<IUIState & II18nState, IValueAction<any>>) => provider(),
 		},
-	})(withStyles(styles)(GameViewComponent)),
+		'i18n:translate': {
+			name: '__',
+			value: (translate) => Promise.resolve(translate),
+		},
+		'data-store:action:create:set-language': {
+			name: 'createSetLanguageAction',
+			value: (actionCreator) => Promise.resolve(actionCreator),
+		},
+		'data-store:action:create:set-effects-muted': {
+			name: 'createSetEffectsMutedAction',
+			value: (actionCreator) => Promise.resolve(actionCreator),
+		},
+		'data-store:action:create:set-effects-volume': {
+			name: 'createSetEffectsVolumeAction',
+			value: (actionCreator) => Promise.resolve(actionCreator),
+		},
+		'data-store:action:create:set-music-muted': {
+			name: 'createSetMusicMutedAction',
+			value: (actionCreator) => Promise.resolve(actionCreator),
+		},
+		'data-store:action:create:set-music-volume': {
+			name: 'createSetMusicVolumeAction',
+			value: (actionCreator) => Promise.resolve(actionCreator),
+		},
+		'data-store:action:create:set-muted': {
+			name: 'createSetMutedAction',
+			value: (actionCreator) => Promise.resolve(actionCreator),
+		},
+		'data-store:action:create:set-theme': {
+			name: 'createSetThemeAction',
+			value: (actionCreator) => Promise.resolve(actionCreator),
+		},
+		'data-store:action:create:set-volume': {
+			name: 'createSetVolumeAction',
+			value: (actionCreator) => Promise.resolve(actionCreator),
+		},
+	})(withStyles(styles)(ConfigurationViewComponent)),
 );
