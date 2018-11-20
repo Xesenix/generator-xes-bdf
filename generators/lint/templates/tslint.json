@@ -3,7 +3,8 @@
 	"extends": [
 		"tslint:recommended",
 		"tslint-config-prettier",
-		"tslint-eslint-rules"
+		"tslint-eslint-rules",
+		"tslint-react"
 	],
 	"jsRules": {
 		"indent": [true, "<%= indentStyle === 'tab' ? 'tabs' : 'spaces' %>", <%= parseFloat(indentSize) %>],
@@ -38,7 +39,11 @@
 		"semicolon": [true, "always"],
 		"whitespace": [true, "check-branch", "check-decl", "check-operator", "check-module", "check-rest-spread", "check-type", "check-typecast", "check-type-operator"],
 		"ordered-imports": [true, "lowercase-first"],
-		"object-literal-sort-keys": false
+		"object-literal-sort-keys": false,
+		"array-bracket-spacing": ["error", "always"],
+		"jsx-curly-spacing": ["error", "always"],
+		"jsx-no-multiline-js": false,
+		"jsx-no-lambda": true
 	},
 	"rulesDirectory": []
 }

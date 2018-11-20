@@ -113,6 +113,7 @@ module.exports = class extends Generator {
       'eclint',
       'eslint',
       'prettier',
+      'tslint-react',
       'tslint-config-prettier',
       'tslint-eslint-rules',
     ], { saveDev: true });
