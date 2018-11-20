@@ -30,10 +30,10 @@ export const requestFullScreen = (element: any = document.getElementsByTagName('
 	fscreen.requestFullscreen(element);
 };
 
-export const isFullScreen = () => document.fullscreenElement ||
-	document.webkitFullscreenElement ||
-	document.mozFullScreenElement ||
-	document.msFullscreenElement;
+export const isFullScreen = () => document.fullscreenElement
+	|| document.webkitFullscreenElement
+	|| document.mozFullScreenElement
+	|| document.msFullscreenElement;
 
 export const onFullScreenChange = (cb) => {
 	document.addEventListener('fullscreenchange', cb);

@@ -122,15 +122,16 @@ export class IntroScene extends Phaser.Scene {
 		if (this.label) {
 			const sm: IAudioManager = this.sys.plugins.get('audio-manager') as any;
 			const stm: ISoundtrackManager = this.sys.plugins.get('soundtrack-manager') as any;
-			const currentSoundtrack = stm.soundtrackPlayer.getCurrentScheduledSoundtrack()
-				.map(({ soundtrack: { name }, state, start, end }) => `${name}-${state}[${start.toFixed(2)}-${end && end.toFixed(2) || 'inf'}]`)
+			const currentSoundtrack = stm.soundtrackPlayer
+				.getCurrentScheduledSoundtrack()
+				.map(({ soundtrack: { name }, state, start, end }) => `${name}-${state}[${start.toFixed(2)}-${(end && end.toFixed(2)) || 'inf'}]`)
 				.join(', ');
 
 			this.label.setText(
-`${ __('total time') }: ${(time / 1000).toFixed(0)}s\n
-${ __('delta time') }: ${delta.toFixed(2)}ms\n
-${ __('audio time') }: ${sm.context.currentTime.toFixed(2)}s\n
-current sound: ${ currentSoundtrack }`,
+				`${__('total time')}: ${(time / 1000).toFixed(0)}s\n
+${__('delta time')}: ${delta.toFixed(2)}ms\n
+${__('audio time')}: ${sm.context.currentTime.toFixed(2)}s\n
+current sound: ${currentSoundtrack}`,
 			);
 		}
 	}

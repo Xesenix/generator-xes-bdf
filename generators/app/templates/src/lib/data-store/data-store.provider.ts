@@ -30,13 +30,7 @@ export function DataStoreProvider<T, A extends Action>(context: interfaces.Conte
 					})
 				: compose;
 
-			store = createStore<T | undefined, A, any, any>(
-				reducer,
-				initialState,
-				composeEnhancers(
-					debug ? applyMiddleware(logger, thunk) : applyMiddleware(thunk),
-				),
-			);
+			store = createStore<T | undefined, A, any, any>(reducer, initialState, composeEnhancers(debug ? applyMiddleware(logger, thunk) : applyMiddleware(thunk)));
 
 			context.container.bind<Store<T, A>>('data-store').toConstantValue(store);
 

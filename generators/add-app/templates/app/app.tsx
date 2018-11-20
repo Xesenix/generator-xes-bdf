@@ -71,20 +71,28 @@ class App extends React.Component<IAppProps & WithStyles<typeof styles>, IAppSta
 		const { classes } = this.props;
 		const { loading, ready, phaserReady, theme = 'light' } = this.state;
 
-		const gameView = ready
-			? <GameView/>
-			: phaserReady
-				? <Button color="primary" variant="contained" onClick={ this.start }>{ __('Start') }</Button>
-				: <Typography component="p">{ `${__('loading')}: PHASER` }</Typography>;
+		const gameView = ready ? (
+			<GameView />
+		) : phaserReady ? (
+			<Button color="primary" variant="contained" onClick={this.start}>
+				{__('Start')}
+			</Button>
+		) : (
+			<Typography component="p">{`${__('loading')}: PHASER`}</Typography>
+		);
 
-		return (<MuiThemeProvider theme={ appThemes[theme] }>
-				<CssBaseline/>
-				<Paper className={ classes.root } elevation={ 1 }>
-					{ loading ? <LinearProgress/> : null }
-					<Typography className={ classes.headline } variant="headline" component="h1">{ __('<%= title %>') }</Typography>
-					{ gameView }
+		return (
+			<MuiThemeProvider theme={appThemes[theme]}>
+				<CssBaseline />
+				<Paper className={classes.root} elevation={1}>
+					{loading ? <LinearProgress /> : null}
+					<Typography className={classes.headline} variant="headline" component="h1">
+						{__('<%= title %>')}
+					</Typography>
+					{gameView}
 				</Paper>
-			</MuiThemeProvider>);
+			</MuiThemeProvider>
+		);
 	}
 
 	private start = () => {
@@ -107,9 +115,11 @@ class App extends React.Component<IAppProps & WithStyles<typeof styles>, IAppSta
 	}
 }
 
-export default hot(module)(connectToInjector<IAppProps>({
-	'data-store:provider': {
-		name: 'store',
-		value: (provider: IDataStoreProvider<IUIState, IValueAction>) => provider(),
-	},
-})(withStyles(styles)(App)));
+export default hot(module)(
+	connectToInjector<IAppProps>({
+		'data-store:provider': {
+			name: 'store',
+			value: (provider: IDataStoreProvider<IUIState, IValueAction>) => provider(),
+		},
+	})(withStyles(styles)(App)),
+);

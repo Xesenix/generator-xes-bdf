@@ -1,41 +1,50 @@
 import { Store } from 'redux';
 
 import { IDataStoreProvider } from 'lib/data-store';
-import { IApplication } from 'lib/interfaces';
-import { createSetFullscreenAction } from 'lib/ui';
+import { IApplication, ICreateSetAction } from 'lib/interfaces';
 
 import { isFullScreen, onFullScreenChange, setFullscreen } from './fullscreen';
 
+/**
+ * Connect application fullscreen state with datastore.
+ */
 export class FullScreenModule {
 	public static register(app: IApplication) {
 		app.bind<FullScreenModule>('fullscreen:module').toConstantValue(new FullScreenModule(app));
 	}
 
 	constructor(
+		// prettier-ignore
 		private app: IApplication,
 	) {
 		this.app = app;
 	}
 
 	public boot = () => {
-		const console = this.app.get<Console>('debug:console');
-		return this.app.get<IDataStoreProvider<any, any>>('data-store:provider')().then((store: Store) => {
-			onFullScreenChange(() => {
-				const { fullscreen } = store.getState();
-				const currentFullScreenState = isFullScreen();
-				console.log('FullScreenModule:onFullScreenChange', fullscreen, currentFullScreenState);
-				if (fullscreen !== currentFullScreenState) {
-					store.dispatch(createSetFullscreenAction(currentFullScreenState));
-				}
+		return this.app
+			.get<IDataStoreProvider<any, any>>('data-store:provider')()
+			.then((store: Store) => {
+				const createSetFullscreenAction = this.app.get<ICreateSetAction<boolean>>('data-store:action:create:set-fullscreen');
+
+				// synchronize data store with fullscreen state
+				onFullScreenChange(() => {
+					const { fullscreen } = store.getState();
+					const currentFullScreenState: boolean = isFullScreen();
+
+					if (fullscreen !== currentFullScreenState) {
+						store.dispatch(createSetFullscreenAction(currentFullScreenState));
+					}
+				});
+
+				// synchronize fullscreen state with data store
+				store.subscribe(() => {
+					const { fullscreen } = store.getState();
+					const currentFullScreenState: boolean = isFullScreen();
+
+					if (fullscreen !== currentFullScreenState) {
+						setFullscreen(fullscreen);
+					}
+				});
 			});
-			store.subscribe(() => {
-				const { fullscreen } = store.getState();
-				const currentFullScreenState = isFullScreen();
-				console.log('FullScreenModule:update:store', fullscreen, currentFullScreenState);
-				if (fullscreen !== currentFullScreenState) {
-					setFullscreen(fullscreen);
-				}
-			});
-		});
 	}
 }

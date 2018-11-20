@@ -22,8 +22,7 @@ export interface IPhaserViewProps {
 	keepInstanceOnRemove: boolean;
 }
 
-export interface IPhaserViewState {
-}
+export interface IPhaserViewState {}
 
 class PhaserViewComponent extends React.PureComponent<IPhaserViewProps & WithStyles<typeof styles>, IPhaserViewState> {
 	private unsubscribe?: any;
@@ -41,7 +40,7 @@ class PhaserViewComponent extends React.PureComponent<IPhaserViewProps & WithSty
 				gameContainer.appendChild(game.canvas);
 			} else {
 				di.bind<HTMLElement | null>('phaser:container').toDynamicValue(() => gameContainer);
-				di.get<IPhaserGameProvider>('phaser:game-provider')().then((result: Phaser.Game) => game = result);
+				di.get<IPhaserGameProvider>('phaser:game-provider')().then((result: Phaser.Game) => (game = result));
 			}
 		}
 
@@ -61,7 +60,7 @@ class PhaserViewComponent extends React.PureComponent<IPhaserViewProps & WithSty
 	public render(): any {
 		const { classes } = this.props;
 
-		return <div className={ classes.root } ref={ this.bindContainer }></div>;
+		return <div className={classes.root} ref={this.bindContainer} />;
 	}
 
 	private bindToStore(): void {
@@ -77,12 +76,16 @@ class PhaserViewComponent extends React.PureComponent<IPhaserViewProps & WithSty
 		}
 	}
 
-	private bindContainer = (el: HTMLDivElement): void => { gameContainer = el; };
+	private bindContainer = (el: HTMLDivElement): void => {
+		gameContainer = el;
+	}
 }
 
-export default hot(module)(connectToInjector<IPhaserViewProps>({
-	'data-store:provider': {
-		name: 'store',
-		value: (provider: IDataStoreProvider<IUIState, IValueAction>) => provider(),
-	},
-})(withStyles(styles)(PhaserViewComponent)));
+export default hot(module)(
+	connectToInjector<IPhaserViewProps>({
+		'data-store:provider': {
+			name: 'store',
+			value: (provider: IDataStoreProvider<IUIState, IValueAction>) => provider(),
+		},
+	})(withStyles(styles)(PhaserViewComponent)),
+);
