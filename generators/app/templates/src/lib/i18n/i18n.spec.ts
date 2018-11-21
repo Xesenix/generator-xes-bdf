@@ -16,15 +16,16 @@ describe('localize', () => {
 			i18n.addTranslations('pl', 'messages', {
 				charset: 'utf-8',
 				headers: {
-					'language': 'pl_PL',
+					language: 'pl_PL',
 					'plural-forms': 'nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);',
 				},
 				translations: {
 					'': {
-					abc: { msgid: 'abc', msgstr: ['xyz'] },
-					ABC: { msgid: 'ABC', msgstr: ['QWERTY'] },
+						abc: { msgid: 'abc', msgstr: ['xyz'] },
+						ABC: { msgid: 'ABC', msgstr: ['QWERTY'] },
+					},
 				},
-			}});
+			});
 			i18n.setLocale('pl');
 			expect(__('abc')).toEqual('xyz');
 			expect(__('ABC')).toEqual('QWERTY');

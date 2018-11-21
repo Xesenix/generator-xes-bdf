@@ -1,5 +1,4 @@
-import { ContainerModule, interfaces } from 'inversify';
-import { ICreateSetAction } from 'lib/interfaces';
+import { IApplication, ICreateSetAction } from 'lib/interfaces';
 
 import {
 	createSetEffectsMutedAction,
@@ -14,17 +13,34 @@ import {
 } from './actions/index';
 import { IUIStoreProvider, UIStoreProvider } from './store.provider';
 
-export const UIModule = () =>
-	new ContainerModule((bind: interfaces.Bind, unbind: interfaces.Unbind) => {
-		bind<IUIStoreProvider>('ui:store').toProvider(UIStoreProvider);
+/**
+ * Connect application fullscreen state with datastore.
+ */
+export class UIModule {
+	public static register(app: IApplication) {
+		app.bind<UIModule>('ui:module').toConstantValue(new UIModule(app));
 
-		bind<ICreateSetAction<boolean>>('data-store:action:create:set-muted').toConstantValue(createSetMutedAction);
-		bind<ICreateSetAction<boolean>>('data-store:action:create:set-music-muted').toConstantValue(createSetMusicMutedAction);
-		bind<ICreateSetAction<boolean>>('data-store:action:create:set-effects-muted').toConstantValue(createSetEffectsMutedAction);
-		bind<ICreateSetAction<boolean>>('data-store:action:create:set-paused').toConstantValue(createSetPausedAction);
-		bind<ICreateSetAction<number>>('data-store:action:create:set-volume').toConstantValue(createSetVolumeAction);
-		bind<ICreateSetAction<number>>('data-store:action:create:set-effects-volume').toConstantValue(createSetEffectsVolumeAction);
-		bind<ICreateSetAction<number>>('data-store:action:create:set-music-volume').toConstantValue(createSetMusicVolumeAction);
-		bind<ICreateSetAction<string>>('data-store:action:create:set-theme').toConstantValue(createSetThemeAction);
-		bind<ICreateSetAction<boolean>>('data-store:action:create:set-fullscreen').toConstantValue(createSetFullscreenAction);
-	});
+		app.bind<IUIStoreProvider>('ui:store').toProvider(UIStoreProvider);
+
+		app.bind<ICreateSetAction<boolean>>('data-store:action:create:set-muted').toConstantValue(createSetMutedAction);
+		app.bind<ICreateSetAction<boolean>>('data-store:action:create:set-music-muted').toConstantValue(createSetMusicMutedAction);
+		app.bind<ICreateSetAction<boolean>>('data-store:action:create:set-effects-muted').toConstantValue(createSetEffectsMutedAction);
+		app.bind<ICreateSetAction<boolean>>('data-store:action:create:set-paused').toConstantValue(createSetPausedAction);
+		app.bind<ICreateSetAction<number>>('data-store:action:create:set-volume').toConstantValue(createSetVolumeAction);
+		app.bind<ICreateSetAction<number>>('data-store:action:create:set-effects-volume').toConstantValue(createSetEffectsVolumeAction);
+		app.bind<ICreateSetAction<number>>('data-store:action:create:set-music-volume').toConstantValue(createSetMusicVolumeAction);
+		app.bind<ICreateSetAction<string>>('data-store:action:create:set-theme').toConstantValue(createSetThemeAction);
+		app.bind<ICreateSetAction<boolean>>('data-store:action:create:set-fullscreen').toConstantValue(createSetFullscreenAction);
+	}
+
+	constructor(
+		// prettier-ignore
+		private app: IApplication,
+	) {
+		this.app = app;
+	}
+
+	public boot = () => {
+		return this.app.get<IUIStoreProvider>('ui:store')();
+	}
+}

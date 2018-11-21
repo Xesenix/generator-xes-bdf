@@ -18,7 +18,7 @@ export const defaultI18nState: II18nState = {
 	language: 'en',
 };
 
-export type I18nAction = IValueAction | ISetLanguageReadyAction;
+export type I18nAction = IValueAction<any> | ISetLanguageReadyAction;
 
 export function i18nReducer<S extends II18nState | undefined, A extends I18nAction>(state: S = defaultI18nState as S, action: A): S {
 	switch (action.type) {
@@ -27,7 +27,7 @@ export function i18nReducer<S extends II18nState | undefined, A extends I18nActi
 			const { languages = { [value]: { ready: false } } } = state as II18nState;
 			const lang = languages[value] || { ready: false };
 			state = {
-				...state as any,
+				...(state as any),
 				language: value,
 				languages: {
 					...languages,
