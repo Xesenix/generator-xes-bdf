@@ -15,12 +15,13 @@ import Typography from '@material-ui/core/Typography';
 
 import { IDataStoreProvider } from 'lib/data-store';
 import { connectToInjector } from 'lib/di';
-import { __ } from 'lib/i18n';
 import { IValueAction } from 'lib/interfaces';
 import { defaultUIState, IUIState } from 'lib/ui';
 
 import { styles } from './app.styles';
 import { appThemes } from './app.themes';
+
+import { IPhaserProvider } from '../src/phaser/game.module';
 
 const Loader = () => <div>...</div>;
 
@@ -29,6 +30,8 @@ const GameView = Loadable({ loading: Loader, loader: () => import('../components
 interface IAppProps {
 	di?: Container;
 	store?: Store<IUIState, IValueAction>;
+	__: (key: string) => string;
+	phaserProvider: IPhaserProvider;
 }
 
 interface IAppState {
@@ -51,9 +54,9 @@ class App extends React.Component<IAppProps & WithStyles<typeof styles>, IAppSta
 	}
 
 	public componentDidMount(): void {
-		const { di } = this.props;
+		const { phaserProvider } = this.props;
 		// optional preloading
-		di.get<IPhaserProvider>('phaser:provider')().then(() => this.setState({ phaserReady: true }));
+		phaserProvider().then(() => this.setState({ phaserReady: true }));
 		this.bindToStore();
 	}
 
@@ -68,7 +71,7 @@ class App extends React.Component<IAppProps & WithStyles<typeof styles>, IAppSta
 	}
 
 	public render() {
-		const { classes } = this.props;
+		const { classes, __ } = this.props;
 		const { loading, ready, phaserReady, theme = 'light' } = this.state;
 
 		const gameView = ready ? (
@@ -117,9 +120,17 @@ class App extends React.Component<IAppProps & WithStyles<typeof styles>, IAppSta
 
 export default hot(module)(
 	connectToInjector<IAppProps>({
-		'data-store:provider': {
-			name: 'store',
-			value: (provider: IDataStoreProvider<IUIState, IValueAction>) => provider(),
+		store: {
+			dependencies: ['data-store:provider'],
+			value: (provider: IDataStoreProvider<IUIState, IValueAction<any>>) => provider(),
+		},
+		__: {
+			dependencies: ['i18n:translate'],
+			value: (translate) => Promise.resolve(translate),
+		},
+		phaserProvider: {
+			dependencies: ['phaser:provider'],
+			value: (provider: IPhaserProvider) => Promise.resolve(provider),
 		},
 	})(withStyles(styles)(App)),
 );

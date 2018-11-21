@@ -213,44 +213,45 @@ export class ConfigurationViewComponent extends React.Component<IConfigurationPr
 
 export default hot(module)(
 	connectToInjector<IConfigurationProps>({
-		'data-store:provider': {
-			name: 'store',
+		store: {
+			dependencies: ['data-store:provider'],
 			value: (provider: IDataStoreProvider<IUIState & II18nState, IValueAction<any>>) => provider(),
 		},
-		'i18n:translate': {
-			name: '__',
+		__: {
+			dependencies: ['i18n:translate'],
 			value: (translate) => Promise.resolve(translate),
 		},
-		'data-store:action:create:set-language': {
-			name: 'createSetLanguageAction',
+		createSetLanguageAction: {
+			name: '',
+			dependencies: ['data-store:action:create:set-language'],
 			value: (actionCreator) => Promise.resolve(actionCreator),
 		},
-		'data-store:action:create:set-effects-muted': {
-			name: 'createSetEffectsMutedAction',
+		createSetEffectsMutedAction: {
+			dependencies: ['data-store:action:create:set-effects-muted'],
 			value: (actionCreator) => Promise.resolve(actionCreator),
 		},
-		'data-store:action:create:set-effects-volume': {
-			name: 'createSetEffectsVolumeAction',
+		createSetEffectsVolumeAction: {
+			dependencies: ['data-store:action:create:set-effects-volume'],
 			value: (actionCreator) => Promise.resolve(actionCreator),
 		},
-		'data-store:action:create:set-music-muted': {
-			name: 'createSetMusicMutedAction',
+		createSetMusicMutedAction: {
+			dependencies: ['data-store:action:create:set-music-muted'],
 			value: (actionCreator) => Promise.resolve(actionCreator),
 		},
-		'data-store:action:create:set-music-volume': {
-			name: 'createSetMusicVolumeAction',
+		createSetMusicVolumeAction: {
+			dependencies: ['data-store:action:create:set-music-volume'],
 			value: (actionCreator) => Promise.resolve(actionCreator),
 		},
-		'data-store:action:create:set-muted': {
-			name: 'createSetMutedAction',
+		createSetMutedAction: {
+			dependencies: ['data-store:action:create:set-muted'],
 			value: (actionCreator) => Promise.resolve(actionCreator),
 		},
-		'data-store:action:create:set-theme': {
-			name: 'createSetThemeAction',
+		createSetThemeAction: {
+			dependencies: ['data-store:action:create:set-theme'],
 			value: (actionCreator) => Promise.resolve(actionCreator),
 		},
-		'data-store:action:create:set-volume': {
-			name: 'createSetVolumeAction',
+		createSetVolumeAction: {
+			dependencies: ['data-store:action:create:set-volume'],
 			value: (actionCreator) => Promise.resolve(actionCreator),
 		},
 	})(withStyles(styles)(ConfigurationViewComponent)),

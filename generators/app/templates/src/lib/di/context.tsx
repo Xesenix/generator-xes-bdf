@@ -35,7 +35,7 @@ export function connectToDI<T>(Consumer) {
  */
 export function connectToInjector<T>(
 	// prettier-ignore
-	select: { [key: string]: { name: string, value: (value: any) => Promise<any> } },
+	select: { [name: string]: { dependencies: string[], value: (...dependencies: any[]) => Promise<any>} },
 	Preloader: React.ReactNode = () => <>{ `loading...` }</>,
 ) {
 	return (Consumer: React.Component) => {
@@ -48,10 +48,10 @@ export function connectToInjector<T>(
 					const configs = Object.values(select);
 
 					Promise.all(
-						keys.map((key) => select[key].value(di.get(key))),
+						configs.map(({ value, dependencies }) => value.apply({}, dependencies.map((key) => di.get(key)))),
 					).then((values: any[]) => {
 						const state = values.reduce((result, value, index) => {
-							result[configs[index].name] = value;
+							result[keys[index]] = value;
 							return result;
 						}, {});
 						this.setState(state);

@@ -201,24 +201,24 @@ class GameViewComponent extends React.PureComponent<IGameViewProps & WithStyles<
 
 export default hot(module)(
 	connectToInjector<IGameViewProps>({
-		'data-store:provider': {
-			name: 'store',
+		store: {
+			dependencies: ['data-store:provider'],
 			value: (provider: IDataStoreProvider<IUIState, IValueAction<any>>) => provider(),
 		},
-		'i18n:translate': {
-			name: '__',
+		__: {
+			dependencies: ['i18n:translate'],
 			value: (translate) => Promise.resolve(translate),
 		},
-		'data-store:action:create:set-fullscreen': {
-			name: 'createSetFullscreenAction',
+		createSetFullscreenAction: {
+			dependencies: ['data-store:action:create:set-fullscreen'],
 			value: (actionCreator) => Promise.resolve(actionCreator),
 		},
-		'data-store:action:create:set-paused': {
-			name: 'createSetPausedAction',
+		createSetPausedAction: {
+			dependencies: ['data-store:action:create:set-paused'],
 			value: (actionCreator) => Promise.resolve(actionCreator),
 		},
-		'data-store:action:create:set-muted': {
-			name: 'createSetMutedAction',
+		createSetMutedAction: {
+			dependencies: ['data-store:action:create:set-muted'],
 			value: (actionCreator) => Promise.resolve(actionCreator),
 		},
 	})(withStyles(styles)(GameViewComponent)),
