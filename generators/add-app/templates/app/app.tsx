@@ -126,11 +126,9 @@ export default hot(module)(
 		},
 		__: {
 			dependencies: ['i18n:translate'],
-			value: (translate) => Promise.resolve(translate),
 		},
 		phaserProvider: {
 			dependencies: ['phaser:provider'],
-			value: (provider: IPhaserProvider) => Promise.resolve(provider),
 		},
 	})(withStyles(styles)(App)),
 );

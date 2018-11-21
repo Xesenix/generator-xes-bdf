@@ -36,9 +36,7 @@ export class UIModule {
 	constructor(
 		// prettier-ignore
 		private app: IApplication,
-	) {
-		this.app = app;
-	}
+	) {}
 
 	public boot = () => {
 		return this.app.get<IUIStoreProvider>('ui:store')();

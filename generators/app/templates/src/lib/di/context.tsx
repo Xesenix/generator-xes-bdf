@@ -17,7 +17,7 @@ export const DIContext = React.createContext<Container | null>(null);
 export function connectToDI<T>(Consumer) {
 	class DIConsumer extends React.Component<T, {}> {
 		public render() {
-			return <DIContext.Consumer>{ (container: Container | null) => <Consumer { ...this.props } di={ container }/> }</DIContext.Consumer>;
+			return <DIContext.Consumer>{(container: Container | null) => <Consumer {...this.props} di={container} />}</DIContext.Consumer>;
 		}
 	}
 
@@ -35,8 +35,8 @@ export function connectToDI<T>(Consumer) {
  */
 export function connectToInjector<T>(
 	// prettier-ignore
-	select: { [name: string]: { dependencies: string[], value: (...dependencies: any[]) => Promise<any>} },
-	Preloader: React.ReactNode = () => <>{ `loading...` }</>,
+	select: { [name: string]: { dependencies: string[], value?: (...dependencies: any[]) => Promise<any> } },
+	Preloader: React.ReactNode = () => <>{`loading...`}</>,
 ) {
 	return (Consumer: React.Component) => {
 		class DIInjector extends React.Component<T & { di: Container }, {}> {
@@ -47,9 +47,12 @@ export function connectToInjector<T>(
 					const keys = Object.keys(select);
 					const configs = Object.values(select);
 
-					Promise.all(
-						configs.map(({ value, dependencies }) => value.apply({}, dependencies.map((key) => di.get(key)))),
-					).then((values: any[]) => {
+					Promise.all(configs.map(
+						({
+							value = (dep: any) => Promise.resolve(dep),
+							dependencies,
+						}) => value.apply({}, dependencies.map((key) => di.get<any>(key))),
+					)).then((values: any[]) => {
 						const state = values.reduce((result, value, index) => {
 							result[keys[index]] = value;
 							return result;
@@ -61,10 +64,10 @@ export function connectToInjector<T>(
 
 			public render() {
 				if (!!this.state) {
-					return <Consumer {...this.props} {...this.state}/>;
+					return <Consumer {...this.props} {...this.state} />;
 				}
 
-				return <Preloader/>;
+				return <Preloader />;
 			}
 		}
 

@@ -191,7 +191,7 @@ export class ConfigurationViewComponent extends React.Component<IConfigurationPr
 						<InputLabel>{__('theme')}</InputLabel>
 						<Select
 							value={theme}
-							onChange={(event) => this.dispatch(createSetThemeAction(event.target.value as 'light' | 'dark'))}
+							onChange={(event) => this.dispatch(createSetThemeAction(event.target.value))}
 						>
 							<MenuItem value={'light'}>{__('light')}</MenuItem>
 							<MenuItem value={'dark'}>{__('dark')}</MenuItem>
@@ -219,40 +219,30 @@ export default hot(module)(
 		},
 		__: {
 			dependencies: ['i18n:translate'],
-			value: (translate) => Promise.resolve(translate),
 		},
 		createSetLanguageAction: {
-			name: '',
 			dependencies: ['data-store:action:create:set-language'],
-			value: (actionCreator) => Promise.resolve(actionCreator),
 		},
 		createSetEffectsMutedAction: {
 			dependencies: ['data-store:action:create:set-effects-muted'],
-			value: (actionCreator) => Promise.resolve(actionCreator),
 		},
 		createSetEffectsVolumeAction: {
 			dependencies: ['data-store:action:create:set-effects-volume'],
-			value: (actionCreator) => Promise.resolve(actionCreator),
 		},
 		createSetMusicMutedAction: {
 			dependencies: ['data-store:action:create:set-music-muted'],
-			value: (actionCreator) => Promise.resolve(actionCreator),
 		},
 		createSetMusicVolumeAction: {
 			dependencies: ['data-store:action:create:set-music-volume'],
-			value: (actionCreator) => Promise.resolve(actionCreator),
 		},
 		createSetMutedAction: {
 			dependencies: ['data-store:action:create:set-muted'],
-			value: (actionCreator) => Promise.resolve(actionCreator),
 		},
 		createSetThemeAction: {
 			dependencies: ['data-store:action:create:set-theme'],
-			value: (actionCreator) => Promise.resolve(actionCreator),
 		},
 		createSetVolumeAction: {
 			dependencies: ['data-store:action:create:set-volume'],
-			value: (actionCreator) => Promise.resolve(actionCreator),
 		},
 	})(withStyles(styles)(ConfigurationViewComponent)),
 );

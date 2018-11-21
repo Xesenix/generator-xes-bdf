@@ -16,9 +16,7 @@ export class FullScreenModule {
 	constructor(
 		// prettier-ignore
 		private app: IApplication,
-	) {
-		this.app = app;
-	}
+	) {}
 
 	public boot = () => {
 		return this.app

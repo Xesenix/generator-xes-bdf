@@ -207,19 +207,15 @@ export default hot(module)(
 		},
 		__: {
 			dependencies: ['i18n:translate'],
-			value: (translate) => Promise.resolve(translate),
 		},
 		createSetFullscreenAction: {
 			dependencies: ['data-store:action:create:set-fullscreen'],
-			value: (actionCreator) => Promise.resolve(actionCreator),
 		},
 		createSetPausedAction: {
 			dependencies: ['data-store:action:create:set-paused'],
-			value: (actionCreator) => Promise.resolve(actionCreator),
 		},
 		createSetMutedAction: {
 			dependencies: ['data-store:action:create:set-muted'],
-			value: (actionCreator) => Promise.resolve(actionCreator),
 		},
 	})(withStyles(styles)(GameViewComponent)),
 );

@@ -25,8 +25,6 @@ export class SoundModule<T extends IAudioConfigurationState> {
 		private app: IApplication,
 		phaser: boolean = true,
 	) {
-		this.app = app;
-
 		// we dont want to provide AudioContext just as value because we want to wait for it being needed
 		this.app.bind<IAudioContextFactory>('audio-context:factory').toFactory((context: interfaces.Context) => {
 			if (!context.container.isBound('audio-context')) {
