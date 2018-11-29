@@ -47,18 +47,15 @@ export function connectToInjector<T>(
 					const keys = Object.keys(select);
 					const configs = Object.values(select);
 
-					Promise.all(configs.map(
-						({
-							value = (dep: any) => Promise.resolve(dep),
-							dependencies,
-						}) => value.apply({}, dependencies.map((key) => di.get<any>(key))),
-					)).then((values: any[]) => {
-						const state = values.reduce((result, value, index) => {
-							result[keys[index]] = value;
-							return result;
-						}, {});
-						this.setState(state);
-					});
+					Promise.all(configs.map(({ value = (dep: any) => Promise.resolve(dep), dependencies }) => value.apply({}, dependencies.map((key) => di.get<any>(key))))).then(
+						(values: any[]) => {
+							const state = values.reduce((result, value, index) => {
+								result[keys[index]] = value;
+								return result;
+							}, {});
+							this.setState(state);
+						},
+					);
 				}
 			}
 

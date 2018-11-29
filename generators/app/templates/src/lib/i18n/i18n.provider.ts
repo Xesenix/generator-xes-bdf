@@ -2,16 +2,20 @@ import { interfaces } from 'inversify';
 import { Gettext } from 'node-gettext';
 import { Store } from 'redux';
 
-import { IUIStoreProvider } from 'lib/ui/store.provider';
+import { IDataStoreProvider } from 'lib/data-store/data-store.provider';
 
-import { createLanguageReadyAction, LanguageType } from './actions';
 import { i18n } from './i18n';
+import {
+	// prettier-ignore
+	II18nActions,
+	II18nActionsProvider,
+} from './i18n-actions.provider';
 
 /**
  * Update i18n object after each change in store language setup.
  * Also load translations if needed.
  */
-const syncLocaleWithStore = (store) => () => {
+const syncLocaleWithStore = (store: Store<any, any>, actions: II18nActions) => () => {
 	return new Promise((resolve, reject) => {
 		const { language, languages } = store.getState();
 		const localesPath = process.env.LOCALES_DIR;
@@ -22,7 +26,7 @@ const syncLocaleWithStore = (store) => () => {
 					(content) => {
 						i18n.addTranslations(language, 'messages', content);
 						i18n.setLocale(language);
-						store.dispatch(createLanguageReadyAction(language, true));
+						actions.setLanguageReady(language, true);
 						resolve();
 					},
 					(err) => reject(`ERROR while loading locales path: '${localesPath}/messages.${language}.po'`),
@@ -49,10 +53,15 @@ export function I18nProvider(context: interfaces.Context) {
 	return () =>
 		new Promise((resolve, reject) => {
 			try {
-				const storeProvider = context.container.get<IUIStoreProvider>('data-store:provider');
-				return storeProvider().then((store: Store<{ language: LanguageType }>) => {
-					store.subscribe(syncLocaleWithStore(store));
-					return syncLocaleWithStore(store)().then(() => {
+				const storeProvider = context.container.get<IDataStoreProvider<any, any>>('data-store:provider');
+				const actionsProvider = context.container.get<II18nActionsProvider>('i18n:actions:provider');
+				return Promise.all([
+					// prettier-ignore
+					storeProvider(),
+					actionsProvider(),
+				]).then(([store, actions]: [Store<any, any>, II18nActions]) => {
+					store.subscribe(syncLocaleWithStore(store, actions));
+					return syncLocaleWithStore(store, actions)().then(() => {
 						resolve(i18n);
 					});
 				});

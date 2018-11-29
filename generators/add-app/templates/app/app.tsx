@@ -13,9 +13,7 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 
-import { IDataStoreProvider } from 'lib/data-store';
 import { connectToInjector } from 'lib/di';
-import { IValueAction } from 'lib/interfaces';
 import { defaultUIState, IUIState } from 'lib/ui';
 
 import { styles } from './app.styles';
@@ -29,10 +27,22 @@ const GameView = Loadable({ loading: Loader, loader: () => import('../components
 
 interface IAppProps {
 	di?: Container;
-	store?: Store<IUIState, IValueAction>;
+	store?: Store<IUIState, any>;
 	__: (key: string) => string;
 	phaserProvider: IPhaserProvider;
 }
+
+const diDecorator = connectToInjector<IAppProps>({
+	store: {
+		dependencies: ['data-store'],
+	},
+	__: {
+		dependencies: ['i18n:translate'],
+	},
+	phaserProvider: {
+		dependencies: ['phaser:provider'],
+	},
+});
 
 interface IAppState {
 	ready: boolean;
@@ -90,7 +100,7 @@ class App extends React.Component<IAppProps & WithStyles<typeof styles>, IAppSta
 				<Paper className={classes.root} elevation={1}>
 					{loading ? <LinearProgress /> : null}
 					<Typography className={classes.headline} variant="headline" component="h1">
-						{__('<%= title %>')}
+						{__('Ancient maze of Epla')}
 					</Typography>
 					{gameView}
 				</Paper>
@@ -118,17 +128,4 @@ class App extends React.Component<IAppProps & WithStyles<typeof styles>, IAppSta
 	}
 }
 
-export default hot(module)(
-	connectToInjector<IAppProps>({
-		store: {
-			dependencies: ['data-store:provider'],
-			value: (provider: IDataStoreProvider<IUIState, IValueAction<any>>) => provider(),
-		},
-		__: {
-			dependencies: ['i18n:translate'],
-		},
-		phaserProvider: {
-			dependencies: ['phaser:provider'],
-		},
-	})(withStyles(styles)(App)),
-);
+export default hot(module)(diDecorator(withStyles(styles)(App)));

@@ -1,6 +1,5 @@
 import { IValueAction } from 'lib/interfaces';
 
-// tslint:disable:max-classes-per-file
 export const SET_MUTED = 'UI_SET_MUTED';
 
 export const createSetMutedAction = (value: boolean): IValueAction<boolean> => ({

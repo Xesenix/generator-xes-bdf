@@ -1,6 +1,7 @@
 import { IValueAction } from 'lib/interfaces';
 
 import {
+	// prettier-ignore
 	SET_EFFECTS_MUTED,
 	SET_EFFECTS_VOLUME,
 	SET_FULLSCREEN,
@@ -30,7 +31,7 @@ export const defaultUIState: IUIState = {
 	effectsMuted: false,
 	paused: false,
 	effectsVolume: 1.0,
-	volume: 0.1,
+	volume: 0.5,
 	musicVolume: 1.0,
 	theme: 'light',
 	fullscreen: false,

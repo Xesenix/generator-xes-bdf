@@ -2,15 +2,15 @@ import { IValueAction } from 'lib/interfaces';
 
 export type LanguageType = 'en' | 'pl';
 
-export const SET_LANGUAGE = 'I18N_SET_LANGUAGE';
+export const SET_CURRENT_LANGUAGE = 'I18N_SET_CURRENT_LANGUAGE';
 
 /**
  * Create action for selecting current application locales.
  *
  * @param value selected locale
  */
-export const createSetLanguageAction = (value: LanguageType): IValueAction<LanguageType> => ({
-	type: SET_LANGUAGE,
+export const createSetCurrentLanguageAction = (value: LanguageType): IValueAction<LanguageType> => ({
+	type: SET_CURRENT_LANGUAGE,
 	value,
 });
 

@@ -205,6 +205,7 @@ module.exports = class extends Generator {
       'redux-logger',
       'reflect-metadata',
       'phaser',
+      'eventemitter3', // fast event emitter
     ]);
   }
 };

@@ -4,9 +4,7 @@ import * as React from 'react';
 import { hot } from 'react-hot-loader';
 import { Store } from 'redux';
 
-import { IDataStoreProvider } from 'lib/data-store';
 import { connectToInjector } from 'lib/di';
-import { IValueAction } from 'lib/interfaces';
 import { IUIState } from 'lib/ui';
 
 import { IPhaserGameProvider } from '../../src/phaser/game.provider';
@@ -21,6 +19,12 @@ export interface IPhaserViewProps {
 	store?: Store<IUIState>;
 	keepInstanceOnRemove: boolean;
 }
+
+const diDecorator = connectToInjector<IPhaserViewProps>({
+	store: {
+		dependencies: ['data-store'],
+	},
+});
 
 export interface IPhaserViewState {}
 
@@ -81,11 +85,4 @@ class PhaserViewComponent extends React.PureComponent<IPhaserViewProps & WithSty
 	}
 }
 
-export default hot(module)(
-	connectToInjector<IPhaserViewProps>({
-		store: {
-			dependencies: ['data-store:provider'],
-			value: (provider: IDataStoreProvider<IUIState, IValueAction<any>>) => provider(),
-		},
-	})(withStyles(styles)(PhaserViewComponent)),
-);
+export default hot(module)(diDecorator(withStyles(styles)(PhaserViewComponent)));

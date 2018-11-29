@@ -1,6 +1,11 @@
-import { IApplication, ICreateSetAction } from 'lib/interfaces';
+import {
+	// prettier-ignore
+	IApplication,
+	ICreateSetAction,
+} from 'lib/interfaces';
 
 import {
+	// prettier-ignore
 	createSetEffectsMutedAction,
 	createSetEffectsVolumeAction,
 	createSetFullscreenAction,
@@ -10,8 +15,12 @@ import {
 	createSetPausedAction,
 	createSetThemeAction,
 	createSetVolumeAction,
-} from './actions/index';
-import { IUIStoreProvider, UIStoreProvider } from './store.provider';
+} from './actions';
+import {
+	// prettier-ignore
+	IUIActionsProvider,
+	UIActionsProvider,
+} from './ui-actions.provider';
 
 /**
  * Connect application fullscreen state with datastore.
@@ -20,7 +29,7 @@ export class UIModule {
 	public static register(app: IApplication) {
 		app.bind<UIModule>('ui:module').toConstantValue(new UIModule(app));
 
-		app.bind<IUIStoreProvider>('ui:store').toProvider(UIStoreProvider);
+		app.bind<IUIActionsProvider>('ui:actions:provider').toProvider(UIActionsProvider);
 
 		app.bind<ICreateSetAction<boolean>>('data-store:action:create:set-muted').toConstantValue(createSetMutedAction);
 		app.bind<ICreateSetAction<boolean>>('data-store:action:create:set-music-muted').toConstantValue(createSetMusicMutedAction);
@@ -39,6 +48,7 @@ export class UIModule {
 	) {}
 
 	public boot = () => {
-		return this.app.get<IUIStoreProvider>('ui:store')();
+		// TODO: consider creating provider for whole module
+		return this.app.get<IUIActionsProvider>('ui:actions:provider')();
 	}
 }

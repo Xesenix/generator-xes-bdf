@@ -1,10 +1,10 @@
 import { IValueAction } from 'lib/interfaces';
 
 import {
-	ISetLanguageAction,
+	// prettier-ignore
 	ISetLanguageReadyAction,
 	LanguageType,
-	SET_LANGUAGE,
+	SET_CURRENT_LANGUAGE,
 	SET_LANGUAGE_READY,
 } from '../actions';
 
@@ -22,8 +22,8 @@ export type I18nAction = IValueAction<any> | ISetLanguageReadyAction;
 
 export function i18nReducer<S extends II18nState | undefined, A extends I18nAction>(state: S = defaultI18nState as S, action: A): S {
 	switch (action.type) {
-		case SET_LANGUAGE: {
-			const { value } = action as ISetLanguageAction;
+		case SET_CURRENT_LANGUAGE: {
+			const { value } = action as IValueAction<LanguageType>;
 			const { languages = { [value]: { ready: false } } } = state as II18nState;
 			const lang = languages[value] || { ready: false };
 			state = {

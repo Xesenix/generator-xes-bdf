@@ -1,4 +1,9 @@
-import { createStyles, Theme, withStyles, WithStyles } from '@material-ui/core/styles';
+import { withStyles, WithStyles } from '@material-ui/core/styles';
+import { Container } from 'inversify';
+import * as React from 'react';
+import { hot } from 'react-hot-loader';
+import Loadable from 'react-loadable';
+import { Store } from 'redux';
 
 // elements
 import AppBar from '@material-ui/core/AppBar';
@@ -20,32 +25,45 @@ import BackIcon from '@material-ui/icons/Undo';
 import MuteOnIcon from '@material-ui/icons/VolumeOff';
 import MuteOffIcon from '@material-ui/icons/VolumeUp';
 
-import { Container } from 'inversify';
-import * as React from 'react';
-import { hot } from 'react-hot-loader';
-import { Store } from 'redux';
-
-import { IDataStoreProvider } from 'lib/data-store';
 import { connectToInjector } from 'lib/di';
-import { ICreateSetAction, IValueAction } from 'lib/interfaces';
-import { defaultUIState, IUIState } from 'lib/ui';
+import { defaultUIState, IUIActions, IUIState } from 'lib/ui';
 
-import Loadable from 'react-loadable';
 import { styles } from './game-view.styles';
 
 const Loader = () => <LinearProgress />;
 
-const ConfigurationViewComponent = Loadable({ loading: Loader, loader: () => import('../../components/configuration-view/configuration-view') });
-const PhaserViewComponent = Loadable({ loading: Loader, loader: () => import('../../components/phaser-view/phaser-view') });
+const ConfigurationViewComponent = Loadable({ loading: Loader, loader: () => import('../configuration-view/configuration-view') });
+const PhaserViewComponent = Loadable({ loading: Loader, loader: () => import('../phaser-view/phaser-view') });
 
 export interface IGameViewProps {
 	di?: Container;
 	store?: Store<IUIState>;
-	createSetFullscreenAction: ICreateSetAction<boolean>;
-	createSetPausedAction: ICreateSetAction<boolean>;
-	createSetMutedAction: ICreateSetAction<boolean>;
+	dispatchSetFullscreenAction: (value: boolean) => void;
+	dispatchSetPausedAction: (value: boolean) => void;
+	dispatchCreateSetMutedAction: (value: boolean) => void;
 	__: (key: string) => string;
 }
+
+const diDecorator = connectToInjector<IGameViewProps>({
+	store: {
+		dependencies: ['data-store'],
+	},
+	__: {
+		dependencies: ['i18n:translate'],
+	},
+	dispatchSetFullscreenAction: {
+		dependencies: ['ui:actions'],
+		value: (actions: IUIActions) => Promise.resolve((value: boolean) => actions.setFullscreen(value)),
+	},
+	dispatchSetPausedAction: {
+		dependencies: ['ui:actions'],
+		value: (actions: IUIActions) => Promise.resolve((value: boolean) => actions.setPaused(value)),
+	},
+	dispatchCreateSetMutedAction: {
+		dependencies: ['ui:actions'],
+		value: (actions: IUIActions) => Promise.resolve((value: boolean) => actions.setMuted(value)),
+	},
+});
 
 export interface IGameViewState {
 	tab: 'configuration' | 'game';
@@ -136,7 +154,7 @@ class GameViewComponent extends React.PureComponent<IGameViewProps & WithStyles<
 							{menu}
 						</Drawer>
 						{tab === 'configuration' ? <ConfigurationViewComponent /> : null}
-						{tab === 'game' ? <PhaserViewComponent keepInstanceOnRemove={true} /> : null}
+						{tab === 'game' ? <PhaserViewComponent keepInstanceOnRemove /> : null}
 					</Paper>
 				</Grid>
 			</Grid>
@@ -175,47 +193,22 @@ class GameViewComponent extends React.PureComponent<IGameViewProps & WithStyles<
 	}
 
 	private toggleFullScreen = (): void => {
-		const { store, createSetFullscreenAction } = this.props;
+		const { dispatchSetFullscreenAction } = this.props;
 		const { fullscreen } = this.state;
-		if (store) {
-			store.dispatch(createSetFullscreenAction(!fullscreen));
-		}
+		dispatchSetFullscreenAction(!fullscreen);
 	}
 
 	private togglePause = (): void => {
-		const { store, createSetPausedAction } = this.props;
+		const { dispatchSetPausedAction } = this.props;
 		const { paused } = this.state;
-		if (store) {
-			store.dispatch(createSetPausedAction(!paused));
-		}
+		dispatchSetPausedAction(!paused);
 	}
 
 	private toggleMute = (): void => {
-		const { store, createSetMutedAction } = this.props;
+		const { dispatchCreateSetMutedAction } = this.props;
 		const { mute } = this.state;
-		if (store) {
-			store.dispatch(createSetMutedAction(!mute));
-		}
+		dispatchCreateSetMutedAction(!mute);
 	}
 }
 
-export default hot(module)(
-	connectToInjector<IGameViewProps>({
-		store: {
-			dependencies: ['data-store:provider'],
-			value: (provider: IDataStoreProvider<IUIState, IValueAction<any>>) => provider(),
-		},
-		__: {
-			dependencies: ['i18n:translate'],
-		},
-		createSetFullscreenAction: {
-			dependencies: ['data-store:action:create:set-fullscreen'],
-		},
-		createSetPausedAction: {
-			dependencies: ['data-store:action:create:set-paused'],
-		},
-		createSetMutedAction: {
-			dependencies: ['data-store:action:create:set-muted'],
-		},
-	})(withStyles(styles)(GameViewComponent)),
-);
+export default hot(module)(diDecorator(withStyles(styles)(GameViewComponent)));

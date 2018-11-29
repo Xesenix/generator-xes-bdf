@@ -15,15 +15,15 @@ export const styles = (theme: Theme) =>
 			margin: theme.spacing.unit,
 		},
 		icon: {
-			display: 'inline-flex',
-			width: '48px',
-			height: '48px',
+			'display': 'inline-flex',
+			'width': '48px',
+			'height': '48px',
 			'justify-content': 'center',
 			'align-items': 'center',
-			color: theme.palette.text.primary,
+			'color': theme.palette.text.primary,
 		},
 		scroll: {
-			display: 'inline-flex',
+			'display': 'inline-flex',
 			'align-items': 'center',
 		},
 		formControl: {
