@@ -7,6 +7,7 @@ export type IDataStoreProvider<T, A extends Action> = () => Promise<Store<T, A>>
 
 export function DataStoreProvider<T, A extends Action>(context: interfaces.Context) {
 	const debug: boolean = process.env.DEBUG === 'true';
+	const debugRedux: boolean = debug && process.env.DEBUG_REDUX === 'true';
 	const console: Console = context.container.get<Console>('debug:console');
 	let store: Store<T, A>;
 
@@ -23,14 +24,14 @@ export function DataStoreProvider<T, A extends Action>(context: interfaces.Conte
 				timestamp: true,
 			});
 			// prettier-ignore
-			const composeEnhancers = debug && typeof window === 'object'
+			const composeEnhancers = debugRedux && typeof window === 'object'
 				&& typeof window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ !== 'undefined'
 				? (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
 						// Specify extension’s options like name, actionsBlacklist, actionsCreators, serialize...
 					})
 				: compose;
 
-			store = createStore<T | undefined, A, any, any>(reducer, initialState, composeEnhancers(debug ? applyMiddleware(logger, thunk) : applyMiddleware(thunk)));
+			store = createStore<T | undefined, A, any, any>(reducer, initialState, composeEnhancers(debugRedux ? applyMiddleware(logger, thunk) : applyMiddleware(thunk)));
 
 			context.container.bind<Store<T, A>>('data-store').toConstantValue(store);
 
