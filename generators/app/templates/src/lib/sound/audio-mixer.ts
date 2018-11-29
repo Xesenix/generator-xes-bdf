@@ -1,11 +1,6 @@
 import { inject } from 'lib/di';
 
-import {
-	IAudioConfigurationState,
-	IAudioTrack,
-	IStateAwareAudioMixer,
-	IStateAwareAudioTrack,
-} from './interfaces';
+import { IAudioConfigurationState, IAudioTrack, IStateAwareAudioMixer, IStateAwareAudioTrack } from './interfaces';
 
 @inject(['audio-context:factory', 'audio-mixer:track:music', 'audio-mixer:track:effects', 'audio-mixer:track:master'])
 export class AudioMixer implements IStateAwareAudioMixer {

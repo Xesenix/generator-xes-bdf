@@ -1,23 +1,22 @@
 import { ISoundtrackPlayer } from '../interfaces';
 
-export const phaserSoundtrackManagerPluginFactory = (
-	soundtrackPlayer: ISoundtrackPlayer,
-) => class PhaserSoundtrackManagerPlugin extends Phaser.Plugins.BasePlugin {
-	public soundtrackPlayer: ISoundtrackPlayer = soundtrackPlayer;
+export const phaserSoundtrackManagerPluginFactory = (soundtrackPlayer: ISoundtrackPlayer) =>
+	class PhaserSoundtrackManagerPlugin extends Phaser.Plugins.BasePlugin {
+		public soundtrackPlayer: ISoundtrackPlayer = soundtrackPlayer;
 
-	constructor(
-		// prettier-ignore
-		public pluginManager: Phaser.Plugins.PluginManager,
-	) {
-		super(pluginManager);
-		console.log('PhaserSoundtrackManagerPlugin:constructor');
-	}
+		constructor(
+			// prettier-ignore
+			public pluginManager: Phaser.Plugins.PluginManager,
+		) {
+			super(pluginManager);
+			console.log('PhaserSoundtrackManagerPlugin:constructor');
+		}
 
-	public start(): void {
-		console.log('PhaserSoundtrackManagerPlugin:start', this);
-	}
+		public start(): void {
+			console.log('PhaserSoundtrackManagerPlugin:start', this);
+		}
 
-	public stop() {
-		console.log('PhaserSoundtrackManagerPlugin:stop');
-	}
-};
+		public stop() {
+			console.log('PhaserSoundtrackManagerPlugin:stop');
+		}
+	};

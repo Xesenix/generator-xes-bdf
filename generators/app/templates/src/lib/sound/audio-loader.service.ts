@@ -26,16 +26,17 @@ export class AudioLoaderService implements IAudioFileLoader {
 		return Promise.all(Object.values(this.loadQueue).map(this.loadSound)).then(() => {});
 	}
 
-	private loadSound = ({ key, url }): Promise<void> => new Promise((resolve) => {
-		const request = new XMLHttpRequest();
-		request.open('GET', url, true);
-		request.responseType = 'arraybuffer';
-		request.onload = () => {
-			this.context.decodeAudioData(request.response, (data: AudioBuffer) => {
-				this.repository.add(key, data);
-				resolve();
-			});
-		};
-		request.send();
-	})
+	private loadSound = ({ key, url }): Promise<void> =>
+		new Promise((resolve) => {
+			const request = new XMLHttpRequest();
+			request.open('GET', url, true);
+			request.responseType = 'arraybuffer';
+			request.onload = () => {
+				this.context.decodeAudioData(request.response, (data: AudioBuffer) => {
+					this.repository.add(key, data);
+					resolve();
+				});
+			};
+			request.send();
+		})
 }

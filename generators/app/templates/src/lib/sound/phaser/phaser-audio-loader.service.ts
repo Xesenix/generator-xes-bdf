@@ -1,6 +1,11 @@
 import { inject } from 'lib/di';
 
-import { IAudioBufferRepository, IAudioContextFactory, IAudioFileLoader } from '../interfaces';
+import {
+	// prettier-ignore
+	IAudioBufferRepository,
+	IAudioContextFactory,
+	IAudioFileLoader,
+} from '../interfaces';
 
 @inject(['audio-repository', 'audio-context:factory', 'debug:console'])
 export class PhaserAudioLoaderService implements IAudioFileLoader {
@@ -27,11 +32,7 @@ export class PhaserAudioLoaderService implements IAudioFileLoader {
 	public setLoader(loader: Phaser.Loader.LoaderPlugin): void {
 		this.loader = loader;
 		// TODO: find better way to connect to phaser loader audio cache
-		(this.loader as any).cacheManager.audio.events.on('add', (
-			cache: Phaser.Cache.BaseCache,
-			key: string,
-			data: AudioBuffer,
-		) => {
+		(this.loader as any).cacheManager.audio.events.on('add', (cache: Phaser.Cache.BaseCache, key: string, data: AudioBuffer) => {
 			this.repository.add(key, data);
 			this.loadQueue[key] = false;
 		});
@@ -44,16 +45,22 @@ export class PhaserAudioLoaderService implements IAudioFileLoader {
 		}
 		if (this.loader) {
 			// TODO: phaser has mismatched interface for configuring audioContext so we need cast second argument to any
-			this.loader.addFile(new Phaser.Loader.FileTypes.AudioFile(this.loader, {
-				key,
-				context: this.context,
-				xhrSettings: {
-					responseType: 'arraybuffer',
-				},
-			} as any, {
-				type: 'audio',
-				url,
-			}));
+			this.loader.addFile(
+				new Phaser.Loader.FileTypes.AudioFile(
+					this.loader,
+					{
+						key,
+						context: this.context,
+						xhrSettings: {
+							responseType: 'arraybuffer',
+						},
+					} as any,
+					{
+						type: 'audio',
+						url,
+					},
+				),
+			);
 		}
 	}
 

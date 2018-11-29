@@ -3,7 +3,7 @@ import { EventEmitter } from 'events';
 import { inject } from 'lib/di';
 import { IAudioTrack } from 'lib/sound';
 
-import { IScheduledSoundtrack, ISoundtrack, } from '../interfaces';
+import { IScheduledSoundtrack, ISoundtrack } from '../interfaces';
 
 @inject(['audio-mixer:track:music', 'audio-context:factory', 'event-manager'])
 export class SoundtrackPlayer {
@@ -156,7 +156,6 @@ export class SoundtrackPlayer {
 	 * @param [layer=0] soundtrack layer
 	 */
 	public scheduleAfterLast(soundtrack: ISoundtrack, duration: number = 0, layer: number = 0): void {
-
 		const last = this.getLastScheduledSoundtrack(layer);
 		let when = this.getClosestInterruptionTime(last, this.context.currentTime);
 		const soundtrackChanged = !last || last.soundtrack.name !== soundtrack.name;
@@ -241,16 +240,14 @@ export class SoundtrackPlayer {
 	public getLastScheduledSoundtrack(layer: number = 0): IScheduledSoundtrack | null {
 		return this.layers[layer].reduce(
 			(result: IScheduledSoundtrack | null, current: IScheduledSoundtrack) =>
-				result !== null && result.end && current.end && result.end < current.end || current ? current : result,
+				(result !== null && result.end && current.end && result.end < current.end) || current ? current : result,
 			null,
 		);
 	}
 
 	public getCurrentScheduledSoundtrack(layer: number = 0): IScheduledSoundtrack[] {
 		const currentAudioTime = this.context.currentTime;
-		return this.layers[layer].filter(
-			({ start, end }: IScheduledSoundtrack) => start <= currentAudioTime && (!end || end > currentAudioTime),
-		);
+		return this.layers[layer].filter(({ start, end }: IScheduledSoundtrack) => start <= currentAudioTime && (!end || end > currentAudioTime));
 	}
 
 	private removeSoundtrackFromScheduleQueue(descriptor: IScheduledSoundtrack, layer: number): void {
@@ -271,11 +268,7 @@ export class SoundtrackPlayer {
 		}
 		const { loopDuration } = descriptor;
 		const { start, end, loop, interruptionStep = loopDuration } = descriptor;
-		const result = end
-			? end
-			: loop && interruptionStep > 0
-				? Math.ceil((when - start) / interruptionStep) * interruptionStep + start
-				: when;
+		const result = end ? end : loop && interruptionStep > 0 ? Math.ceil((when - start) / interruptionStep) * interruptionStep + start : when;
 
 		return result;
 	}

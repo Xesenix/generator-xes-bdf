@@ -1,6 +1,4 @@
-export interface ISoundScapeState {
-
-}
+export interface ISoundScapeState {}
 
 export interface ISoundtrackPlayer {
 	/**

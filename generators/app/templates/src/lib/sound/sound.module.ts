@@ -5,13 +5,7 @@ import { AudioBufferRepository } from './audio-buffer-repository';
 import { audioLoaderProvider } from './audio-loader.provider';
 import { AudioMixer } from './audio-mixer';
 import { AudioMixerTrack } from './audio-mixer-track';
-import {
-	IAudioConfigurationState,
-	IAudioContextFactory,
-	IAudioFileLoaderProvider,
-	IAudioMixer,
-	IAudioTrack,
-} from './interfaces';
+import { IAudioConfigurationState, IAudioContextFactory, IAudioFileLoaderProvider, IAudioMixer, IAudioTrack } from './interfaces';
 import { phaserAudioLoaderProvider } from './phaser/phaser-audio-loader.provider';
 import { phaserAudioManagerPluginProvider } from './phaser/phaser-audio-manager-plugin.provider';
 
@@ -39,12 +33,30 @@ export class SoundModule<T extends IAudioConfigurationState> {
 			this.app.bind<IAudioFileLoaderProvider>('audio-loader:provider').toProvider(audioLoaderProvider);
 		}
 
-		this.app.bind<AudioBufferRepository>('audio-repository').to(AudioBufferRepository).inSingletonScope();
-		this.app.bind<IAudioTrack>('audio-mixer:track:master').to(AudioMixerTrack).inSingletonScope();
-		this.app.bind<IAudioTrack>('audio-mixer:track:effects').to(AudioMixerTrack).inSingletonScope();
-		this.app.bind<IAudioTrack>('audio-mixer:track:music').to(AudioMixerTrack).inSingletonScope();
-		this.app.bind<IAudioTrack>('audio-mixer:track:dialog').to(AudioMixerTrack).inSingletonScope();
-		this.app.bind<IAudioMixer>('audio-mixer').to(AudioMixer).inSingletonScope();
+		this.app
+			.bind<AudioBufferRepository>('audio-repository')
+			.to(AudioBufferRepository)
+			.inSingletonScope();
+		this.app
+			.bind<IAudioTrack>('audio-mixer:track:master')
+			.to(AudioMixerTrack)
+			.inSingletonScope();
+		this.app
+			.bind<IAudioTrack>('audio-mixer:track:effects')
+			.to(AudioMixerTrack)
+			.inSingletonScope();
+		this.app
+			.bind<IAudioTrack>('audio-mixer:track:music')
+			.to(AudioMixerTrack)
+			.inSingletonScope();
+		this.app
+			.bind<IAudioTrack>('audio-mixer:track:dialog')
+			.to(AudioMixerTrack)
+			.inSingletonScope();
+		this.app
+			.bind<IAudioMixer>('audio-mixer')
+			.to(AudioMixer)
+			.inSingletonScope();
 
 		// TODO: this factory returns class figure out how to correctly type this binding
 		this.app.bind('audio-manager-plugin:provider').toProvider(phaserAudioManagerPluginProvider);

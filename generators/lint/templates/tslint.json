@@ -43,7 +43,8 @@
 		"array-bracket-spacing": ["error", "always"],
 		"jsx-curly-spacing": ["error", "always"],
 		"jsx-no-multiline-js": false,
-		"jsx-no-lambda": true
+		"jsx-no-lambda": true,
+		"jsx-boolean-value": false
 	},
 	"rulesDirectory": []
 }

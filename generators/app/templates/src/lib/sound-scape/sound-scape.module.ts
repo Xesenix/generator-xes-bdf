@@ -13,7 +13,10 @@ export class SoundScapeModule {
 		// prettier-ignore
 		private app: IApplication,
 	) {
-		this.app.bind<ISoundtrackPlayer>('sound-scape:soundtrack-player').to(SoundtrackPlayer).inSingletonScope();
+		this.app
+			.bind<ISoundtrackPlayer>('sound-scape:soundtrack-player')
+			.to(SoundtrackPlayer)
+			.inSingletonScope();
 
 		this.app.bind('soundtrack-manager-plugin:provider').toProvider(phaserSoundtrackManagerPluginProvider);
 	}

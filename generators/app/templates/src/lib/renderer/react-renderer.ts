@@ -17,7 +17,6 @@ export class ReactRenderer implements IRenderer {
 		// prettier-ignore
 		private uiRoot: HTMLElement,
 		private outletFactory: React.ComponentFactory<any, any>,
-
 	) {
 		this.uiRoot = uiRoot;
 		this.outletFactory = outletFactory;

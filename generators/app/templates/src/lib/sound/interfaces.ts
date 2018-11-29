@@ -26,7 +26,7 @@ export interface IAudioFile {
 }
 
 export interface IAudioFileLoader {
-	add(key: string,  url: string): void;
+	add(key: string, url: string): void;
 	loadAll(): Promise<void>;
 }
 
@@ -60,7 +60,7 @@ export interface IAudioTrack {
 	getNode(): AudioNode;
 }
 
-export type IStateAwareAudioTrack = IAudioTrack & IStoreStateAware<{ muted: boolean, volume: number }>;
+export type IStateAwareAudioTrack = IAudioTrack & IStoreStateAware<{ muted: boolean; volume: number }>;
 
 export interface IAudioManagerPlugin<T extends IAudioConfigurationState> extends Phaser.Plugins.BasePlugin {
 	store: Store<T>;

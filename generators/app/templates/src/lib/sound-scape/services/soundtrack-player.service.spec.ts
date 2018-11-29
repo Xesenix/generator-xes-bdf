@@ -73,281 +73,293 @@ describe('SoundtrackPlayer', () => {
 	});
 
 	describe('.scheduleIntroAt()', () => {
-		[0, 1000].forEach((contextCurrentTime) => describe(`audio context currentTime: ${contextCurrentTime}`, () => {
-			beforeEach(() => {
-				context.currentTime = contextCurrentTime;
-			});
-
-			[0, 100].forEach((when) => describe(`start offset: ${when}`, () => {
-				describe('when intro duration is 0', () => {
-					beforeEach(() => {
-						intro = {
-							start: 5,
-							end: 5,
-							duration: 0,
-						};
-						soundtrack = {
-							key: 'soundtrack',
-							name: 'idle',
-							intro,
-							loop,
-							outro,
-						};
-					});
-					it('should not schedule intro', () => {
-						expect((service.scheduleIntroAt(soundtrack, when) as any)).toBe(null);
-					});
-					it('should not emit soundtrack:schedule-changed event', () => {
-						service.scheduleIntroAt(soundtrack, when);
-						expect(em.emit).not.toHaveBeenCalled();
-					});
+		[0, 1000].forEach((contextCurrentTime) =>
+			describe(`audio context currentTime: ${contextCurrentTime}`, () => {
+				beforeEach(() => {
+					context.currentTime = contextCurrentTime;
 				});
 
-				describe('when intro duration is greater than 0', () => {
-					beforeEach(() => {
-						soundtrack = {
-							key: 'soundtrack',
-							name: 'idle',
-							intro,
-							loop,
-							outro,
-						};
-
-						music.mockedNode = {
-							start: jasmine.createSpy('start'),
-							stop: jasmine.createSpy('stop'),
-						};
-					});
-
-					describe('returned intro', () => {
-						it('should not be null', () => {
-							expect((service.scheduleIntroAt(soundtrack, when) as any)).not.toBe(null);
-						});
-
-						it(`should start at specified offset (${when})`, () => {
-							expect((service.scheduleIntroAt(soundtrack, when) as any).start).toBe(when);
-						});
-
-						it(`should end at specified offset (${when}) and intro duration`, () => {
-							expect((service.scheduleIntroAt(soundtrack, when) as any).end).toBe(when + intro.duration);
-						});
-
-						it('should attach audio node to result', () => {
-							expect((service.scheduleIntroAt(soundtrack, when) as any).node).not.toBeUndefined();
-						});
-
-						describe('returned audio node', () => {
-							it('should not set loop to true', () => {
-								expect((service.scheduleIntroAt(soundtrack, when) as any).node.loop).not.toBe(true);
+				[0, 100].forEach((when) =>
+					describe(`start offset: ${when}`, () => {
+						describe('when intro duration is 0', () => {
+							beforeEach(() => {
+								intro = {
+									start: 5,
+									end: 5,
+									duration: 0,
+								};
+								soundtrack = {
+									key: 'soundtrack',
+									name: 'idle',
+									intro,
+									loop,
+									outro,
+								};
+							});
+							it('should not schedule intro', () => {
+								expect(service.scheduleIntroAt(soundtrack, when) as any).toBe(null);
+							});
+							it('should not emit soundtrack:schedule-changed event', () => {
+								service.scheduleIntroAt(soundtrack, when);
+								expect(em.emit).not.toHaveBeenCalled();
 							});
 						});
-					});
 
-					it('should add scheduled segment to layer 0', () => {
-						expect(service.layers[0]).toContain((service.scheduleIntroAt(soundtrack, when) as any));
-					});
+						describe('when intro duration is greater than 0', () => {
+							beforeEach(() => {
+								soundtrack = {
+									key: 'soundtrack',
+									name: 'idle',
+									intro,
+									loop,
+									outro,
+								};
 
-					it('should emit soundtrack:schedule-changed event', () => {
-						service.scheduleIntroAt(soundtrack, when);
-						expect(em.emit).toHaveBeenCalledWith('soundtrack:schedule-changed', service);
-					});
-				});
-			}));
-		}));
+								music.mockedNode = {
+									start: jasmine.createSpy('start'),
+									stop: jasmine.createSpy('stop'),
+								};
+							});
+
+							describe('returned intro', () => {
+								it('should not be null', () => {
+									expect(service.scheduleIntroAt(soundtrack, when) as any).not.toBe(null);
+								});
+
+								it(`should start at specified offset (${when})`, () => {
+									expect((service.scheduleIntroAt(soundtrack, when) as any).start).toBe(when);
+								});
+
+								it(`should end at specified offset (${when}) and intro duration`, () => {
+									expect((service.scheduleIntroAt(soundtrack, when) as any).end).toBe(when + intro.duration);
+								});
+
+								it('should attach audio node to result', () => {
+									expect((service.scheduleIntroAt(soundtrack, when) as any).node).not.toBeUndefined();
+								});
+
+								describe('returned audio node', () => {
+									it('should not set loop to true', () => {
+										expect((service.scheduleIntroAt(soundtrack, when) as any).node.loop).not.toBe(true);
+									});
+								});
+							});
+
+							it('should add scheduled segment to layer 0', () => {
+								expect(service.layers[0]).toContain(service.scheduleIntroAt(soundtrack, when) as any);
+							});
+
+							it('should emit soundtrack:schedule-changed event', () => {
+								service.scheduleIntroAt(soundtrack, when);
+								expect(em.emit).toHaveBeenCalledWith('soundtrack:schedule-changed', service);
+							});
+						});
+					}),
+				);
+			}),
+		);
 	});
 
 	describe('.scheduleLoopAt()', () => {
-		[0, 1000].forEach((contextCurrentTime) => describe(`audio context currentTime: ${contextCurrentTime}`, () => {
-			beforeEach(() => {
-				context.currentTime = contextCurrentTime;
-			});
-
-			[0, 100].forEach((when) => describe(`start offset: ${when}`, () => {
-				describe('when loop duration is 0', () => {
-					beforeEach(() => {
-						loop = {
-							start: 5,
-							end: 5,
-							duration: 0,
-						};
-						soundtrack = {
-							key: 'soundtrack',
-							name: 'idle',
-							intro,
-							loop,
-							outro,
-						};
-					});
-					it('should not schedule loop', () => {
-						expect((service.scheduleLoopAt(soundtrack, when) as any)).toBe(null);
-					});
-					it('should not emit soundtrack:schedule-changed event', () => {
-						service.scheduleLoopAt(soundtrack, when);
-						expect(em.emit).not.toHaveBeenCalled();
-					});
+		[0, 1000].forEach((contextCurrentTime) =>
+			describe(`audio context currentTime: ${contextCurrentTime}`, () => {
+				beforeEach(() => {
+					context.currentTime = contextCurrentTime;
 				});
 
-				describe('when loop duration is greater than 0', () => {
-					beforeEach(() => {
-						soundtrack = {
-							key: 'soundtrack',
-							name: 'idle',
-							intro,
-							loop,
-							outro,
-						};
-
-						music.mockedNode = {
-							start: jasmine.createSpy('start'),
-							stop: jasmine.createSpy('stop'),
-						};
-					});
-
-					describe('returned loop', () => {
-						it('should not be null', () => {
-							expect((service.scheduleLoopAt(soundtrack, when) as any)).not.toBe(null);
-						});
-
-						it(`should start at specified offset (${when})`, () => {
-							expect((service.scheduleLoopAt(soundtrack, when) as any).start).toBe(when);
-						});
-
-						describe('when requested duration is 0', () => {
-							it(`should not set end`, () => {
-								expect((service.scheduleLoopAt(soundtrack, when) as any).end).toBeUndefined();
+				[0, 100].forEach((when) =>
+					describe(`start offset: ${when}`, () => {
+						describe('when loop duration is 0', () => {
+							beforeEach(() => {
+								loop = {
+									start: 5,
+									end: 5,
+									duration: 0,
+								};
+								soundtrack = {
+									key: 'soundtrack',
+									name: 'idle',
+									intro,
+									loop,
+									outro,
+								};
+							});
+							it('should not schedule loop', () => {
+								expect(service.scheduleLoopAt(soundtrack, when) as any).toBe(null);
+							});
+							it('should not emit soundtrack:schedule-changed event', () => {
+								service.scheduleLoopAt(soundtrack, when);
+								expect(em.emit).not.toHaveBeenCalled();
 							});
 						});
 
-						describe('when requested duration is grater than 0', () => {
-							it(`should end at specified offset (${when}) and rounded down multiplication of loop interruptionStep`, () => {
-								expect((service.scheduleLoopAt(soundtrack, when, 4.2) as any).end).toBe(when + 4);
+						describe('when loop duration is greater than 0', () => {
+							beforeEach(() => {
+								soundtrack = {
+									key: 'soundtrack',
+									name: 'idle',
+									intro,
+									loop,
+									outro,
+								};
+
+								music.mockedNode = {
+									start: jasmine.createSpy('start'),
+									stop: jasmine.createSpy('stop'),
+								};
 							});
-							it(`should end at specified offset (${when}) and rounded up multiplication of loop interruptionStep`, () => {
-								expect((service.scheduleLoopAt(soundtrack, when, 2.6) as any).end).toBe(when + 4);
+
+							describe('returned loop', () => {
+								it('should not be null', () => {
+									expect(service.scheduleLoopAt(soundtrack, when) as any).not.toBe(null);
+								});
+
+								it(`should start at specified offset (${when})`, () => {
+									expect((service.scheduleLoopAt(soundtrack, when) as any).start).toBe(when);
+								});
+
+								describe('when requested duration is 0', () => {
+									it(`should not set end`, () => {
+										expect((service.scheduleLoopAt(soundtrack, when) as any).end).toBeUndefined();
+									});
+								});
+
+								describe('when requested duration is grater than 0', () => {
+									it(`should end at specified offset (${when}) and rounded down multiplication of loop interruptionStep`, () => {
+										expect((service.scheduleLoopAt(soundtrack, when, 4.2) as any).end).toBe(when + 4);
+									});
+									it(`should end at specified offset (${when}) and rounded up multiplication of loop interruptionStep`, () => {
+										expect((service.scheduleLoopAt(soundtrack, when, 2.6) as any).end).toBe(when + 4);
+									});
+									it(`should not start if there is not enough time`, () => {
+										expect(service.scheduleLoopAt(soundtrack, when, 0.1) as any).toBe(null);
+									});
+								});
+
+								it(`should set result interruptionStep to loop interruptionStep`, () => {
+									expect((service.scheduleLoopAt(soundtrack, when) as any).interruptionStep).toBe(loop.interruptionStep);
+								});
+
+								it('should attach audio node to result', () => {
+									expect((service.scheduleLoopAt(soundtrack, when) as any).node).not.toBeUndefined();
+								});
+
+								describe('returned audio node', () => {
+									it('should set loop to true', () => {
+										expect((service.scheduleLoopAt(soundtrack, when) as any).node.loop).toBe(true);
+									});
+
+									it('should set loopStart', () => {
+										expect((service.scheduleLoopAt(soundtrack, when) as any).node.loopStart).toBe(loop.start);
+									});
+
+									it('should set loopEnd', () => {
+										expect((service.scheduleLoopAt(soundtrack, when) as any).node.loopEnd).toBe(loop.end);
+									});
+								});
 							});
-							it(`should not start if there is not enough time`, () => {
-								expect((service.scheduleLoopAt(soundtrack, when, 0.1) as any)).toBe(null);
+
+							it('should add scheduled segment to layer 0', () => {
+								expect(service.layers[0]).toContain(service.scheduleLoopAt(soundtrack, when) as any);
+							});
+
+							it('should emit soundtrack:schedule-changed event', () => {
+								service.scheduleLoopAt(soundtrack, when);
+								expect(em.emit).toHaveBeenCalledWith('soundtrack:schedule-changed', service);
 							});
 						});
-
-						it(`should set result interruptionStep to loop interruptionStep`, () => {
-							expect((service.scheduleLoopAt(soundtrack, when) as any).interruptionStep).toBe(loop.interruptionStep);
-						});
-
-						it('should attach audio node to result', () => {
-							expect((service.scheduleLoopAt(soundtrack, when) as any).node).not.toBeUndefined();
-						});
-
-						describe('returned audio node', () => {
-							it('should set loop to true', () => {
-								expect((service.scheduleLoopAt(soundtrack, when) as any).node.loop).toBe(true);
-							});
-
-							it('should set loopStart', () => {
-								expect((service.scheduleLoopAt(soundtrack, when) as any).node.loopStart).toBe(loop.start);
-							});
-
-							it('should set loopEnd', () => {
-								expect((service.scheduleLoopAt(soundtrack, when) as any).node.loopEnd).toBe(loop.end);
-							});
-						});
-					});
-
-					it('should add scheduled segment to layer 0', () => {
-						expect(service.layers[0]).toContain((service.scheduleLoopAt(soundtrack, when) as any));
-					});
-
-					it('should emit soundtrack:schedule-changed event', () => {
-						service.scheduleLoopAt(soundtrack, when);
-						expect(em.emit).toHaveBeenCalledWith('soundtrack:schedule-changed', service);
-					});
-				});
-			}));
-		}));
+					}),
+				);
+			}),
+		);
 	});
 
 	describe('.scheduleOutroAt()', () => {
-		[0, 1000].forEach((contextCurrentTime) => describe(`audio context currentTime: ${contextCurrentTime}`, () => {
-			beforeEach(() => {
-				context.currentTime = contextCurrentTime;
-			});
-
-			[0, 100].forEach((when) => describe(`start offset: ${when}`, () => {
-				describe('when outro duration is 0', () => {
-					beforeEach(() => {
-						outro = {
-							start: 5,
-							end: 5,
-							duration: 0,
-						};
-						soundtrack = {
-							key: 'soundtrack',
-							name: 'idle',
-							intro,
-							loop,
-							outro,
-						};
-					});
-					it('should not schedule outro', () => {
-						expect((service.scheduleOutroAt(soundtrack, when) as any)).toBe(null);
-					});
-					it('should not emit soundtrack:schedule-changed event', () => {
-						service.scheduleOutroAt(soundtrack, when);
-						expect(em.emit).not.toHaveBeenCalled();
-					});
+		[0, 1000].forEach((contextCurrentTime) =>
+			describe(`audio context currentTime: ${contextCurrentTime}`, () => {
+				beforeEach(() => {
+					context.currentTime = contextCurrentTime;
 				});
 
-				describe('when outro duration is greater than 0', () => {
-					beforeEach(() => {
-						soundtrack = {
-							key: 'soundtrack',
-							name: 'idle',
-							intro,
-							loop,
-							outro,
-						};
-
-						music.mockedNode = {
-							start: jasmine.createSpy('start'),
-							stop: jasmine.createSpy('stop'),
-						};
-					});
-
-					describe('returned outro', () => {
-						it('should not be null', () => {
-							expect((service.scheduleOutroAt(soundtrack, when) as any)).not.toBe(null);
-						});
-
-						it(`should start at specified offset (${when})`, () => {
-							expect((service.scheduleOutroAt(soundtrack, when) as any).start).toBe(when);
-						});
-
-						it(`should end at specified offset (${when}) and outro duration`, () => {
-							expect((service.scheduleOutroAt(soundtrack, when) as any).end).toBe(when + outro.duration);
-						});
-
-						it('should attach audio node to result', () => {
-							expect((service.scheduleOutroAt(soundtrack, when) as any).node).not.toBeUndefined();
-						});
-
-						describe('returned audio node', () => {
-							it('should not set loop to true', () => {
-								expect((service.scheduleOutroAt(soundtrack, when) as any).node.loop).not.toBe(true);
+				[0, 100].forEach((when) =>
+					describe(`start offset: ${when}`, () => {
+						describe('when outro duration is 0', () => {
+							beforeEach(() => {
+								outro = {
+									start: 5,
+									end: 5,
+									duration: 0,
+								};
+								soundtrack = {
+									key: 'soundtrack',
+									name: 'idle',
+									intro,
+									loop,
+									outro,
+								};
+							});
+							it('should not schedule outro', () => {
+								expect(service.scheduleOutroAt(soundtrack, when) as any).toBe(null);
+							});
+							it('should not emit soundtrack:schedule-changed event', () => {
+								service.scheduleOutroAt(soundtrack, when);
+								expect(em.emit).not.toHaveBeenCalled();
 							});
 						});
-					});
 
-					it('should add scheduled segment to layer 0', () => {
-						expect(service.layers[0]).toContain((service.scheduleOutroAt(soundtrack, when) as any));
-					});
+						describe('when outro duration is greater than 0', () => {
+							beforeEach(() => {
+								soundtrack = {
+									key: 'soundtrack',
+									name: 'idle',
+									intro,
+									loop,
+									outro,
+								};
 
-					it('should emit soundtrack:schedule-changed event', () => {
-						service.scheduleOutroAt(soundtrack, when);
-						expect(em.emit).toHaveBeenCalledWith('soundtrack:schedule-changed', service);
-					});
-				});
-			}));
-		}));
+								music.mockedNode = {
+									start: jasmine.createSpy('start'),
+									stop: jasmine.createSpy('stop'),
+								};
+							});
+
+							describe('returned outro', () => {
+								it('should not be null', () => {
+									expect(service.scheduleOutroAt(soundtrack, when) as any).not.toBe(null);
+								});
+
+								it(`should start at specified offset (${when})`, () => {
+									expect((service.scheduleOutroAt(soundtrack, when) as any).start).toBe(when);
+								});
+
+								it(`should end at specified offset (${when}) and outro duration`, () => {
+									expect((service.scheduleOutroAt(soundtrack, when) as any).end).toBe(when + outro.duration);
+								});
+
+								it('should attach audio node to result', () => {
+									expect((service.scheduleOutroAt(soundtrack, when) as any).node).not.toBeUndefined();
+								});
+
+								describe('returned audio node', () => {
+									it('should not set loop to true', () => {
+										expect((service.scheduleOutroAt(soundtrack, when) as any).node.loop).not.toBe(true);
+									});
+								});
+							});
+
+							it('should add scheduled segment to layer 0', () => {
+								expect(service.layers[0]).toContain(service.scheduleOutroAt(soundtrack, when) as any);
+							});
+
+							it('should emit soundtrack:schedule-changed event', () => {
+								service.scheduleOutroAt(soundtrack, when);
+								expect(em.emit).toHaveBeenCalledWith('soundtrack:schedule-changed', service);
+							});
+						});
+					}),
+				);
+			}),
+		);
 	});
 
 	describe('.scheduleAfterLast()', () => {
