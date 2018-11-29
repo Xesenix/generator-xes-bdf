@@ -100,7 +100,7 @@ class App extends React.Component<IAppProps & WithStyles<typeof styles>, IAppSta
 				<Paper className={classes.root} elevation={1}>
 					{loading ? <LinearProgress /> : null}
 					<Typography className={classes.headline} variant="headline" component="h1">
-						{__('Ancient maze of Epla')}
+						{__('<%= title %>')}
 					</Typography>
 					{gameView}
 				</Paper>
