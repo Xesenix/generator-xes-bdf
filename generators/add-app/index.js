@@ -110,6 +110,7 @@ module.exports = class extends Generator {
       ...await listTemplates('app'),
       ...await listTemplates('assets'),
       ...await listTemplates('components'),
+      ...await listTemplates('locales'),
       ...await listTemplates('src'),
       ...await listTemplates('styles'),
       // 'locales',
