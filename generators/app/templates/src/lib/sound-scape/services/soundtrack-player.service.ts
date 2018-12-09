@@ -192,20 +192,29 @@ export class SoundtrackPlayer {
 	 * @param [layer=0] soundtrack layer
 	 */
 	public scheduleNext(soundtrack: ISoundtrack, duration: number = 0, layer: number = 0): void {
+		let extended = false;
 		this.clearSoundtracksAfter(0, layer);
 
 		this.getCurrentScheduledSoundtrack().forEach((descriptor) => {
-			if (descriptor.loop && descriptor.interruptionStep > 0) {
-				const newEnd = descriptor.start + Math.ceil((this.context.currentTime - descriptor.start) / descriptor.interruptionStep) * descriptor.interruptionStep;
+			const sameSoundtrack = descriptor.soundtrack.name === soundtrack.name;
+			const offset = sameSoundtrack ? duration : 0;
 
-				if (descriptor.end !== newEnd) {
+			if (descriptor.loop && descriptor.interruptionStep > 0) {
+				// FIXME: lookout for magic number duration === 0 scheduling endless loop
+				const newEnd = descriptor.start + Math.ceil((this.context.currentTime + offset - descriptor.start) / descriptor.interruptionStep) * descriptor.interruptionStep;
+
+				if (descriptor.end !== newEnd && (!sameSoundtrack || descriptor.state !== 'endless')) {
 					descriptor.end = newEnd;
 					descriptor.node.stop(newEnd);
+					this.scheduleOutroAt(descriptor.soundtrack, newEnd, layer);
 				}
+				extended = (extended || sameSoundtrack) && duration > 0;
 			}
 		});
 
-		this.scheduleAfterLast(soundtrack, duration, layer);
+		if (!extended) {
+			this.scheduleAfterLast(soundtrack, duration, layer);
+		}
 	}
 
 	public getSchedule(layer: number = 0): IScheduledSoundtrack[] {
