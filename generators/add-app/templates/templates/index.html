@@ -4,6 +4,13 @@
 	<meta charset="utf-8">
 	<title><%= htmlWebpackPlugin.options.data.title %></title>
 
+	<meta property="og:type" content="game">
+	<meta property="og:title" content="<%= htmlWebpackPlugin.options.data.title %>">
+	<meta property="og:site_name" content="<%= htmlWebpackPlugin.options.data.title %>">
+	<meta property="og:description" content="<%= htmlWebpackPlugin.options.data.description %>">
+	<meta property="og:url" content="<%= htmlWebpackPlugin.options.data.url %>">
+	<meta property="og:image" content="<%= htmlWebpackPlugin.options.data.url %>/assets/thumb.png">
+
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1, maximum-scale=1, user-scalable=0">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
 
@@ -14,6 +21,7 @@
 	<div class="container">
 		<div id="app">
 			<h1><%= htmlWebpackPlugin.options.data.title %></h1>
+			<p><%= htmlWebpackPlugin.options.data.description %></p>
 			<h3>Loading...</h3>
 		</div>
 	</div>

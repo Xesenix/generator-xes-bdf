@@ -29,8 +29,22 @@ module.exports = class extends Generator {
       },
       {
         type: 'input',
-        name: 'title',
+        name: 'appTitle',
         message: promptColor('Application title (used to identify it to end user): '),
+        validate: validateMinLengthFactory(3),
+        store: true,
+      },
+      {
+        type: 'input',
+        name: 'appDescription',
+        message: promptColor('Application description: '),
+        validate: validateMinLengthFactory(3),
+        store: true,
+      },
+      {
+        type: 'input',
+        name: 'appUrl',
+        message: promptColor('Application url (where will it be available): '),
         validate: validateMinLengthFactory(3),
         store: true,
       },
@@ -42,7 +56,7 @@ module.exports = class extends Generator {
 
   configuring() {
     const { promptValues: { author } } = this.config.getAll();
-    const { appName, title } = this.props;
+    const { appName, appTitle, appDescription, appUrl } = this.props;
 
     this.log(`\n${ progressColor(`ADD-APP`) } Configuring ${ scriptColor('package.json') }...\n`);
 
@@ -70,8 +84,10 @@ module.exports = class extends Generator {
           ].filter(Boolean),
           'test': 'main.test.ts',
           'templateData': {
-            title,
+            title: appTitle,
             author,
+            description: appDescription,
+            url: appUrl,
           },
           'assets': [
             'assets',
@@ -93,7 +109,7 @@ module.exports = class extends Generator {
   async writing() {
     this.log(`\n${ progressColor(`ADD-APP`) } Generating files...\n`);
     const { promptValues: { author, usePhaser } } = this.config.getAll();
-    const { appName, title } = this.props;
+    const { appName, appTitle, appDescription, appUrl } = this.props;
 
     // copy ejs templates without processing
     [
@@ -126,7 +142,9 @@ module.exports = class extends Generator {
           author,
           appName,
           usePhaser,
-          title,
+          appTitle,
+          appUrl,
+          appDescription,
         },
       );
     });
@@ -140,7 +158,9 @@ module.exports = class extends Generator {
         author,
         appName,
         usePhaser,
-        title,
+        appTitle,
+        appUrl,
+        appDescription,
       },
     );
   }

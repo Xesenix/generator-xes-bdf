@@ -55,7 +55,7 @@ module.exports = class extends Generator {
       },
       {
         type: 'input',
-        name: 'description',
+        name: 'projectDescription',
         message: promptColor('Project description: '),
         validate: validateMinLengthFactory(0),
         store: true,
@@ -114,7 +114,7 @@ module.exports = class extends Generator {
 
     this.fs.extendJSON(this.destinationPath('package.json'), {
       name: this.props.name,
-      description: this.props.description,
+      description: this.props.projectDescription,
       version: '0.0.0',
       author: this.props.author,
       scripts: {
