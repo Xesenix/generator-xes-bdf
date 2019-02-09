@@ -7,7 +7,7 @@ export interface IOutletState {}
 
 class OutletComponent extends React.Component<IOutletProps, IOutletState> {
 	public render(): any {
-		return <>{this.props.children}</>;
+		return <>{ this.props.children }</>;
 	}
 }
 

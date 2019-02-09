@@ -55,7 +55,7 @@ module.exports = class extends Generator {
   }
 
   configuring() {
-    const { promptValues: { author } } = this.config.getAll();
+    const { promptValues: { author, usePhaser } } = this.config.getAll();
     const { appName, appTitle, appDescription, appUrl } = this.props;
 
     this.log(`\n${ progressColor(`ADD-APP`) } Configuring ${ scriptColor('package.json') }...\n`);
@@ -125,7 +125,7 @@ module.exports = class extends Generator {
     [
       ...await listTemplates('app'),
       ...await listTemplates('assets'),
-      ...await listTemplates('components'),
+      ...await listTemplates('components/outlet'),
       ...await listTemplates('locales'),
       ...await listTemplates('src'),
       ...await listTemplates('styles'),
@@ -133,8 +133,13 @@ module.exports = class extends Generator {
       // 'styles',
       'main.test.ts',
       'main.ts',
-      'phaser.ts',
-    ].forEach((path) => {
+      ...(usePhaser ? [
+        'phaser.ts',
+        ...await listTemplates('components/configuration-view'),
+        ...await listTemplates('components/game-view'),
+        ...await listTemplates('components/phaser-view'),
+      ] : []),
+    ].filter(Boolean).forEach((path) => {
       this.fs.copyTpl(
         this.templatePath(path),
         this.destinationPath(`${ rootSrcPath }${ appName }/${ path }`),

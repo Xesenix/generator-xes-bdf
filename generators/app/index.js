@@ -133,6 +133,7 @@ module.exports = class extends Generator {
   }
 
   async writing() {
+    const { promptValues: { usePhaser } } = this.config.getAll();
     this.log(`\n${ progressColor(`APP`) } Copying files...\n`);
 
     [
@@ -150,13 +151,13 @@ module.exports = class extends Generator {
       ...await listTemplates('src/lib/di'),
       ...await listTemplates('src/lib/fullscreen'),
       ...await listTemplates('src/lib/i18n'),
-      ...await listTemplates('src/lib/phaser'),
+      ...(usePhaser ? await listTemplates('src/lib/phaser') : []),
       ...await listTemplates('src/lib/renderer'),
       ...await listTemplates('src/lib/sound'),
       ...await listTemplates('src/lib/sound-scape'),
       ...await listTemplates('src/lib/sound-scape-debug'), // TODO: requires additional dependencies vis.js
       ...await listTemplates('src/lib/ui'),
-    ].forEach((path) => {
+    ].filter(Boolean).forEach((path) => {
       this.fs.copy(
         this.templatePath(path),
         this.destinationPath(path),

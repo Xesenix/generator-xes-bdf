@@ -1,4 +1,7 @@
 {
+  "exclude": [
+    "./ap/**/*"
+  ],
   "extends": [
     "tslint:recommended"
   ],

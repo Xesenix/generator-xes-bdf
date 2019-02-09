@@ -14,8 +14,8 @@ import { SoundModule } from 'lib/sound';
 import { SoundScapeModule } from 'lib/sound-scape';
 import { defaultUIState, IUIState, UIModule, uiReducer } from 'lib/ui';
 
-import OutletComponent from '../components/outlet/outlet';
-import { PhaserGameModule } from '../src/phaser/game.module';
+import OutletComponent from '../components/outlet/outlet';<% if (usePhaser) { %>
+import { PhaserGameModule } from '../src/phaser/game.module';<% } %>
 
 import App from './app';
 
@@ -66,10 +66,10 @@ export class AppModule extends Container implements IApplication {
 		SoundScapeModule.register(this);
 
 		// translations
-		I18nModule.register(this);
+		I18nModule.register(this);<% if (usePhaser) { %>
 
 		// phaser
-		this.load(PhaserGameModule());
+		this.load(PhaserGameModule());<% } %>
 
 		// data store
 		this.load(

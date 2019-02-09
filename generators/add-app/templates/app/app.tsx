@@ -17,19 +17,19 @@ import { connectToInjector } from 'lib/di';
 import { defaultUIState, IUIState } from 'lib/ui';
 
 import { styles } from './app.styles';
-import { appThemes } from './app.themes';
+import { appThemes } from './app.themes'; <% if (usePhaser) { %>
 
-import { IPhaserProvider } from '../src/phaser/game.module';
+import { IPhaserProvider } from '../src/phaser/game.module'; <% } %>
 
 const Loader = () => <div>...</div>;
-
-const GameView = Loadable({ loading: Loader, loader: () => import('../components/game-view/game-view') });
+<% if (usePhaser) { %>
+const GameView = Loadable({ loading: Loader, loader: () => import('../components/game-view/game-view') });<% } %>
 
 interface IAppProps {
 	di?: Container;
 	store?: Store<IUIState, any>;
-	__: (key: string) => string;
-	phaserProvider: IPhaserProvider;
+	__: (key: string) => string;<% if (usePhaser) { %>
+	phaserProvider: IPhaserProvider;<% } %>
 }
 
 const diDecorator = connectToInjector<IAppProps>({
@@ -38,15 +38,15 @@ const diDecorator = connectToInjector<IAppProps>({
 	},
 	__: {
 		dependencies: ['i18n:translate'],
-	},
+	},<% if (usePhaser) { %>
 	phaserProvider: {
 		dependencies: ['phaser:provider'],
-	},
+	},<% } %>
 });
 
 interface IAppState {
-	ready: boolean;
-	phaserReady: boolean;
+	ready: boolean;<% if (usePhaser) { %>
+	phaserReady: boolean;<% } %>
 	loading: boolean;
 }
 
@@ -57,16 +57,16 @@ class App extends React.Component<IAppProps & WithStyles<typeof styles>, IAppSta
 		super(props);
 		this.state = {
 			...defaultUIState,
-			ready: false,
-			phaserReady: false,
+			ready: false,<% if (usePhaser) { %>
+			phaserReady: false,<% } %>
 			loading: false,
 		};
 	}
 
-	public componentDidMount(): void {
-		const { phaserProvider } = this.props;
+	public componentDidMount(): void {<% if (usePhaser) { %>
+		 const { phaserProvider } = this.props;
 		// optional preloading
-		phaserProvider().then(() => this.setState({ phaserReady: true }));
+		phaserProvider().then(() => this.setState({ phaserReady: true }));<% } %>
 		this.bindToStore();
 	}
 
@@ -82,27 +82,32 @@ class App extends React.Component<IAppProps & WithStyles<typeof styles>, IAppSta
 
 	public render() {
 		const { classes, __ } = this.props;
-		const { loading, ready, phaserReady, theme = 'light' } = this.state;
+		const {
+			loading,
+			ready,<% if (usePhaser) { %>
+			phaserReady,<% } %>
+			theme = 'light',
+		} = this.state;<% if (usePhaser) { %>;
 
 		const gameView = ready ? (
 			<GameView />
 		) : phaserReady ? (
-			<Button color="primary" variant="contained" onClick={this.start}>
+			<Button color="primary" variant="contained" onClick={ this.start }>
 				{__('Start')}
 			</Button>
 		) : (
-			<Typography component="p">{`${__('loading')}: PHASER`}</Typography>
-		);
+			<Typography component="p">{ `${__('loading')}: PHASER` }</Typography>
+		);<% } %>;
 
 		return (
-			<MuiThemeProvider theme={appThemes[theme]}>
+			<MuiThemeProvider theme={ appThemes[theme] }>
 				<CssBaseline />
-				<Paper className={classes.root} elevation={1}>
-					{loading ? <LinearProgress /> : null}
-					<Typography className={classes.headline} variant="headline" component="h1">
-						{__('<%= appTitle %>')}
-					</Typography>
-					{gameView}
+				<Paper className={ classes.root } elevation={ 1 }>
+					{ loading ? <LinearProgress /> : null }
+					<Typography className={ classes.headline } variant="headline" component="h1">
+						{ __('<%= appTitle %>') }
+					</Typography><% if (usePhaser) { %>
+					{ gameView } <% } %>
 				</Paper>
 			</MuiThemeProvider>
 		);
@@ -112,7 +117,7 @@ class App extends React.Component<IAppProps & WithStyles<typeof styles>, IAppSta
 		this.setState({ loading: true });
 		// TODO: wrong type definition for preload
 		(GameView.preload() as any).then(() => this.setState({ ready: true, loading: false }));
-	}
+	};
 
 	private bindToStore(): void {
 		const { store } = this.props;
