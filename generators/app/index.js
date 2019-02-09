@@ -151,7 +151,7 @@ module.exports = class extends Generator {
       ...await listTemplates('src/lib/di'),
       ...await listTemplates('src/lib/fullscreen'),
       ...await listTemplates('src/lib/i18n'),
-      ...(usePhaser ? await listTemplates('src/lib/phaser') : []),
+      ...(usePhaser === 'yes' ? await listTemplates('src/lib/phaser') : []),
       ...await listTemplates('src/lib/renderer'),
       ...await listTemplates('src/lib/sound'),
       ...await listTemplates('src/lib/sound-scape'),
@@ -166,7 +166,7 @@ module.exports = class extends Generator {
   }
 
   install() {
-    const { promptValues: { npmInstall } } = this.config.getAll();
+    const { promptValues: { npmInstall, usePhaser } } = this.config.getAll();
 
     if (npmInstall !== 'yes') {
       this.log(`\n${ progressColor(`APP`) } Skiping npm ${ scriptColor('npm -D install') }...\n`);
@@ -205,7 +205,7 @@ module.exports = class extends Generator {
       'redux-thunk',
       'redux-logger',
       'reflect-metadata',
-      'phaser',
+      ...(usePhaser === 'yes' ? ['phaser'] : []),
       'eventemitter3', // fast event emitter
     ]);
   }

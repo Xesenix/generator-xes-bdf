@@ -133,7 +133,7 @@ module.exports = class extends Generator {
       // 'styles',
       'main.test.ts',
       'main.ts',
-      ...(usePhaser ? [
+      ...(usePhaser === 'yes' ? [
         'phaser.ts',
         ...await listTemplates('components/configuration-view'),
         ...await listTemplates('components/game-view'),
@@ -162,7 +162,7 @@ module.exports = class extends Generator {
       {
         author,
         appName,
-        usePhaser,
+        usePhaser: usePhaser === 'yes',
         appTitle,
         appUrl,
         appDescription,
