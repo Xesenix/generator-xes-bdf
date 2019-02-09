@@ -14,7 +14,7 @@ export const DIContext = React.createContext<Container | null>(null);
  * @param Consumer component into which we want to inject dependency injection container
  * @returns component with injected DI container property under `di` property
  */
-export function connectToDI<T>(Consumer) {
+export function connectToDI<T extends { di?: Container }>(Consumer: React.ComponentType<T>) {
 	class DIConsumer extends React.Component<T, {}> {
 		public render() {
 			return <DIContext.Consumer>{(container: Container | null) => <Consumer {...this.props} di={container} />}</DIContext.Consumer>;
@@ -33,13 +33,13 @@ export function connectToDI<T>(Consumer) {
  * @param select map dependencies from container to properties names injected into decorated component properties
  * @returns component with injected values from DI container
  */
-export function connectToInjector<T>(
+export function connectToInjector<T extends { di?: Container }>(
 	// prettier-ignore
 	select: { [name: string]: { dependencies: string[], value?: (...dependencies: any[]) => Promise<any> } },
-	Preloader: React.ReactNode = () => <>{`loading...`}</>,
+	Preloader: React.FunctionComponent = () => <>loading...</>,
 ) {
-	return (Consumer: React.Component) => {
-		class DIInjector extends React.Component<T & { di: Container }, {}> {
+	return (Consumer: React.ComponentType<T>) => {
+		class DIInjector extends React.Component<T> {
 			public componentDidMount() {
 				const { di } = this.props;
 
@@ -47,7 +47,12 @@ export function connectToInjector<T>(
 					const keys = Object.keys(select);
 					const configs = Object.values(select);
 
-					Promise.all(configs.map(({ value = (dep: any) => Promise.resolve(dep), dependencies }) => value.apply({}, dependencies.map((key) => di.get<any>(key))))).then(
+					Promise.all(
+						configs.map(
+							({ value = (dep: any) => Promise.resolve(dep), dependencies }) =>
+								value.apply({}, dependencies.map((key) => di.get<any>(key))),
+						),
+					).then(
 						(values: any[]) => {
 							const state = values.reduce((result, value, index) => {
 								result[keys[index]] = value;

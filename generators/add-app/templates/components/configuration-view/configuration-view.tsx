@@ -1,4 +1,5 @@
 import { withStyles, WithStyles } from '@material-ui/core/styles';
+import { Container } from 'inversify';
 import * as React from 'react';
 import { hot } from 'react-hot-loader';
 import { Store } from 'redux';
@@ -29,6 +30,7 @@ import { defaultUIState, IUIActions, IUIState } from 'lib/ui';
 import { styles } from './configuration-view.styles';
 
 export interface IConfigurationProps {
+	di?: Container;
 	store?: Store<IUIState & II18nState>;
 	dispatchSetCurrentLanguageAction: () => void;
 	dispatchSetEffectsMutedAction: () => void;
@@ -130,7 +132,11 @@ export class ConfigurationViewComponent extends React.Component<IConfigurationPr
 					</Grid>
 					<Grid item xs={12} container>
 						<Grid item xs={12} md={3}>
-							<FormControlLabel className={classes.margin} label={__('master volume')} control={<span className={classes.icon}>{mute ? <MuteOffIcon /> : <MuteOnIcon />}</span>} />
+							<FormControlLabel
+								className={classes.margin}
+								label={__('master volume')}
+								control={<span className={classes.icon}>{mute ? <MuteOffIcon /> : <MuteOnIcon />}</span>}
+							/>
 						</Grid>
 						<Grid item xs={12} md={9} className={classes.scroll}>
 							<Slider min={0} max={1} step={1 / 32} value={volume} onChange={dispatchSetVolumeAction} />
@@ -157,7 +163,13 @@ export class ConfigurationViewComponent extends React.Component<IConfigurationPr
 							/>
 						</Grid>
 						<Grid item xs={12} md={9} className={classes.scroll}>
-							<Slider min={0} max={1} step={1 / 32} value={effectsVolume} onChange={dispatchSetEffectsVolumeAction} />
+							<Slider
+								min={0}
+								max={1}
+								step={1 / 32}
+								value={effectsVolume}
+								onChange={dispatchSetEffectsVolumeAction}
+							/>
 						</Grid>
 					</Grid>
 				</Grid>
