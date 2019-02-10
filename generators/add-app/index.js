@@ -146,7 +146,7 @@ module.exports = class extends Generator {
         {
           author,
           appName,
-          usePhaser,
+          usePhaser: usePhaser === 'yes',
           appTitle,
           appUrl,
           appDescription,
