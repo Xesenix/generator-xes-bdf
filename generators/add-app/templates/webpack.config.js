@@ -9,7 +9,7 @@ const { webpack } = require('xes-webpack-core');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = (config) => {
-	console.log(chalk.bold.yellow('Setting WEBPACK for <%= appName %>...'));
+	console.log(chalk.bold.yellow('Setting WEBPACK for <%= appName %>...'));<% if (usePhaser) { %>
 	config.module.rules.push(...webpack.loaders.shaderRulesFactory());
 
 	console.log(chalk.bold.yellow('Adding Phaser 3 environment setup...'));
@@ -17,12 +17,7 @@ module.exports = (config) => {
 		// required by Phaser 3
 		'CANVAS_RENDERER': JSON.stringify(true),
 		'WEBGL_RENDERER': JSON.stringify(true),
-	}));
-
-	/*config.externals = {
-		...config.externals,
-		moment: 'moment',
-	};*/
+	}));<% } %>
 
 	// config.devServer.disableHostCheck = true;
 
