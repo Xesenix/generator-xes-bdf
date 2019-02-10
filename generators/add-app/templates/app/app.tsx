@@ -44,10 +44,10 @@ const diDecorator = connectToInjector<IAppProps>({
 	},<% } %>
 });
 
-interface IAppState {
-	ready: boolean;<% if (usePhaser) { %>
-	phaserReady: boolean;<% } %>
-	loading: boolean;
+interface IAppState {<% if (usePhaser) { %>
+	ready: boolean;
+	phaserReady: boolean;
+	loading: boolean;<% } %>
 }
 
 class App extends React.Component<IAppProps & WithStyles<typeof styles>, IAppState & IUIState> {
@@ -82,9 +82,9 @@ class App extends React.Component<IAppProps & WithStyles<typeof styles>, IAppSta
 
 	public render() {
 		const { classes, __ } = this.props;
-		const {
+		const {<% if (usePhaser) { %>
 			loading,
-			ready,<% if (usePhaser) { %>
+			ready,
 			phaserReady,<% } %>
 			theme = 'light',
 		} = this.state;<% if (usePhaser) { %>;
@@ -102,22 +102,22 @@ class App extends React.Component<IAppProps & WithStyles<typeof styles>, IAppSta
 		return (
 			<MuiThemeProvider theme={ appThemes[theme] }>
 				<CssBaseline />
-				<Paper className={ classes.root } elevation={ 1 }>
-					{ loading ? <LinearProgress /> : null }
+				<Paper className={ classes.root } elevation={ 1 }><% if (usePhaser) { %>
+					{ loading ? <LinearProgress /> : null }<% } %>
 					<Typography className={ classes.headline } variant="headline" component="h1">
 						{ __('<%= appTitle %>') }
 					</Typography><% if (usePhaser) { %>
-					{ gameView } <% } %>
+					{ gameView }<% } %>
 				</Paper>
 			</MuiThemeProvider>
 		);
-	}
+	}<% if (usePhaser) { %>
 
 	private start = () => {
 		this.setState({ loading: true });
 		// TODO: wrong type definition for preload
 		(GameView.preload() as any).then(() => this.setState({ ready: true, loading: false }));
-	};
+	}<% } %>
 
 	private bindToStore(): void {
 		const { store } = this.props;
