@@ -125,6 +125,7 @@ module.exports = class extends Generator {
         'test': 'cross-env BABEL_ENV=test ENV=test karma start --single-run',
         'start': 'http-server ./dist',
         'serve': 'cross-env ENV=development HMR=true webpack-dev-server --config webpack.config.js',
+        "expose": "ngrok http --host-header=rewrite 8080",
         'build:dev': 'cross-env ENV=development parallel-webpack --config webpack.config.js',
         'build:prod': 'cross-env ENV=production webpack --config webpack.config.js',
         'xi18n': 'ts-node ./scripts/extract.ts',
@@ -138,6 +139,7 @@ module.exports = class extends Generator {
 
     [
       '.babelrc',
+      '.env.default',
       '.env.example',
       'karma.conf.js',
       'tsconfig.json',
@@ -149,14 +151,16 @@ module.exports = class extends Generator {
       // TODO: need to move those to separate repositories
       ...await listTemplates('src/lib/data-store'),
       ...await listTemplates('src/lib/di'),
+      ...await listTemplates('src/lib/debug'),
       ...await listTemplates('src/lib/fullscreen'),
       ...await listTemplates('src/lib/i18n'),
       ...(usePhaser === 'yes' ? await listTemplates('src/lib/phaser') : []),
-      ...await listTemplates('src/lib/renderer'),
+      ...await listTemplates('src/lib/service-worker'),
       ...await listTemplates('src/lib/sound'),
       ...await listTemplates('src/lib/sound-scape'),
-      ...await listTemplates('src/lib/sound-scape-debug'), // TODO: requires additional dependencies vis.js
+      // ...await listTemplates('src/lib/sound-scape-debug'), // TODO: requires additional dependencies vis.js
       ...await listTemplates('src/lib/ui'),
+      ...await listTemplates('src/lib/utils'),
     ].filter(Boolean).forEach((path) => {
       this.fs.copy(
         this.templatePath(path),
@@ -183,6 +187,10 @@ module.exports = class extends Generator {
       // locales?
       'node-gettext',
       'po-gettext-loader',
+      'compression-webpack-plugin',
+      'ngrock-webpack-plugin',
+      'webpack-pwa-manifest',
+      'workbox-webpack-plugin',
     ], { saveDev: true });
 
     this.log(`\n${ progressColor(`APP`) } Running ${ scriptColor('npm install') }...\n`);
@@ -207,6 +215,20 @@ module.exports = class extends Generator {
       'reflect-metadata',
       ...(usePhaser === 'yes' ? ['phaser'] : []),
       'eventemitter3', // fast event emitter
+      'html-decoder',
+      'immer',
+      'redux-localstorage-simple',
+      'react',
+      'react-dom',
+      'react-hot-loader',
+      'react-loadable',
+      'react-router',
+      'react-router-dom',
+      'hoist-non-react-statics',
+      '@hot-loader/react-dom',
+      'webpack@4.28', // @see https://github.com/webpack/webpack/issues/8656
+      'core-js@2', // @see https://github.com/babel/babel/issues/9449
+      'polished',
     ]);
   }
 };

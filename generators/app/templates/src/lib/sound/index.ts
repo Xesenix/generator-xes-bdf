@@ -3,8 +3,4 @@ export * from './audio-loader.provider';
 export * from './audio-loader.service';
 export * from './audio-mixer';
 export * from './interfaces';
-export * from './phaser/phaser-audio-manager.plugin';
-export * from './phaser/phaser-audio-manager-plugin.provider';
-export * from './phaser/phaser-audio-loader.service';
-export * from './phaser/phaser-audio-loader.provider';
 export * from './sound.module';

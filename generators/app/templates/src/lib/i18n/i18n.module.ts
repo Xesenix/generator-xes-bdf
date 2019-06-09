@@ -1,7 +1,10 @@
+import { Reducer } from 'redux';
+
 import {
 	// prettier-ignore
 	IApplication,
 	ICreateSetAction,
+	LanguageType,
 } from 'lib/interfaces';
 
 import {
@@ -9,43 +12,32 @@ import {
 	createLanguageReadyAction,
 	createSetCurrentLanguageAction,
 	ICreateSetLanguageReadyAction,
-	LanguageType,
 } from './actions';
-import { __ } from './i18n';
+import { _$, __ } from './i18n';
+import { I18nBootProvider } from './i18n-boot.provider';
 import {
 	// prettier-ignore
-	I18nActionsProvider,
-	II18nActionsProvider,
-} from './i18n-actions.provider';
-import {
-	// prettier-ignore
-	I18nProvider,
-	II18nProvider,
-} from './i18n.provider';
+	II18nPluralTranslation,
+	II18nTranslation,
+} from './i18n.interfaces';
+import { reducer } from './reducers/index';
 
 export class I18nModule {
 	public static register(app: IApplication) {
-		app.bind<I18nModule>('i18n:module').toConstantValue(new I18nModule(app));
-		app.bind<II18nProvider>('i18n:provider').toProvider(I18nProvider);
-		app.bind<(key: string) => string>('i18n:translate').toConstantValue(__);
 
-		app.bind<II18nActionsProvider>('i18n:actions:provider').toProvider(I18nActionsProvider);
+		// define logic needed to bootstrap module
+		app.bind('boot').toProvider(I18nBootProvider);
+
+		app.bind<II18nTranslation>('i18n:translate').toConstantValue(__);
+		app.bind<II18nPluralTranslation>('i18n:translate_plural').toConstantValue(_$);
 
 		app.bind<ICreateSetAction<LanguageType>>('data-store:action:create:set-current-language').toConstantValue(createSetCurrentLanguageAction);
 		app.bind<ICreateSetLanguageReadyAction>('data-store:action:create:set-language-ready').toConstantValue(createLanguageReadyAction);
-	}
 
-	constructor(
-		// prettier-ignore
-		private app: IApplication,
-	) {}
+		// add data store keys that should be persisted between page refresh
+		app.bind<string>('data-store:persist:state').toConstantValue('language');
 
-	public boot = () => {
-		// TODO: consider creating provider for whole module
-		return Promise.all([
-			this.app
-				.get<II18nProvider>('i18n:provider')()
-				.then(this.app.get<II18nActionsProvider>('i18n:actions:provider')),
-		]);
+		// add reducer from this module
+		app.bind<Reducer<any, any>>('data-store:reducers').toConstantValue(reducer);
 	}
 }

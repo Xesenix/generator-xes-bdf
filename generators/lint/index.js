@@ -82,10 +82,10 @@ module.exports = class extends Generator {
     this.log(`\n${ progressColor(`LINT`) } Adding ${ scriptColor('lint:*') } scripts...\n`);
     this.fs.extendJSON(this.destinationPath('package.json'), {
       scripts: {
-        'lint': 'tslint -p ./',
-        'lint:fix': 'npm run prettier && tslint -p ./ --fix',
-        'lint:ec:fix': 'eclint fix',
-        'prettier': 'prettier --write \"**/*.{js,jsx,ts,tsx}\"',
+        "lint": "tslint -p ./",
+        "lint:fix": "npm run prettier && tslint -p ./ --fix",
+        "prettier": "prettier --write \"**/*.{js,jsx,ts,tsx}\"",
+        "pre-commit": "lint:fix",
       },
     });
 
@@ -110,7 +110,6 @@ module.exports = class extends Generator {
     // linter for fixing code according to .editorconfig setup
     this.npmInstall([
       'tslint',
-      'eclint',
       'eslint',
       'prettier',
       'tslint-react',

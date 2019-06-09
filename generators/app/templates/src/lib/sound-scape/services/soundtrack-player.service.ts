@@ -1,6 +1,5 @@
-import { EventEmitter } from 'events';
-
 import { inject } from 'lib/di';
+import { IEventEmitter } from 'lib/interfaces';
 import { IAudioTrack } from 'lib/sound';
 
 import { IScheduledSoundtrack, ISoundtrack } from '../interfaces';
@@ -13,7 +12,7 @@ export class SoundtrackPlayer {
 		// prettier-ignore
 		private music: IAudioTrack,
 		private context: Pick<AudioContext, 'currentTime'>,
-		private eventsManager: EventEmitter,
+		private eventsManager: IEventEmitter,
 	) {
 		this.music = music;
 		this.context = context;

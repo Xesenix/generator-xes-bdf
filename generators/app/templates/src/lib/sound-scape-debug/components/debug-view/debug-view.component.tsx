@@ -1,8 +1,6 @@
+import { Container } from 'inversify';
 import * as React from 'react';
 import { hot } from 'react-hot-loader';
-
-import { EventEmitter } from 'events';
-import { Container } from 'inversify';
 import { interval, Observable, Subscription } from 'rxjs';
 import { animationFrame } from 'rxjs/internal/scheduler/animationFrame';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
@@ -13,62 +11,65 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 
 import { connectToInjector } from 'lib/di';
+import { IEventEmitter } from 'lib/interfaces';
 import { IScheduledSoundtrack, ISoundtrackPlayer } from 'lib/sound-scape/interfaces';
 
-const styles = (theme: Theme) => createStyles({
-	root: {
-		display: 'block',
-		padding: '24px',
-		marginBottom: '0',
-	},
-	timeline: {
-		// fix viz element overlapping outside elements
-		'position': 'relative',
-		'z-index': 0,
-		// sync theme
-		'& *': {
-			fontFamily: theme.typography.fontFamily,
-			borderColor: theme.palette.grey['100'],
+const styles = (theme: Theme) =>
+	createStyles({
+		root: {
+			display: 'block',
+			padding: '24px',
+			marginBottom: '0',
 		},
-		'& .vis-labelset .vis-label, & .vis-time-axis .vis-text': {
-			fontFamily: theme.typography.fontFamily,
-			color: theme.palette.text.primary,
-		},
-		'& .vis-grid.vis-vertical.vis-minor, .vis-grid.vis-vertical.vis-major, & .vis-time-axis.vis-foreground': {
-			borderColor: theme.palette.grey[theme.palette.type === 'dark' ? '800' : '300'],
-			backgroundColor: theme.palette.grey[theme.palette.type === 'dark' ? '900' : '100'],
-		},
-		'& .vis-item': {
-			'backgroundColor': theme.palette.primary.light,
-			'color': theme.palette.primary.contrastText,
-			'borderColor': theme.palette.grey[theme.palette.type === 'dark' ? '800' : '300'],
-			'&.vis-old': {
-				backgroundColor: theme.palette.secondary.light,
-				color: theme.palette.secondary.contrastText,
+		timeline: {
+			// fix viz element overlapping outside elements
+			position: 'relative',
+			'z-index': 0,
+			// sync theme
+			'& *': {
+				fontFamily: theme.typography.fontFamily,
+				borderColor: theme.palette.grey['100'],
 			},
-			'&.vis-selected': {
-				backgroundColor: theme.palette.primary.dark,
+			'& .vis-labelset .vis-label, & .vis-time-axis .vis-text': {
+				fontFamily: theme.typography.fontFamily,
+				color: theme.palette.text.primary,
+			},
+			'& .vis-grid.vis-vertical.vis-minor, .vis-grid.vis-vertical.vis-major, & .vis-time-axis.vis-foreground': {
+				borderColor: theme.palette.grey[theme.palette.type === 'dark' ? '800' : '300'],
+				backgroundColor: theme.palette.grey[theme.palette.type === 'dark' ? '900' : '100'],
+			},
+			'& .vis-item': {
+				backgroundColor: theme.palette.primary.light,
 				color: theme.palette.primary.contrastText,
-				borderColor: theme.palette.grey[theme.palette.type === 'dark' ? '300' : '800'],
+				borderColor: theme.palette.grey[theme.palette.type === 'dark' ? '800' : '300'],
+				'&.vis-old': {
+					backgroundColor: theme.palette.secondary.light,
+					color: theme.palette.secondary.contrastText,
+				},
+				'&.vis-selected': {
+					backgroundColor: theme.palette.primary.dark,
+					color: theme.palette.primary.contrastText,
+					borderColor: theme.palette.grey[theme.palette.type === 'dark' ? '300' : '800'],
+				},
+				'& .vis-small': {
+					fontSize: '0.75em',
+				},
 			},
-			'& .vis-small': {
-				fontSize: '0.75em',
+			'& .vis-custom-time.now': {
+				backgroundColor: theme.palette.secondary.light,
+				'z-index': 2,
+				width: '8px',
+				opacity: 0.5,
 			},
 		},
-		'& .vis-custom-time.now': {
-			'backgroundColor': theme.palette.secondary.light,
-			'z-index': 2,
-			'width': '8px',
-			'opacity': 0.5,
-		},
-	},
-});
+	});
 
-export interface ISoundScapeDebugViewProps {
+export interface ISoundScapeDebugViewExternalProps {
 	audioContext?: AudioContext;
 	soundtrackPlayer?: ISoundtrackPlayer;
-	eventsManager?: EventEmitter;
+	eventsManager?: IEventEmitter;
 	di?: Container;
+	console: Console;
 }
 
 export interface ISoundScapeDebugViewState {
@@ -77,15 +78,17 @@ export interface ISoundScapeDebugViewState {
 	currentAudioTime: number;
 }
 
+type ISoundScapeDebugViewProps = ISoundScapeDebugViewExternalProps & WithStyles<typeof styles>;
+
 /**
  * TODO: create own repository for debug component with peer dependency on vis
  */
-class SoundScapeDebugViewComponent extends React.PureComponent<ISoundScapeDebugViewProps & WithStyles<typeof styles>, ISoundScapeDebugViewState> {
+class SoundScapeDebugViewComponent extends React.PureComponent<ISoundScapeDebugViewProps, ISoundScapeDebugViewState> {
 	private subscription: Subscription = new Subscription();
 
 	constructor(
 		// prettier-ignore
-		props: ISoundScapeDebugViewProps & WithStyles<typeof styles>,
+		props: ISoundScapeDebugViewProps,
 	) {
 		super(props);
 
@@ -99,21 +102,26 @@ class SoundScapeDebugViewComponent extends React.PureComponent<ISoundScapeDebugV
 		console.log('SoundScapeDebugViewComponent:componentDidMount', eventsManager);
 
 		if (eventsManager) {
-			this.subscription.add(Observable.create((observer) => {
-				eventsManager.on('soundtrack:schedule-changed', observer.next.bind(observer));
-			}).pipe(
-				debounceTime(100),
-			).subscribe(this.updateTimeline));
+			this.subscription.add(
+				Observable.create((observer) => {
+					eventsManager.on('soundtrack:schedule-changed', observer.next.bind(observer));
+				})
+					.pipe(debounceTime(100))
+					.subscribe(this.updateTimeline),
+			);
 		}
 
 		if (audioContext) {
-			this.subscription.add(interval(250, animationFrame).pipe(
+			this.subscription.add(
+				interval(250, animationFrame).pipe(
+					// prettier-ignore
 					map(() => Math.floor(audioContext.currentTime * 4) * 0.25),
 					distinctUntilChanged(),
 					map((currentAudioTime) => ({
 						currentAudioTime,
 					})),
-				).subscribe(this.setState.bind(this)));
+				).subscribe(this.setState.bind(this)),
+			);
 		}
 	}
 
@@ -124,82 +132,88 @@ class SoundScapeDebugViewComponent extends React.PureComponent<ISoundScapeDebugV
 
 		if (viewContainer && !tl) {
 			console.log('SoundScapeDebugViewComponent:componentDidUpdate', viewContainer, tl);
+
 			Promise.all([
-				// import('vis/lib/network/Network'),
+				// prettier-ignore
 				import('vis/lib/timeline/Timeline'),
 				import('vis/lib/DataSet'),
 				import('moment'),
 				import('vis/dist/vis.min.css'),
-			]).then(([
-				// { default: Network },
-				{ default: Timeline },
-				{ default: DataSet },
-				{ default: moment },
-			]) => {
-				const { timeline: timelineIsInitialized } = this.state;
-				console.log('SoundScapeDebugViewComponent:componentDidUpdate:then', Timeline, DataSet);
-				if (!timelineIsInitialized) {
-					const nodes = new DataSet([]);
-					const groups = [
-						{ id: 'loop', content: 'loop' },
-						{ id: 'intro', content: 'intro' },
-						{ id: 'outro', content: 'outro' },
-						{ id: 'endless', content: 'endless' },
-					];
-					const options = {
-						minHeight: '240px',
-						maxHeight: '480px',
-						min: 0,
-						showMajorLabels: true,
-						stack: true,
-						showCurrentTime: false,
-						moment,
-						format: {
-							minorLabels: {
-								millisecond: 'SSS[ms]',
-								second: 's[sek]',
-								minute: 'm[min]',
-								hour: 'H[h]',
-								weekday: 'd[days]',
-								day: 'd[days]',
-								week: 'w[weeks]',
-								month: 'M[months]',
-								year: '',
+			]).then(
+				([
+					// prettier-ignore
+					// { default: Network },
+					{ default: Timeline },
+					{ default: DataSet },
+					{ default: moment },
+				]) => {
+					const { timeline: timelineIsInitialized } = this.state;
+					console.log('SoundScapeDebugViewComponent:componentDidUpdate:then', Timeline, DataSet);
+					if (!timelineIsInitialized) {
+						const nodes = new DataSet([]);
+						const groups = [
+							// prettier-ignore
+							{ id: 'loop', content: 'loop' },
+							{ id: 'intro', content: 'intro' },
+							{ id: 'outro', content: 'outro' },
+							{ id: 'endless', content: 'endless' },
+						];
+						const options = {
+							minHeight: '240px',
+							maxHeight: '480px',
+							min: 0,
+							showMajorLabels: true,
+							stack: true,
+							showCurrentTime: false,
+							moment,
+							format: {
+								minorLabels: {
+									millisecond: 'SSS[ms]',
+									second: 's[sek]',
+									minute: 'm[min]',
+									hour: 'H[h]',
+									weekday: 'd[days]',
+									day: 'd[days]',
+									week: 'w[weeks]',
+									month: 'M[months]',
+									year: '',
+								},
+								majorLabels: {
+									millisecond: 's[sek]',
+									second: 'm[min]',
+									minute: 'H[h]',
+									hour: 'd[days]',
+									weekday: 'w[weeks]',
+									day: 'w[weeks]',
+									week: 'MM',
+									month: '',
+									year: '',
+								},
 							},
-							majorLabels: {
-								millisecond: 's[sek]',
-								second: 'm[min]',
-								minute: 'H[h]',
-								hour: 'd[days]',
-								weekday: 'w[weeks]',
-								day: 'w[weeks]',
-								week: 'MM',
-								month: '',
-								year: '',
-							},
-						},
-					};
-					const timeline = new Timeline(viewContainer, nodes, groups, options);
-					timeline.currentTime.stop();
-					timeline.range.setRange(0, 60000); // fix
-					timeline.addCustomTime(0, 'now');
-					timeline.on('rangechange', () => {
-						const { currentAudioTime } = this.state;
-						timeline.setCustomTime(currentAudioTime * 1000, 'now');
-					});
-					// this.updateTimeline();
-					if (this.props.di) {
-						if (this.props.di.isBound('sound-scape:debug-view:items')) {
-							timeline.setItems(this.props.di.get('sound-scape:debug-view:items'));
-						} else {
-							this.props.di.bind('sound-scape:debug-view:items').toConstantValue([]);
+						};
+						const timeline = new Timeline(viewContainer, nodes, groups, options);
+						timeline.currentTime.stop();
+						timeline.range.setRange(0, 60000); // fix
+						timeline.addCustomTime(0, 'now');
+						timeline.on('rangechange', () => {
+							const { currentAudioTime } = this.state;
+							timeline.setCustomTime(currentAudioTime * 1000, 'now');
+						});
+						// this.updateTimeline();
+						if (this.props.di) {
+							if (this.props.di.isBound('sound-scape:debug-view:items')) {
+								timeline.setItems(this.props.di.get('sound-scape:debug-view:items'));
+							} else {
+								this.props.di.bind('sound-scape:debug-view:items').toConstantValue([]);
+							}
 						}
+						this.setState({ timeline });
 					}
-					this.setState({ timeline });
-				}
-			}, (err) => {
-				console.log('SoundScapeDebugViewComponent:componentDidUpdate:error', err);
-			});
+				},
+				(err) => {
+					console.error('SoundScapeDebugViewComponent:componentDidUpdate:error', err);
+				},
+			);
 		}
 	}
 
@@ -216,21 +230,35 @@ class SoundScapeDebugViewComponent extends React.PureComponent<ISoundScapeDebugV
 			timeline.setCustomTime(currentAudioTime * 1000, 'now');
 		}
 
-		return <Paper className={ classes.root } elevation={ 2 }>
+		return (
+			<Paper className={classes.root} elevation={2}>
 				<Typography component="h3">DEBUG SOUND SCAPE</Typography>
-				<Typography component="p">Audio context time: { currentAudioTime }</Typography>
-				<div className={ classes.timeline } ref={ this.bindTimelineContainer }></div>
-			</Paper>;
+				<Typography component="p">Audio context time: {currentAudioTime}</Typography>
+				<div className={classes.timeline} ref={this.bindTimelineContainer} />
+			</Paper>
+		);
 	}
 
 	private updateTimeline = (): void => {
-		const { console, soundtrackPlayer, audioContext: { currentTime = 0 } } = this.props;
+		const {
+			// prettier-ignore
+			console,
+			soundtrackPlayer,
+			audioContext: { currentTime = 0 } = {},
+		} = this.props;
 		const { timeline, currentAudioTime } = this.state;
 		console.log('SoundScapeDebugViewComponent:componentDidMount:soundtrack:schedule-changed', { currentTime, soundtrackPlayer, timeline });
+
 		if (soundtrackPlayer && timeline) {
 			const schedule = soundtrackPlayer.getSchedule();
 			const newItems = schedule.map((block: IScheduledSoundtrack, id: number) => {
-				const { soundtrack: { name }, state, start, end = 'inf' } = block;
+				const {
+					// prettier-ignore
+					soundtrack: { name },
+					state,
+					start,
+					end = 'inf',
+				} = block;
 				return {
 					id: `${start.toFixed(4)}-${end && isNumber(end) ? end.toFixed(4) : end}-${name}-${state}`,
 					group: state,
@@ -245,8 +273,9 @@ class SoundScapeDebugViewComponent extends React.PureComponent<ISoundScapeDebugV
 					},
 				};
 			});
-			const items = timeline.itemsData.get()
-				.filter((item) => item.data && newItems.every((data) => data.id !== item.id) && item.data.end && item.data.end < currentAudioTime + 0.5 )
+			const items = timeline.itemsData
+				.get()
+				.filter((item) => item.data && newItems.every((data) => data.id !== item.id) && item.data.end && item.data.end < currentAudioTime + 0.5)
 				.map((item) => {
 					const end = Math.min(item.data.end, currentAudioTime);
 					return {
@@ -261,7 +290,9 @@ class SoundScapeDebugViewComponent extends React.PureComponent<ISoundScapeDebugV
 					};
 				})
 				.concat(newItems);
+
 			console.log('SoundScapeDebugViewComponent:componentDidMount:soundtrack:schedule-changed', currentAudioTime, newItems, items);
+
 			timeline.setCustomTime(currentAudioTime * 1000, 'now');
 			timeline.setItems(items);
 			this.setState({});
@@ -272,24 +303,28 @@ class SoundScapeDebugViewComponent extends React.PureComponent<ISoundScapeDebugV
 		}
 	}
 
-	private bindTimelineContainer = (viewContainer: HTMLDivElement): void => { this.setState({ viewContainer }); };
+	private bindTimelineContainer = (viewContainer: HTMLDivElement): void => {
+		this.setState({ viewContainer });
+	}
 }
 
-export default hot(module)(connectToInjector<ISoundScapeDebugViewProps>({
-	'sound-scape:soundtrack-player': {
-		name: 'soundtrackPlayer',
-		value: (soundtrackPlayer: ISoundtrackPlayer) => Promise.resolve(soundtrackPlayer),
-	},
-	'event-manager': {
-		name: 'eventsManager',
-		value: (eventsManager: EventEmitter) => Promise.resolve(eventsManager),
-	},
-	'audio-context': {
-		name: 'audioContext',
-		value: (audioContext: AudioContext) => Promise.resolve(audioContext),
-	},
-	'debug:console': {
-		name: 'console',
-		value: (console: Console) => Promise.resolve(console),
-	},
-})(withStyles(styles)(SoundScapeDebugViewComponent)));
+export default hot(module)(
+	connectToInjector<ISoundScapeDebugViewExternalProps>({
+		'sound-scape:soundtrack-player': {
+			dependencies: ['soundtrackPlayer'],
+			value: (soundtrackPlayer: ISoundtrackPlayer) => Promise.resolve(soundtrackPlayer),
+		},
+		'event-manager': {
+			dependencies: ['eventsManager'],
+			value: (eventsManager: IEventEmitter) => Promise.resolve(eventsManager),
+		},
+		'audio-context': {
+			dependencies: ['audioContext'],
+			value: (audioContext: AudioContext) => Promise.resolve(audioContext),
+		},
+		'debug:console:DEBUG_SOUND': {
+			dependencies: ['console'],
+			value: (console: Console) => Promise.resolve(console),
+		},
+	})(withStyles(styles)(SoundScapeDebugViewComponent)),
+);

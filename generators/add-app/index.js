@@ -63,10 +63,12 @@ module.exports = class extends Generator {
     this.fs.extendJSON(this.destinationPath('package.json'), {
       scripts: {
         [`${ appName }:analyze`]: `cross-env APP=${ appName } npm run analyze`,
+        [`${ appName }:check`]: `npm run lint && cross-env CHECK_TYPESCRIPT=true npm run ${ appName }:test`,
         [`${ appName }:tdd`]: `cross-env APP=${ appName } npm run tdd`,
         [`${ appName }:test`]: `cross-env APP=${ appName } npm run test`,
         [`${ appName }:start`]: `http-server ./dist/${ appName }`,
         [`${ appName }:serve`]: `cross-env APP=${ appName } npm run serve`,
+        [`${ appName }:serve:expose`]: `cross-env EXPOSE=ngrok npm run ${ appName }:serve`,
         [`${ appName }:build:dev`]: `cross-env APP=${ appName } npm run build:dev`,
         [`${ appName }:build:prod`]: `cross-env APP=${ appName } npm run build:prod`,
         [`${ appName }:xi18n`]: `cross-env APP=${ appName } ts-node ./scripts/extract.ts`,
@@ -85,6 +87,7 @@ module.exports = class extends Generator {
           'test': 'main.test.ts',
           'templateData': {
             title: appTitle,
+            themeColor: '#fff',
             author,
             description: appDescription,
             url: appUrl,
@@ -125,7 +128,14 @@ module.exports = class extends Generator {
     [
       ...await listTemplates('app'),
       ...await listTemplates('assets'),
-      ...await listTemplates('components/outlet'),
+      ...await listTemplates('components/core'),
+      ...await listTemplates('components/language'),
+      ...await listTemplates('components/layouts'),
+      ...await listTemplates('components/loader'),
+      ...await listTemplates('components/menu'),
+      ...await listTemplates('components/theme'),
+      ...await listTemplates('components/views'),
+      ...await listTemplates('data'),
       ...await listTemplates('locales'),
       ...await listTemplates('src'),
       ...await listTemplates('styles'),
@@ -135,8 +145,6 @@ module.exports = class extends Generator {
       'main.ts',
       ...(usePhaser === 'yes' ? [
         'phaser.ts',
-        ...await listTemplates('components/configuration-view'),
-        ...await listTemplates('components/game-view'),
         ...await listTemplates('components/phaser-view'),
       ] : []),
     ].filter(Boolean).forEach((path) => {

@@ -2,35 +2,31 @@ import { withStyles, WithStyles } from '@material-ui/core';
 import { Container } from 'inversify';
 import * as React from 'react';
 import { hot } from 'react-hot-loader';
-import { Store } from 'redux';
 
-import { connectToInjector } from 'lib/di';
-import { IUIState } from 'lib/ui';
-
-import { IPhaserGameProvider } from '../../src/phaser/game.provider';
+import { connectToDI } from 'lib/di';
+import { IPhaserGameProvider } from 'phaser/game.provider';
 
 import { styles } from './phaser-view.styles';
 
 let game: Phaser.Game | null;
 let gameContainer: HTMLDivElement | null;
 
-export interface IPhaserViewProps {
-	di?: Container;
-	store?: Store<IUIState>;
+/** Component public properties required to be provided by parent component. */
+export interface IPhaserViewExternalProps {
 	keepInstanceOnRemove: boolean;
 }
 
-const diDecorator = connectToInjector<IPhaserViewProps>({
-	store: {
-		dependencies: ['data-store'],
-	},
-});
+/** Internal component properties include properties injected via dependency injection. */
+interface IPhaserViewInternalProps {
+	di: Container | null;
+}
 
-export interface IPhaserViewState {}
+/** Internal component state. */
+interface IPhaserViewState {}
 
-class PhaserViewComponent extends React.PureComponent<IPhaserViewProps & WithStyles<typeof styles>, IPhaserViewState> {
-	private unsubscribe?: any;
+type IPhaserViewProps = IPhaserViewExternalProps & IPhaserViewInternalProps & WithStyles<typeof styles>;
 
+class PhaserViewComponent extends React.PureComponent<IPhaserViewProps, IPhaserViewState> {
 	constructor(props) {
 		super(props);
 		this.state = {};
@@ -39,45 +35,33 @@ class PhaserViewComponent extends React.PureComponent<IPhaserViewProps & WithSty
 	public componentDidMount(): void {
 		const { di } = this.props;
 
-		if (!!di && gameContainer) {
-			if (game && game.isBooted) {
-				gameContainer.appendChild(game.canvas);
-			} else {
-				di.bind<HTMLElement | null>('phaser:container').toDynamicValue(() => gameContainer);
-				di.get<IPhaserGameProvider>('phaser:game-provider')().then((result: Phaser.Game) => (game = result));
-			}
+		if (!!di && !!gameContainer) {
+			di.bind<HTMLElement | null>('phaser:container').toDynamicValue(() => gameContainer);
+			di.get<IPhaserGameProvider>('phaser:game-provider')().then((result: Phaser.Game) => {
+				game = result;
+			});
 		}
-
-		this.bindToStore();
-	}
-
-	public componentDidUpdate(): void {
-		this.bindToStore();
 	}
 
 	public componentWillUnmount(): void {
-		if (this.unsubscribe) {
-			this.unsubscribe();
+		const { di } = this.props;
+
+		if (!!gameContainer) {
+			if (!!game) {
+				gameContainer.removeChild(game.canvas);
+			}
+			gameContainer = null;
+		}
+
+		if (!!di) {
+			di.unbind('phaser:container');
 		}
 	}
 
 	public render(): any {
 		const { classes } = this.props;
 
-		return <div className={classes.root} ref={this.bindContainer} />;
-	}
-
-	private bindToStore(): void {
-		const { store } = this.props;
-
-		if (!this.unsubscribe && store) {
-			this.unsubscribe = store.subscribe(() => {
-				if (store) {
-					this.setState(store.getState());
-				}
-			});
-			this.setState(store.getState());
-		}
+		return (<div className={classes.root} ref={this.bindContainer} />);
 	}
 
 	private bindContainer = (el: HTMLDivElement): void => {
@@ -85,4 +69,4 @@ class PhaserViewComponent extends React.PureComponent<IPhaserViewProps & WithSty
 	}
 }
 
-export default hot(module)(diDecorator(withStyles(styles)(PhaserViewComponent)));
+export default hot(module)(withStyles(styles)(connectToDI(PhaserViewComponent)));

@@ -1,6 +1,4 @@
-import { IValueAction } from 'lib/interfaces';
-
-export type LanguageType = 'en' | 'pl';
+import { IValueAction, LanguageType } from 'lib/interfaces';
 
 export const SET_CURRENT_LANGUAGE = 'I18N_SET_CURRENT_LANGUAGE';
 
@@ -9,13 +7,17 @@ export const SET_CURRENT_LANGUAGE = 'I18N_SET_CURRENT_LANGUAGE';
  *
  * @param value selected locale
  */
-export const createSetCurrentLanguageAction = (value: LanguageType): IValueAction<LanguageType> => ({
+export const createSetCurrentLanguageAction = (
+	// prettier-ignore
+	value: LanguageType,
+): IValueAction<LanguageType> => ({
 	type: SET_CURRENT_LANGUAGE,
 	value,
 });
 
 export const SET_LANGUAGE_READY = 'I18N_SET_LANGUAGE_READY';
 export interface ISetLanguageReadyAction extends IValueAction<boolean> {
+	// prettier-ignore
 	locale: LanguageType;
 }
 
@@ -25,7 +27,11 @@ export interface ISetLanguageReadyAction extends IValueAction<boolean> {
  * @param locale loaded locale
  * @param value state
  */
-export type ICreateSetLanguageReadyAction = (locale: LanguageType, value: boolean) => ISetLanguageReadyAction;
+export type ICreateSetLanguageReadyAction = (
+	// prettier-ignore
+	locale: LanguageType,
+	value: boolean,
+) => ISetLanguageReadyAction;
 
 /**
  * Create action for marking load state of requested locale.
@@ -33,7 +39,11 @@ export type ICreateSetLanguageReadyAction = (locale: LanguageType, value: boolea
  * @param locale loaded locale
  * @param value state
  */
-export const createLanguageReadyAction: ICreateSetLanguageReadyAction = (locale: LanguageType, value: boolean): ISetLanguageReadyAction => ({
+export const createLanguageReadyAction: ICreateSetLanguageReadyAction = (
+	// prettier-ignore
+	locale: LanguageType,
+	value: boolean,
+): ISetLanguageReadyAction => ({
 	type: SET_LANGUAGE_READY,
 	locale,
 	value,

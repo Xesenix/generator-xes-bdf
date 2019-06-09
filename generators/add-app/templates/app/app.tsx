@@ -1,136 +1,96 @@
-import { MuiThemeProvider, withStyles, WithStyles } from '@material-ui/core/styles';
-
-import { Container } from 'inversify';
 import * as React from 'react';
 import { hot } from 'react-hot-loader';
 import Loadable from 'react-loadable';
-import { Store } from 'redux';
-
-// elements
-import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import LinearProgress from '@material-ui/core/LinearProgress';
-import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
+import { MemoryRouter, Route, Switch } from 'react-router-dom';
 
 import { connectToInjector } from 'lib/di';
-import { defaultUIState, IUIState } from 'lib/ui';
+import { II18nLanguagesState } from 'lib/i18n';
+import { LanguageType } from 'lib/interfaces';
+import { IAppTheme, ThemesNames } from 'theme';
 
-import { styles } from './app.styles';
-import { appThemes } from './app.themes'; <% if (usePhaser) { %>
+// elements
+import CssBaseline from '@material-ui/core/CssBaseline';
+import { MuiThemeProvider } from '@material-ui/core/styles';
 
-import { IPhaserProvider } from '../src/phaser/game.module'; <% } %>
+import FullscreenLayoutComponent from 'components/layouts/fullscreen-layout/fullscreen-layout';
+import PrimaryLayoutComponent from 'components/layouts/primary-layout/primary-layout';
+import Loader from 'components/loader/loader';
 
-const Loader = () => <div>...</div>;
-<% if (usePhaser) { %>
-const GameView = Loadable({ loading: Loader, loader: () => import('../components/game-view/game-view') });<% } %>
+const MenuComponent = Loadable({ loading: (props) => <Loader size={32} {...props}/>, loader: () => import(/* webpackChunkName: "menu" */ 'components/menu/menu') });
+const IntroView = Loadable({ loading: Loader, loader: () => import(/* webpackChunkName: "intro" */ 'components/views/intro-view/intro-view') });
+const GameView = Loadable({ loading: Loader, loader: () => import(/* webpackChunkName: "game" */ 'components/views/game-view/game-view') });
+const ConfigurationView = Loadable({ loading: Loader, loader: () => import(/* webpackChunkName: "config" */ 'components/views/configuration-view/configuration-view') });
 
-interface IAppProps {
-	di?: Container;
-	store?: Store<IUIState, any>;
-	__: (key: string) => string;<% if (usePhaser) { %>
-	phaserProvider: IPhaserProvider;<% } %>
+interface IAppProps {}
+
+interface IAppInternalProps {
+	bindToStore: (keys: (keyof IAppState)[]) => IAppState;
+	getTheme: () => IAppTheme;
 }
 
-const diDecorator = connectToInjector<IAppProps>({
-	store: {
-		dependencies: ['data-store'],
+interface IAppState {
+	/** required for interface updates after changing fullscreen state */
+	fullscreen: boolean;
+	/** required for interface updates after changing application language */
+	language: LanguageType;
+	/** required for interface updates after loading language */
+	languages: II18nLanguagesState;
+	/** required for interface updates after changing application theme */
+	theme: ThemesNames;
+}
+
+const diDecorator = connectToInjector<IAppProps, IAppInternalProps>({
+	bindToStore: {
+		dependencies: ['data-store:bind'],
 	},
-	__: {
-		dependencies: ['i18n:translate'],
-	},<% if (usePhaser) { %>
-	phaserProvider: {
-		dependencies: ['phaser:provider'],
-	},<% } %>
+	getTheme: {
+		dependencies: ['theme:get-theme()'],
+	},
 });
 
-interface IAppState {<% if (usePhaser) { %>
-	ready: boolean;
-	phaserReady: boolean;
-	loading: boolean;<% } %>
+type AppProps = IAppProps & IAppInternalProps;
+
+function App(props: AppProps) {
+	const { getTheme, bindToStore } = props;
+	const { fullscreen = false } = bindToStore([
+		// prettier-ignore
+		'fullscreen',
+		'theme',
+		'language',
+		'languages',
+	]);
+
+	const routing = (
+		<Switch>
+			<Route exact path="/" component={IntroView}/>
+			<Route path="/game" component={GameView}/>
+			<Route path="/config" component={ConfigurationView}/>
+		</Switch>
+	);
+
+	return (
+		<MuiThemeProvider theme={getTheme()}>
+			<CssBaseline />
+			<MemoryRouter>
+				{/* <React.StrictMode> */}
+				{fullscreen
+				? (
+					<FullscreenLayoutComponent
+						Menu={MenuComponent}
+						content={routing}
+					/>
+				)
+				: (
+					<PrimaryLayoutComponent
+						Menu={MenuComponent}
+						content={routing}
+						// loading={GameView.}
+					/>
+				)}
+				{/* </React.StrictMode> */}
+			</MemoryRouter>
+		</MuiThemeProvider>
+	);
 }
 
-class App extends React.Component<IAppProps & WithStyles<typeof styles>, IAppState & IUIState> {
-	private unsubscribe?: any;
-
-	constructor(props) {
-		super(props);
-		this.state = {
-			...defaultUIState,
-			ready: false,<% if (usePhaser) { %>
-			phaserReady: false,<% } %>
-			loading: false,
-		};
-	}
-
-	public componentDidMount(): void {<% if (usePhaser) { %>
-		 const { phaserProvider } = this.props;
-		// optional preloading
-		phaserProvider().then(() => this.setState({ phaserReady: true }));<% } %>
-		this.bindToStore();
-	}
-
-	public componentDidUpdate(): void {
-		this.bindToStore();
-	}
-
-	public componentWillUnmount(): void {
-		if (this.unsubscribe) {
-			this.unsubscribe();
-		}
-	}
-
-	public render() {
-		const { classes, __ } = this.props;
-		const {<% if (usePhaser) { %>
-			loading,
-			ready,
-			phaserReady,<% } %>
-			theme = 'light',
-		} = this.state;<% if (usePhaser) { %>;
-
-		const gameView = ready ? (
-			<GameView />
-		) : phaserReady ? (
-			<Button color="primary" variant="contained" onClick={ this.start }>
-				{__('Start')}
-			</Button>
-		) : (
-			<Typography component="p">{ `${__('loading')}: PHASER` }</Typography>
-		);<% } %>;
-
-		return (
-			<MuiThemeProvider theme={ appThemes[theme] }>
-				<CssBaseline />
-				<Paper className={ classes.root } elevation={ 1 }><% if (usePhaser) { %>
-					{ loading ? <LinearProgress /> : null }<% } %>
-					<Typography className={ classes.headline } variant="headline" component="h1">
-						{ __('<%= appTitle %>') }
-					</Typography><% if (usePhaser) { %>
-					{ gameView }<% } %>
-				</Paper>
-			</MuiThemeProvider>
-		);
-	}<% if (usePhaser) { %>
-
-	private start = () => {
-		this.setState({ loading: true });
-		// TODO: wrong type definition for preload
-		(GameView.preload() as any).then(() => this.setState({ ready: true, loading: false }));
-	}<% } %>
-
-	private bindToStore(): void {
-		const { store } = this.props;
-
-		if (!this.unsubscribe && store) {
-			this.unsubscribe = store.subscribe(() => {
-				if (store) {
-					this.setState(store.getState());
-				}
-			});
-			this.setState(store.getState());
-		}
-	}
-}
-
-export default hot(module)(diDecorator(withStyles(styles)(App)));
+export default hot(module)(diDecorator(App));

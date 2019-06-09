@@ -1,48 +1,25 @@
-import { Store } from 'redux';
+import { Reducer } from 'redux';
 
-import { IDataStoreProvider } from 'lib/data-store';
 import { IApplication, ICreateSetAction } from 'lib/interfaces';
 
-import { isFullScreen, onFullScreenChange, setFullscreen } from './fullscreen';
+import { createSetFullscreenAction } from './actions';
+import { FullscreenBootProvider } from './fullscreen-boot.provider';
+import { reducer } from './reducers';
 
 /**
  * Connect application fullscreen state with datastore.
  */
 export class FullScreenModule {
-	public static register(app: IApplication) {
-		app.bind<FullScreenModule>('fullscreen:module').toConstantValue(new FullScreenModule(app));
-	}
+	public static register(app: IApplication, root: HTMLElement): void {
+		// define logic needed to bootstrap module
+		app.bind('boot').toProvider(FullscreenBootProvider);
 
-	constructor(
-		// prettier-ignore
-		private app: IApplication,
-	) {}
+		// redux action creators
+		app.bind<ICreateSetAction<boolean>>('data-store:action:create:set-fullscreen').toConstantValue(createSetFullscreenAction);
 
-	public boot = () => {
-		return this.app
-			.get<IDataStoreProvider<any, any>>('data-store:provider')()
-			.then((store: Store) => {
-				const createSetFullscreenAction = this.app.get<ICreateSetAction<boolean>>('data-store:action:create:set-fullscreen');
+		app.bind<HTMLElement>('ui:fullscreen-root').toConstantValue(root);
 
-				// synchronize data store with fullscreen state
-				onFullScreenChange(() => {
-					const { fullscreen } = store.getState();
-					const currentFullScreenState: boolean = isFullScreen();
-
-					if (fullscreen !== currentFullScreenState) {
-						store.dispatch(createSetFullscreenAction(currentFullScreenState));
-					}
-				});
-
-				// synchronize fullscreen state with data store
-				store.subscribe(() => {
-					const { fullscreen } = store.getState();
-					const currentFullScreenState: boolean = isFullScreen();
-
-					if (fullscreen !== currentFullScreenState) {
-						setFullscreen(fullscreen);
-					}
-				});
-			});
+		// add reducer from this module
+		app.bind<Reducer<any, any>>('data-store:reducers').toConstantValue(reducer);
 	}
 }

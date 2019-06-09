@@ -10,7 +10,7 @@
 			"loose": true,
 			"useBuiltIns": "usage",
 			"modules": false,
-			"debug": true,
+			"debug": false,
 			"spec": false
 		}],
 		"@babel/preset-react",
@@ -33,7 +33,7 @@
 					},
 					"loose": true,
 					"modules": false,
-					"debug": true,
+					"debug": false,
 					"spec": false
 				}],
 				"@babel/preset-react",

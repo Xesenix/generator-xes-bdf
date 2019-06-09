@@ -11,10 +11,7 @@ export class AudioLoaderService implements IAudioFileLoader {
 		// prettier-ignore
 		private repository: AudioBufferRepository,
 		private context: IAudioContextFactory,
-	) {
-		this.repository = repository;
-		this.context = context;
-	}
+	) {}
 
 	public add(key: string, url: string): void {
 		if (!this.loadQueue[key]) {

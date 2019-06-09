@@ -1,4 +1,4 @@
-import { inject } from 'lib/di';
+import { createProvider, inject } from 'lib/di';
 
 import {
 	// prettier-ignore
@@ -7,8 +7,20 @@ import {
 	IAudioFileLoader,
 } from '../interfaces';
 
-@inject(['audio-repository', 'audio-context:factory', 'debug:console'])
-export class PhaserAudioLoaderService implements IAudioFileLoader {
+// prettier-ignore
+export const PhaserAudioLoaderServiceProvider = createProvider('phaser-audio-loader-service', [
+	// prettier-ignore
+	'phaser:provider()',
+	'debug:console',
+], (
+	// prettier-ignore
+	Phaser,
+	console: Console,
+) => @inject([
+	// prettier-ignore
+	'audio-repository',
+	'audio-context:factory',
+]) class PhaserAudioLoaderService implements IAudioFileLoader {
 	public loader?: Phaser.Loader.LoaderPlugin;
 	private loadQueue: boolean[] = [];
 
@@ -16,11 +28,7 @@ export class PhaserAudioLoaderService implements IAudioFileLoader {
 		// prettier-ignore
 		private repository: IAudioBufferRepository,
 		private context: IAudioContextFactory,
-		private console: Console,
 	) {
-		this.repository = repository;
-		this.context = context;
-		this.console = console;
 	}
 
 	/**
@@ -39,7 +47,6 @@ export class PhaserAudioLoaderService implements IAudioFileLoader {
 	}
 
 	public add(key: string, url: string): void {
-		this.console.log('add', key, url);
 		if (!this.loadQueue[key]) {
 			this.loadQueue[key] = true;
 		}
@@ -64,8 +71,8 @@ export class PhaserAudioLoaderService implements IAudioFileLoader {
 		}
 	}
 
-	public loadAll(): Promise<void> {
-		return new Promise((resolve) => {
+	public async loadAll(): Promise<void> {
+		return await new Promise((resolve) => {
 			if (Object.values(this.loadQueue).some((loading) => loading)) {
 				if (this.loader) {
 					this.loader.addListener('complete', () => {
@@ -77,4 +84,4 @@ export class PhaserAudioLoaderService implements IAudioFileLoader {
 			}
 		});
 	}
-}
+})

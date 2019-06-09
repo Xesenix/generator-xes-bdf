@@ -1,22 +1,27 @@
+import { EventEmitter } from 'eventemitter3';
+import { Container } from 'inversify';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import { EventEmitter } from 'events';
-import { Container } from 'inversify';
-
+import { Game } from 'game/game';
+import { DataStore, IGameState } from 'game/store';
 import { DataStoreModule } from 'lib/data-store';
+import { DebugModule } from 'lib/debug';
 import { DIContext } from 'lib/di';
 import { FullScreenModule } from 'lib/fullscreen';
-import { defaultI18nState, I18nModule, i18nReducer, II18nState } from 'lib/i18n';
-import { IApplication, IValueAction } from 'lib/interfaces';
-import { IRenderer, ReactRenderer } from 'lib/renderer/react-renderer';
+import { I18nModule, II18nState } from 'lib/i18n';
+import { IApplication, IEventEmitter, IValueAction } from 'lib/interfaces';
+import { ServiceWorkerModule } from 'lib/service-worker';
 import { SoundModule } from 'lib/sound';
-import { SoundScapeModule } from 'lib/sound-scape';
-import { defaultUIState, IUIState, UIModule, uiReducer } from 'lib/ui';
+import { SoundScapeModule } from 'lib/sound-scape';<% if (usePhaser) { %>
+import { PhaserGameModule } from 'phaser/game.module';<% } %>
+import { ThemeModule } from 'theme';
+import { DefaultThemeModule } from 'themes/default/default-theme.module';
+import { ModernThemeModule } from 'themes/modern/modern-theme.module';
+import { SharpThemeModule } from 'themes/sharp/sharp-theme.module';
+import { IUIState, UIModule } from 'ui';
 
-import OutletComponent from '../components/outlet/outlet';<% if (usePhaser) { %>
-import { PhaserGameModule } from '../src/phaser/game.module';<% } %>
-
+import { initialGameState } from '../data/initial-state';
 import App from './app';
 
 declare const process: any;
@@ -31,35 +36,32 @@ type AppAction = IValueAction<any>;
  * @extends {Container}
  */
 export class AppModule extends Container implements IApplication {
-	public eventManager = new EventEmitter();
+	public eventManager: IEventEmitter = new EventEmitter();
 
 	constructor() {
 		super();
 
-		// console
-		if (process.env.DEBUG === 'true') {
-			this.bind<Console>('debug:console').toConstantValue(console);
-		} else {
-			// tslint:disable:no-empty
-			const noop = () => {};
-			this.bind<Console>('debug:console').toConstantValue({
-				assert: noop,
-				debug: noop,
-				error: noop,
-				log: noop,
-				trace: noop,
-				group: noop,
-				groupEnd: noop,
-			} as Console);
+		if ((window as any).__inversifyDevtools__) {
+			(window as any).__inversifyDevtools__(this);
 		}
 
+		ServiceWorkerModule.register();
+
+		DebugModule.register(this);
+
 		// event manager
-		this.bind<EventEmitter>('event-manager').toConstantValue(this.eventManager);
+		this.bind<IEventEmitter>('event-manager').toConstantValue(this.eventManager);
 
 		// load modules
 
+		// application themeing
+		ThemeModule.register(this);
+		DefaultThemeModule.register(this);
+		SharpThemeModule.register(this);
+		ModernThemeModule.register(this);
+
 		// fullscreen bindings
-		FullScreenModule.register(this);
+		FullScreenModule.register(this, document.querySelector('body') as HTMLElement);
 
 		// sound
 		SoundModule.register(this);
@@ -69,39 +71,27 @@ export class AppModule extends Container implements IApplication {
 		I18nModule.register(this);<% if (usePhaser) { %>
 
 		// phaser
-		this.load(PhaserGameModule());<% } %>
+		this.load(PhaserGameModule(this));<% } %>
 
 		// data store
-		this.load(
-			DataStoreModule<IAppState, AppAction>(
-				{
-					...defaultUIState,
-					...defaultI18nState,
-				},
-				(state: IAppState, action: AppAction) => {
-					const console = this.get<Console>('debug:console');
-					console.log('reduce', state, action);
-					// TODO: configure store
-					state = uiReducer<IAppState, AppAction>(state, action);
-					state = i18nReducer<IAppState, AppAction>(state, action);
-					return state;
-				},
-			),
-		);
+		DataStoreModule.register<IAppState, AppAction>(this);
 
-		// rendering DOM
+		// rendering DOM - from outside of react
 		this.bind<HTMLElement>('ui:root').toConstantValue(document.getElementById('app') as HTMLElement);
-		this.bind<React.ComponentFactory<any, any>>('ui:outlet-component').toConstantValue(React.createFactory(OutletComponent));
-		this.bind<IRenderer>('ui:renderer')
-			.to(ReactRenderer)
-			.inSingletonScope();
 
 		// ui
 		UIModule.register(this);
+
+		// game
+		const dataStore = new DataStore<IGameState>({} as any, this.eventManager);
+		const game = new Game(initialGameState, dataStore);
+
+		this.bind<Game>('game').toConstantValue(game);
 	}
 
 	public banner() {
 		const console = this.get<Console>('debug:console');
+		console.debug('AppModule:booted');
 		// tslint:disable:max-line-length
 		console.log(
 			'%c  ★★★ Black Dragon Framework ★★★  ',
@@ -116,27 +106,25 @@ export class AppModule extends Container implements IApplication {
 
 	public boot(): Promise<AppModule> {
 		// start all required modules
-		return this.get<I18nModule>('i18n:module')
-			.boot()
-			.then(this.get<FullScreenModule>('fullscreen:module').boot)
-			.then(this.get<FullScreenModule>('ui:module').boot)
+		const console = this.get<Console>('debug:console');
+		const providers = this.getAll('boot');
+		let progress = 0;
+
+		return Promise.all(providers.map((provider: any) => provider().then(() => console.debug(`AppModule:boot:progress ${++progress}/${providers.length}`))))
 			.then(
 				() => {
 					this.banner();
-					this.get<EventEmitter>('event-manager').emit('app:boot');
-
-					// const game = this.get<AncientMaze<IGameObjectState, IAncientMazeState<IGameObjectState>>>('game');
-					// game.boot();
+					this.get<IEventEmitter>('event-manager').emit('app:boot');
 
 					const container = this.get<HTMLElement>('ui:root');
 
-					ReactDOM.render(
-						<DIContext.Provider value={this}>
-							<App />
-						</DIContext.Provider>,
+					ReactDOM.render((
+							<DIContext.Provider value={this}>
+								<App />
+							</DIContext.Provider>
+						),
 						container,
 					);
-					// ReactDOM.render(<App/>, container);
 
 					return this;
 				},
@@ -148,3 +136,4 @@ export class AppModule extends Container implements IApplication {
 			);
 	}
 }
+

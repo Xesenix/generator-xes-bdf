@@ -1,8 +1,8 @@
+import { IEventEmitter } from 'lib/interfaces';
 import { IAudioTrack } from 'lib/sound/interfaces';
 
-import { IScheduledSoundtrack, ISoundSprite, ISoundtrack } from '../interfaces';
+import { ISoundSprite, ISoundtrack } from '../interfaces';
 
-import { EventEmitter } from 'events';
 import { SoundtrackPlayer } from './soundtrack-player.service';
 
 // tslint:disable:max-classes-per-file
@@ -46,7 +46,7 @@ describe('SoundtrackPlayer', () => {
 	let loop: ISoundSprite;
 	let outro: ISoundSprite;
 	let soundtrack: ISoundtrack;
-	let em: EventEmitter;
+	let em: IEventEmitter;
 
 	beforeEach(() => {
 		em = new EventEmitterMock();
@@ -146,7 +146,7 @@ describe('SoundtrackPlayer', () => {
 							});
 
 							it('should add scheduled segment to layer 0', () => {
-								expect(service.layers[0]).toContain(service.scheduleIntroAt(soundtrack, when) as any);
+								expect(service.getSchedule(0)).toContain(service.scheduleIntroAt(soundtrack, when) as any);
 							});
 
 							it('should emit soundtrack:schedule-changed event', () => {
@@ -260,7 +260,7 @@ describe('SoundtrackPlayer', () => {
 							});
 
 							it('should add scheduled segment to layer 0', () => {
-								expect(service.layers[0]).toContain(service.scheduleLoopAt(soundtrack, when) as any);
+								expect(service.getSchedule(0)).toContain(service.scheduleLoopAt(soundtrack, when) as any);
 							});
 
 							it('should emit soundtrack:schedule-changed event', () => {
@@ -348,7 +348,7 @@ describe('SoundtrackPlayer', () => {
 							});
 
 							it('should add scheduled segment to layer 0', () => {
-								expect(service.layers[0]).toContain(service.scheduleOutroAt(soundtrack, when) as any);
+								expect(service.getSchedule(0)).toContain(service.scheduleOutroAt(soundtrack, when) as any);
 							});
 
 							it('should emit soundtrack:schedule-changed event', () => {
@@ -408,9 +408,12 @@ describe('SoundtrackPlayer', () => {
 
 			it('should return last scheduled soundtrack', () => {
 				service.scheduleAfterLast(soundtrackA, 10);
-				expect(service.getLastScheduledSoundtrack().soundtrack).toBe(soundtrackA);
+				let result: any = service.getLastScheduledSoundtrack() || {};
+				expect(result.soundtrack).toBe(soundtrackA);
+
 				service.scheduleAfterLast(soundtrackB, 15);
-				expect(service.getLastScheduledSoundtrack().soundtrack).toBe(soundtrackB);
+				result = service.getLastScheduledSoundtrack() || {};
+				expect(result.soundtrack).toBe(soundtrackB);
 			});
 		});
 	});

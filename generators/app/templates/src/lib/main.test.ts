@@ -10,10 +10,23 @@ const excludeRegexp: RegExp = /.*\/(main|index|interfaces)\./;
  * @see https://github.com/webpack-contrib/karma-webpack#alternative-usage
  */
 {
-	const contextLib = require.context('sound', true, /\.(t|j)sx?$/);
-	contextLib.keys().filter((p: string) => !excludeRegexp.test(p)).forEach(contextLib);
+	const contextLib = (require as any).context('./sound', true, /\.(t|j)sx?$/);
+	contextLib
+		.keys()
+		.filter((p: string) => !excludeRegexp.test(p))
+		.forEach(contextLib);
 }
 {
-	const contextLib = require.context('sound-scape', true, /\.(t|j)sx?$/);
-	contextLib.keys().filter((p: string) => !excludeRegexp.test(p)).forEach(contextLib);
+	const contextLib = (require as any).context('./sound-scape', true, /\.(t|j)sx?$/);
+	contextLib
+		.keys()
+		.filter((p: string) => !excludeRegexp.test(p))
+		.forEach(contextLib);
+}
+{
+	const contextLib = (require as any).context('./i18n', true, /\.(t|j)sx?$/);
+	contextLib
+		.keys()
+		.filter((p: string) => !excludeRegexp.test(p))
+		.forEach(contextLib);
 }

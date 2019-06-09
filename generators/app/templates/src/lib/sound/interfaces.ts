@@ -1,5 +1,4 @@
-import { Store } from 'redux';
-import { IStoreStateAware } from '../data-store/interface';
+import { IStoreStateAware } from '../data-store';
 
 export type IAudioContextFactory = AudioContext;
 export type IAudioFileLoaderProvider = () => Promise<IAudioFileLoader>;
@@ -31,6 +30,7 @@ export interface IAudioFileLoader {
 }
 
 export interface IAudioManager {
+	context: AudioContext;
 	loader?: Phaser.Loader.LoaderPlugin;
 	preloadAudioAsset(key: string, src: string): void;
 	playFxSound(key: string): Promise<AudioBufferSourceNode>;
@@ -53,15 +53,21 @@ export type IStateAwareAudioMixer = IAudioMixer & IStoreStateAware<IAudioConfigu
  */
 export interface IAudioTrack {
 	create(key: string): AudioBufferSourceNode;
-	playLoop(key: string, when?: number, offset?: number, duration?: number | undefined): AudioBufferSourceNode;
-	play(key: string, when?: number, offset?: number, duration?: number | undefined): AudioBufferSourceNode;
+	playLoop(
+		key: string,
+		when?: number,
+		offset?: number,
+		duration?: number | undefined,
+	): AudioBufferSourceNode;
+	play(
+		key: string,
+		when?: number,
+		offset?: number,
+		duration?: number | undefined,
+	): AudioBufferSourceNode;
 	stop(when?: number): void;
 	connect(node: AudioNode): AudioNode;
 	getNode(): AudioNode;
 }
 
 export type IStateAwareAudioTrack = IAudioTrack & IStoreStateAware<{ muted: boolean; volume: number }>;
-
-export interface IAudioManagerPlugin<T extends IAudioConfigurationState> extends Phaser.Plugins.BasePlugin {
-	store: Store<T>;
-}
