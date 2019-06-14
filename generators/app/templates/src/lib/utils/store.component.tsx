@@ -64,7 +64,7 @@ export abstract class StoreComponent<P extends IStoreComponentInternalProps<S>, 
 
 		if (!this.unsubscribeDataStore && !!store) {
 			this.unsubscribeDataStore = store.subscribe(() => {
-				if (!!store) {
+				if (!!this.unsubscribeDataStore && !!store) {
 					this.setState(this.filter(store.getState()));
 				}
 			});
