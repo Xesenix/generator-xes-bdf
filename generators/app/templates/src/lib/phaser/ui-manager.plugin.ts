@@ -1,3 +1,4 @@
+import { throttle } from 'lodash';
 import { Store } from 'redux';
 
 import { createClassProvider } from 'lib/di';
@@ -21,11 +22,13 @@ export const UIManagerPluginProvider = createClassProvider('ui-manager-plugin', 
 	// prettier-ignore
 	'phaser:provider()',
 	'data-store:provider()',
+	'window',
 	'debug:console:DEBUG_PHASER',
 ], (
 	// prettier-ignore
 	Phaser,
 	store: Store,
+	window: Window,
 	console: Console,
 ) => class UIManagerPlugin extends Phaser.Plugins.BasePlugin {
 	public store: Store<IUIState> = store;
@@ -51,12 +54,28 @@ export const UIManagerPluginProvider = createClassProvider('ui-manager-plugin', 
 				this.game.scale.startFullscreen();
 			}
 		};
+
+		window.addEventListener('resize', throttle((event: Event) => this.scaleGameView(event.target as Window), 1000));
+
 		this.syncGameWithUIState();
 	}
 
 	public stop() {
 		console.log('UIManagerPlugin:stop');
 		this.unsubscribe();
+	}
+
+	private scaleGameView({ innerWidth, innerHeight }) {
+		if (this.scaleMode === Phaser.Scale.NONE) {
+			this.game.scale.resize(Math.min(this.game.scale.width, innerWidth), Math.min(this.game.scale.height, innerHeight));
+		} else {
+			// scaledown game view on screen downsizing
+			this.game.scale.setParentSize(0, 0);
+			// recalculate available space
+			this.game.scale.getParentBounds();
+			this.game.scale.displaySize.setParent(this.game.scale.parentSize);
+			this.game.scale.refresh();
+		}
 	}
 
 	private syncGameWithUIState = () => {

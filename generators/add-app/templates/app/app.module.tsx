@@ -77,6 +77,7 @@ export class AppModule extends Container implements IApplication {
 		DataStoreModule.register<IAppState, AppAction>(this);
 
 		// rendering DOM - from outside of react
+		this.bind<Window>('window').toConstantValue(window);
 		this.bind<HTMLElement>('ui:root').toConstantValue(document.getElementById('app') as HTMLElement);
 
 		// ui

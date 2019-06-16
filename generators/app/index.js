@@ -196,8 +196,8 @@ module.exports = class extends Generator {
     this.log(`\n${ progressColor(`APP`) } Running ${ scriptColor('npm install') }...\n`);
 
     this.npmInstall([
-      'inversify',
       '@types/inversify',
+      'inversify',
       'inversify-vanillajs-helpers',
       // fullscreen
       'fscreen',
@@ -212,23 +212,26 @@ module.exports = class extends Generator {
       'redux',
       'redux-thunk',
       'redux-logger',
-      'reflect-metadata',
-      ...(usePhaser === 'yes' ? ['phaser'] : []),
-      'eventemitter3', // fast event emitter
-      'html-decoder',
-      'immer',
       'redux-localstorage-simple',
-      'react',
+      ...(usePhaser === 'yes' ? ['phaser'] : []),
+      'immer',
+      // react
+      '@hot-loader/react-dom',
+      'hoist-non-react-statics',
       'react-dom',
       'react-hot-loader',
       'react-loadable',
-      'react-router',
       'react-router-dom',
-      'hoist-non-react-statics',
-      '@hot-loader/react-dom',
-      'webpack@4.28', // @see https://github.com/webpack/webpack/issues/8656
+      'react-router',
+      'react',
+      // others
       'core-js@2', // @see https://github.com/babel/babel/issues/9449
+      'eventemitter3', // fast event emitter
+      'html-decoder',
+      'lodash',
       'polished',
+      'reflect-metadata',
+      'webpack@4.28', // @see https://github.com/webpack/webpack/issues/8656
     ]);
   }
 };
