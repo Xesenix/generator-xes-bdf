@@ -47,7 +47,7 @@
     "@types/axios": "^0.14.0",
     "@types/chalk": "^2.2.0",
     "@types/fs-extra": "^5.0.4",
-    "axios": "^0.18.0",
+    "axios": "^0.18.1",
     "chalk": "^2.1.0",
     "editorconfig": "^0.15.2",
     "fs-extra": "^7.0.1",
