@@ -5,14 +5,13 @@ const yosay = require('yosay');
 const path = require('path');
 
 const validateMinLengthFactory = require('../../validators/min-length');
-const validateNotEmpty = require('../../validators/not-empty');
 const { listFiles } = require('../../helpers/functions');
 
 const promptColor = chalk.magenta;
 const progressColor = chalk.blue;
 const scriptColor = chalk.keyword('lime');
 
-const listTemplates = async (folder) => (await listFiles(path.resolve(__dirname, `templates/${ folder }`)))
+const listTemplates = (folder) => listFiles(path.resolve(__dirname, `templates/${ folder }`))
   .map(x => path.relative(path.resolve(__dirname, 'templates'), x))
 
 module.exports = class extends Generator {
@@ -41,7 +40,7 @@ module.exports = class extends Generator {
 
   async prompting() {
     this.log(
-      yosay(`Welcome to the ${chalk.red('BDF')} generator!`)
+      yosay(`Welcome to the ${ chalk.red('BDF') } generator!`)
     );
 
     this.log(`\n${ progressColor(`APP`) } General configuration...\n`);
@@ -149,18 +148,18 @@ module.exports = class extends Generator {
       'src/lib/interfaces.ts',
       'src/lib/main.test.ts',
       // TODO: need to move those to separate repositories
-      ...await listTemplates('src/lib/data-store'),
-      ...await listTemplates('src/lib/di'),
-      ...await listTemplates('src/lib/debug'),
-      ...await listTemplates('src/lib/fullscreen'),
-      ...await listTemplates('src/lib/i18n'),
-      ...(usePhaser === 'yes' ? await listTemplates('src/lib/phaser') : []),
-      ...await listTemplates('src/lib/service-worker'),
-      ...await listTemplates('src/lib/sound'),
-      ...await listTemplates('src/lib/sound-scape'),
-      // ...await listTemplates('src/lib/sound-scape-debug'), // TODO: requires additional dependencies vis.js
-      ...await listTemplates('src/lib/ui'),
-      ...await listTemplates('src/lib/utils'),
+      ...listTemplates('src/lib/data-store'),
+      ...listTemplates('src/lib/di'),
+      ...listTemplates('src/lib/debug'),
+      ...listTemplates('src/lib/fullscreen'),
+      ...listTemplates('src/lib/i18n'),
+      ...(usePhaser === 'yes' ? listTemplates('src/lib/phaser') : []),
+      ...listTemplates('src/lib/service-worker'),
+      ...listTemplates('src/lib/sound'),
+      ...listTemplates('src/lib/sound-scape'),
+      // ...listTemplates('src/lib/sound-scape-debug'), // TODO: requires additional dependencies vis.js
+      ...listTemplates('src/lib/ui'),
+      ...listTemplates('src/lib/utils'),
     ].filter(Boolean).forEach((path) => {
       this.fs.copy(
         this.templatePath(path),
@@ -204,34 +203,34 @@ module.exports = class extends Generator {
       // react?
       'react-hot-loader',
       'react-loadable',
-      // jss
-      '@material-ui/core',
-      '@material-ui/icons',
-      '@material-ui/lab',
-      // datastore?
-      'redux',
-      'redux-thunk',
-      'redux-logger',
-      'redux-localstorage-simple',
-      ...(usePhaser === 'yes' ? ['phaser'] : []),
-      'immer',
-      // react
-      '@hot-loader/react-dom',
-      'hoist-non-react-statics',
-      'react-dom',
-      'react-hot-loader',
-      'react-loadable',
-      'react-router-dom',
-      'react-router',
-      'react',
-      // others
-      'core-js@2', // @see https://github.com/babel/babel/issues/9449
-      'eventemitter3', // fast event emitter
-      'html-decoder',
-      'lodash',
-      'polished',
-      'reflect-metadata',
-      'webpack@4.28', // @see https://github.com/webpack/webpack/issues/8656
-    ]);
-  }
+			// jss
+			'@material-ui/core',
+			'@material-ui/icons',
+			'@material-ui/lab',
+			// datastore?
+			'redux',
+			'redux-thunk',
+			'redux-logger',
+			'redux-localstorage-simple',
+			...(usePhaser === 'yes' ? ['phaser'] : []),
+			'immer',
+			// react
+			'@hot-loader/react-dom',
+			'hoist-non-react-statics',
+			'react-dom',
+			'react-hot-loader',
+			'react-loadable',
+			'react-router-dom',
+			'react-router',
+			'react',
+			// others
+			'core-js@2', // @see https://github.com/babel/babel/issues/9449
+			'eventemitter3', // fast event emitter
+			'html-decoder',
+			'lodash',
+			'polished',
+			'reflect-metadata',
+			'webpack@4.28', // @see https://github.com/webpack/webpack/issues/8656
+		]);
+	}
 };
