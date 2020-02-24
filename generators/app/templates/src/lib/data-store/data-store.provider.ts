@@ -3,6 +3,7 @@ import { Action, applyMiddleware, compose, createStore, DeepPartial, Store } fro
 import { load, save } from 'redux-localstorage-simple';
 import { createLogger } from 'redux-logger';
 import thunk from 'redux-thunk';
+
 import { INITIALIZE } from './actions';
 
 export type IDataStoreProvider<T, A extends Action> = () => Promise<Store<T, A>>;
@@ -50,7 +51,7 @@ export function DataStoreProvider<T, A extends Action>({ container }: interfaces
 					namespace,
 					preloadedState: initialState,
 					states,
-				}),
+				}) as any,
 				composeEnhancers(debugRedux ? applyMiddleware(logger, thunk, persist) : applyMiddleware(thunk, persist)),
 			);
 

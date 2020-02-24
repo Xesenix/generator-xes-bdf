@@ -1,5 +1,5 @@
 import HtmlDecoder from 'html-decoder';
-import { memoize } from 'lodash';
+import memoize from 'lodash-es/memoize';
 import Gettext from 'node-gettext';
 
 /**

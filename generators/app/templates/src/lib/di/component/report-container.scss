@@ -1,0 +1,31 @@
+table {
+	background-color: #ddd;
+
+	caption {
+		padding: 4px;
+		font-weight: bold;
+		font-size: 1.5rem;
+		background-color: #000;
+		color: #fff;
+		font-family: monospace;
+	}
+
+	th,
+	td {
+		text-align: left;
+		font-family: monospace;
+
+		input {
+			width: 100%;
+		}
+	}
+
+	tr:nth-child(2n) {
+		th,
+		td {
+			background-color: #eee;
+		}
+	}
+}
+
+

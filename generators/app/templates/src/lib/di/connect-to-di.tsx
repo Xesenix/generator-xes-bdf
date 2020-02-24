@@ -5,7 +5,7 @@ import * as React from 'react';
 import { DIContext } from './context';
 
 /**
- * Add DI container to decorated component properties.
+ * HOC adding DI container to decorated component properties.
  *
  * @export
  * @template T component properties interface including dependency injection container under `di` property

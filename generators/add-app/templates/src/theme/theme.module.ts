@@ -6,8 +6,6 @@ import { II18nTranslation } from 'lib/i18n';
 import { IApplication, ICreateSetAction } from 'lib/interfaces';
 
 import { createSetThemeAction } from './actions';
-import { reducer } from './reducers';
-import { ThemeBootProvider } from './theme-boot.provider';
 import {
 	// prettier-ignore
 	IAppTheme,
@@ -17,18 +15,26 @@ import {
 	IThemeProvider,
 	IThemeState,
 	ThemesNames,
-} from './theme.interfaces';
+} from './interfaces';
+import { reducer } from './reducers';
+import { ThemeBootProvider } from './theme-boot.provider';
 
-export class ThemeModule {
+export default class ThemeModule {
 	public static register(app: IApplication) {
+		const console = app.get<Console>('debug:console');
+		console.log('ThemeModule:register');
 
 		// define logic needed to bootstrap module
 		app.bind('boot').toProvider(ThemeBootProvider);
-		app.bind<IThemeBuilder>('theme:create-theme').toProvider(() => () => import(/* webpackChunkName: "theme" */ './create-theme').then(({ createAppTheme }) => createAppTheme));
+		app.bind<IThemeBuilder>('theme:create-theme')
+			.toProvider(() => () =>
+				import(/* webpackChunkName: "theme" */ './create-theme')
+					.then(({ createAppTheme }) => createAppTheme),
+			);
 
 		app.bind<Promise<IAppThemesDescriptors>>('theme:theme-descriptors:provider')
 			.toProvider(({ container }: interfaces.Context) => () => resolveDependencies<IAppThemesDescriptors>(container, [
-				'theme:theme:provider()[]',
+				'theme:theme:provider[]()',
 			], (
 				themeDescriptors,
 			) => themeDescriptors
@@ -72,6 +78,18 @@ export class ThemeModule {
 		app.bind<Reducer<any, any>>('data-store:reducers').toConstantValue(reducer);
 	}
 
+	/**
+	 * Used to streamline adding new application styling themes.
+	 *
+	 * @param app application container on which dependencies will be defined
+	 * @param name name used for identify theme should be unique
+	 * @param localizedLabel function returning label used to identify theme to user
+	 * injected with translation method that can be used for extracting label for
+	 * translation needs to be named `__`
+	 * @param themeProviderFactory factory function injected with createTheme used
+	 * as base for creating theme configuration returning theme provider can also be used
+	 * to split themes as separate modules and load additional assets only if theme is used
+	 */
 	public static registerTheme(
 		// prettier-ignore
 		app: IApplication,

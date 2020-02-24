@@ -1,3 +1,2 @@
-export * from './theme.interfaces';
-export * from './theme.module';
+export * from './interfaces';
 export * from './reducers';

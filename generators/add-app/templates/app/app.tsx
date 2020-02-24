@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { hot } from 'react-hot-loader';
-import Loadable from 'react-loadable';
-import { MemoryRouter, Route, Switch } from 'react-router-dom';
+import { hot } from 'react-hot-loader';<% if (addLayout) { %>
+import { MemoryRouter } from 'react-router-dom';
 
+import LazyLoaderFactory from 'lib/core/components/lazy-loader-factory';
 import { connectToInjector } from 'lib/di';
 import { II18nLanguagesState } from 'lib/i18n';
 import { LanguageType } from 'lib/interfaces';
@@ -14,20 +14,31 @@ import { MuiThemeProvider } from '@material-ui/core/styles';
 
 import FullscreenLayoutComponent from 'components/layouts/fullscreen-layout/fullscreen-layout';
 import PrimaryLayoutComponent from 'components/layouts/primary-layout/primary-layout';
-import Loader from 'components/loader/loader';
+import Loader from 'components/ui/loader/loader';
+import LoaderErrorView from 'components/ui/loader/loader-error-view';
+import { IMenuExternalProps } from 'components/ui/menu/menu';<% if (addRouting) { %>
 
-const MenuComponent = Loadable({ loading: (props) => <Loader size={32} {...props}/>, loader: () => import(/* webpackChunkName: "menu" */ 'components/menu/menu') });
-const IntroView = Loadable({ loading: Loader, loader: () => import(/* webpackChunkName: "intro" */ 'components/views/intro-view/intro-view') });
-const GameView = Loadable({ loading: Loader, loader: () => import(/* webpackChunkName: "game" */ 'components/views/game-view/game-view') });
-const ConfigurationView = Loadable({ loading: Loader, loader: () => import(/* webpackChunkName: "config" */ 'components/views/configuration-view/configuration-view') });
+import AppRouting from './app.routing';<% } %>
 
-interface IAppProps {}
+const SmallLoader = () => <Loader size={48}/>;
+const BigLoader = () => <Loader size={128}/>;
 
+const MenuComponent = LazyLoaderFactory<IMenuExternalProps>(
+	() => import(/* webpackChunkName: "menu" */ 'components/ui/menu/menu'),
+	SmallLoader,
+	LoaderErrorView,
+);
+
+/** Component public properties required to be provided by parent component. */
+interface IAppExternalProps {}
+
+/** Internal component properties include properties injected via dependency injection. */
 interface IAppInternalProps {
 	bindToStore: (keys: (keyof IAppState)[]) => IAppState;
 	getTheme: () => IAppTheme;
 }
 
+/** Internal component state. */
 interface IAppState {
 	/** required for interface updates after changing fullscreen state */
 	fullscreen: boolean;
@@ -39,18 +50,18 @@ interface IAppState {
 	theme: ThemesNames;
 }
 
-const diDecorator = connectToInjector<IAppProps, IAppInternalProps>({
+type IAppProps = IAppExternalProps & IAppInternalProps;
+
+const diDecorator = connectToInjector<IAppExternalProps, IAppInternalProps>({
 	bindToStore: {
 		dependencies: ['data-store:bind'],
 	},
 	getTheme: {
 		dependencies: ['theme:get-theme()'],
 	},
-});
+}, { Preloader: BigLoader, });
 
-type AppProps = IAppProps & IAppInternalProps;
-
-function App(props: AppProps) {
+function App(props: IAppProps) {
 	const { getTheme, bindToStore } = props;
 	const { fullscreen = false } = bindToStore([
 		// prettier-ignore
@@ -60,31 +71,19 @@ function App(props: AppProps) {
 		'languages',
 	]);
 
-	const routing = (
-		<Switch>
-			<Route exact path="/" component={IntroView}/>
-			<Route path="/game" component={GameView}/>
-			<Route path="/config" component={ConfigurationView}/>
-		</Switch>
-	);
+	<% if (addRouting) { %>const content = <AppRouting /><% } else { %>const content = <h1><%= appTitle %></h1><% } %>;
 
 	return (
 		<MuiThemeProvider theme={getTheme()}>
 			<CssBaseline />
 			<MemoryRouter>
 				{/* <React.StrictMode> */}
-				{fullscreen
-				? (
-					<FullscreenLayoutComponent
-						Menu={MenuComponent}
-						content={routing}
-					/>
-				)
-				: (
+				{fullscreen ? (
+					<FullscreenLayoutComponent Menu={MenuComponent} content={content} />
+				) : (
 					<PrimaryLayoutComponent
 						Menu={MenuComponent}
-						content={routing}
-						// loading={GameView.}
+						content={content}
 					/>
 				)}
 				{/* </React.StrictMode> */}
@@ -94,3 +93,12 @@ function App(props: AppProps) {
 }
 
 export default hot(module)(diDecorator(App));
+<% } else { %>
+function App() {
+	return (
+		<h1><%= appTitle %></h1>
+	);
+}
+
+export default hot(module)(App);
+<% } %>

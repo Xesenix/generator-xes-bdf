@@ -1,5 +1,5 @@
+import { IAudioTrack } from 'lib/audio/interfaces';
 import { IEventEmitter } from 'lib/interfaces';
-import { IAudioTrack } from 'lib/sound/interfaces';
 
 import { ISoundSprite, ISoundtrack } from '../interfaces';
 

@@ -1,5 +1,4 @@
 export * from './actions';
-export * from './data-store.interfaces';
-export * from './data-store.module';
 export * from './data-store.provider';
+export * from './interfaces';
 export * from './use-store';

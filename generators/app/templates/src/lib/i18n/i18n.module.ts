@@ -13,23 +13,25 @@ import {
 	createSetCurrentLanguageAction,
 	ICreateSetLanguageReadyAction,
 } from './actions';
-import { _$, __ } from './i18n';
+import {
+	_$ as i18nPluralTranslation,
+	__ as i18nTranslation,
+} from './i18n';
 import { I18nBootProvider } from './i18n-boot.provider';
 import {
 	// prettier-ignore
 	II18nPluralTranslation,
 	II18nTranslation,
-} from './i18n.interfaces';
+} from './interfaces';
 import { reducer } from './reducers/index';
 
-export class I18nModule {
+export default class I18nModule {
 	public static register(app: IApplication) {
-
 		// define logic needed to bootstrap module
 		app.bind('boot').toProvider(I18nBootProvider);
 
-		app.bind<II18nTranslation>('i18n:translate').toConstantValue(__);
-		app.bind<II18nPluralTranslation>('i18n:translate_plural').toConstantValue(_$);
+		app.bind<II18nTranslation>('i18n:translate').toConstantValue(i18nTranslation);
+		app.bind<II18nPluralTranslation>('i18n:translate_plural').toConstantValue(i18nPluralTranslation);
 
 		app.bind<ICreateSetAction<LanguageType>>('data-store:action:create:set-current-language').toConstantValue(createSetCurrentLanguageAction);
 		app.bind<ICreateSetLanguageReadyAction>('data-store:action:create:set-language-ready').toConstantValue(createLanguageReadyAction);

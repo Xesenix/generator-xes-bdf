@@ -3,7 +3,7 @@ import { IValueAction } from 'lib/interfaces';
 import { defaultUIState as baseUIState } from 'lib/ui';
 
 import { SET_COMPACT_MODE, SET_SET_DRAWER_OPEN } from '../actions';
-import { IUIState } from '../ui.interfaces';
+import { IUIState } from '../interfaces';
 
 export const defaultUIState: IUIState = {
 	...baseUIState,

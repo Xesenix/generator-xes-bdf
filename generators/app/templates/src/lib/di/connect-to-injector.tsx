@@ -6,7 +6,7 @@ import { useInjector } from './use-injector';
 const componentNameRegexp = /function ([a-zA-Z0-9_]+)\(/;
 
 /**
- * Map dependencies from DI container into component properties.
+ * Map dependencies from DI container into component properties by creating HOC decorator.
  *
  * @export
  * @template T interface for properties injected via component properties
@@ -14,19 +14,27 @@ const componentNameRegexp = /function ([a-zA-Z0-9_]+)\(/;
  * @template E interface exposed for properties injected via component properties
  * @param Consumer component into which we want to inject dependencies from dependency container
  * @param select map dependencies from container to properties names injected into decorated component properties
+ * @param config.Preloader component to show when waiting for resolving dependencies
+ * @param config.whenReady promise resolved when we can inject resolved dependencies
  * @returns component with injected values from DI container
  */
 export function connectToInjector<T, I = any>(
 	// prettier-ignore
 	select: { [K in keyof I]: { dependencies: string[], value?: (...dependencies: any[]) => Promise<I[K]> } },
-	Preloader: React.FunctionComponent = () => <>loading...</>,
+	{
+		Preloader = () => <>loading...</>,
+		whenReady = Promise.resolve(),
+	}: {
+		Preloader?: React.FunctionComponent,
+		whenReady?: Promise<void>,
+	} = {},
 ) {
 	return <E extends T>(Consumer: React.ComponentType<E & I>) => {
-		const [ , decoratedComponentNameMatch = '' ] = componentNameRegexp.exec(Consumer.toString()) || [];
+		const [, decoratedComponentNameMatch = ''] = componentNameRegexp.exec(Consumer.toString()) || [];
 		const className = `DI.Injector(${decoratedComponentNameMatch})`;
 
 		function DIInjector(props: E) {
-			const injectedState = useInjector<I>(select);
+			const injectedState = useInjector<I>(select, whenReady);
 
 			if (Object.keys(injectedState).length > 0) {
 				return <Consumer {...props} {...injectedState} />;

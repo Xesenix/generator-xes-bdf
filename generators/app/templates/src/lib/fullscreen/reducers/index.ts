@@ -1,7 +1,7 @@
 import { INITIALIZE } from 'lib/data-store';
 import { IValueAction } from 'lib/interfaces';
 
-import { IFullscreenState } from '../fullscreen.interfaces';
+import { IFullscreenState } from '../interfaces';
 
 import {
 	// prettier-ignore

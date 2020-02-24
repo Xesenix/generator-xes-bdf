@@ -1,10 +1,11 @@
 import * as inversify from 'inversify';
-import { interfaces as ii } from 'inversify';
-import { helpers, interfaces as vi } from 'inversify-vanillajs-helpers';
-import { memoize } from 'lodash';
-import 'reflect-metadata';
+import { Container, interfaces as ii } from 'inversify';
+import memoize from 'lodash-es/memoize';
 
-type DependencyType = string | symbol | ii.Newable<any> | ii.Abstract<any> | vi.BasicInjection | vi.NamedInjection | vi.TaggedInjection;
+import { getDependencies } from './get-dependencies';
+import { helpers, interfaces as vi } from './helpers';
+
+type DependencyType = string | symbol | ii.Newable<any> | ii.Abstract<any> | vi.IBasicInjection | vi.INamedInjection | vi.ITaggedInjection;
 
 /**
  * Annotate class with constructor dependency injection.
@@ -18,6 +19,8 @@ export function inject(dependencies?: DependencyType[]): any {
 			console.debug('annotation:inject', target.name, dependencies);
 		}
 		helpers.annotate(target, dependencies);
+
+		return target;
 	};
 }
 
@@ -29,7 +32,9 @@ export function injectable(): any {
 		if (process.env.DEBUG_DI === 'true') {
 			console.debug('annotation:injectable', target.name);
 		}
-		return inversify.decorate(inversify.injectable(), target);
+		inversify.decorate(inversify.injectable(), target);
+
+		return target;
 	};
 }
 
@@ -37,50 +42,15 @@ export function injectable(): any {
  * Uses context container to inject named dependencies into function.
  *
  * @param container dependency injection container
- * @param key unique identifier that will be used internally to store result of factory in container
  * @param dependencies list identifiers of required dependencies in addition if identifier ends with '()' it will resolve provider result before injecting it
  * @param factory factory function into which we want to inject dependencies
  */
-export async function resolveDependencies<T = any>(
+export async function resolveDependencies<T>(
 	container: ii.Container,
 	dependencies: string[],
 	factory: (...args: any[]) => T,
 ) {
-	const klass = factory(
-		...(await Promise.all(
-			dependencies.map((dep: string) => {
-				const multiple = dep.indexOf('[]') > -1;
-				const callable = dep.indexOf('()') > -1;
-				if (multiple) {
-					const key = dep.replace('[]', '').replace('()', '');
-					const results = container.getAll<any>(key);
-					if (callable) {
-						try {
-							return Promise.all(results.map((result) => result()));
-						} catch (err) {
-							console.error('error:', dep, key, results, err);
-							return Promise.reject(err);
-						}
-					}
-					return Promise.all(results);
-				} else {
-					const key = dep.replace('()', '');
-					const result = container.get<any>(key);
-					if (callable) {
-						try {
-							return result();
-						} catch (err) {
-							console.error('error:', dep, key, result, err);
-							return Promise.reject(err);
-						}
-					}
-					return Promise.resolve(result);
-				}
-			}),
-		)),
-	);
-
-	return klass;
+	return factory(...(await getDependencies<T>(container as Container, dependencies)));
 }
 
 /**
@@ -89,17 +59,17 @@ export async function resolveDependencies<T = any>(
  * @param key unique identifier that will be used internally to store result of factory in container
  * @param dependencies list identifiers of required dependencies in addition if identifier ends with '()' it will resolve provider result before injecting it
  * @param factory factory function into which we want to inject dependencies
- * @param shouldResolve if true will try resolve factory result from DIC else will return result of factory without further modifications
+ * @param singleton if true will try resolve factory result from DIC else will return result of factory without further modifications
  * @returns provider function
  */
 export function createProvider<T = any>(
 	key: string,
 	dependencies: string[],
 	factory: (...args: any[]) => T,
-	shouldResolve: boolean = true,
+	singleton: boolean = true,
 	cache: boolean = true,
-) {
-	const cacheResult = cache ? memoize : (cb) => cb;
+): (ctx: ii.Context) => () => Promise<T> {
+	const cacheResult: (cb: (ctx: ii.Context) => any) => any = cache ? memoize : (cb: (ctx: ii.Context) => any) => cb;
 	return cacheResult(({ container }: ii.Context) => async () => {
 		const console = container.get<Console>('debug:console:DEBUG_DI');
 		console.debug('annotation:injectDecorator', {
@@ -108,19 +78,19 @@ export function createProvider<T = any>(
 			factory,
 		});
 
-		const klass = await resolveDependencies<T>(container, dependencies, factory);
+		const constructor = resolveDependencies<T>(container, dependencies, factory);
 
-		if (shouldResolve) {
+		if (singleton) {
 			if (!container.isBound(key)) {
 				container
 					.bind(key)
-					.to(klass as any)
+					.to(constructor as any)
 					.inSingletonScope();
 			}
 			return container.get(key);
 		}
 
-		return klass;
+		return constructor;
 	});
 }
 
@@ -134,6 +104,10 @@ export function createProvider<T = any>(
  * @param factory factory function into which we want to inject dependencies
  * @returns provider function returning object created by factory without further resolving
  */
-export function createClassProvider<T = any>(key: string, dependencies: string[], factory: (...args: any[]) => any) {
+export function createClassProvider<T = any>(
+	key: string,
+	dependencies: string[],
+	factory: (...args: any[]) => any,
+) {
 	return createProvider<T>(key, dependencies, factory, false);
 }

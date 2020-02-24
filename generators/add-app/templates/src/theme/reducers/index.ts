@@ -2,7 +2,7 @@ import { INITIALIZE } from 'lib/data-store';
 import { IValueAction } from 'lib/interfaces';
 
 import { SET_THEME } from '../actions';
-import { IThemeState } from '../theme.interfaces';
+import { IThemeState } from '../interfaces';
 
 export const defaultThemeState: IThemeState = {
 	theme: 'default-theme-light',

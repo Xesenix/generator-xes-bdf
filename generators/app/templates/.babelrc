@@ -9,6 +9,7 @@
 			},
 			"loose": true,
 			"useBuiltIns": "usage",
+			"corejs": 3,
 			"modules": false,
 			"debug": false,
 			"spec": false
@@ -17,12 +18,24 @@
 		"@babel/preset-typescript"
 	],
 	"plugins": [
+		["@babel/plugin-transform-runtime", {
+			"absoluteRuntime": false,
+			"corejs": false,
+			"helpers": true,
+			"regenerator": true,
+			"useESModules": true
+		}],
 		"@babel/plugin-syntax-dynamic-import",
 		["@babel/plugin-proposal-decorators", {
 			"legacy": true
 		}],
 		"@babel/plugin-proposal-class-properties",
-		"@babel/plugin-proposal-object-rest-spread"
+		"@babel/plugin-proposal-object-rest-spread",
+		["babel-plugin-import", {
+			"libraryName": "@material-ui/icons",
+			"libraryDirectory": "esm",
+			"camel2DashComponentName": false
+		}]
 	],
 	"env": {
 		"test": {

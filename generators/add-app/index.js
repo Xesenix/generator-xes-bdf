@@ -12,7 +12,7 @@ const scriptColor = chalk.keyword('lime');
 const rootSrcPath = '';
 
 const listTemplates = (folder) => listFiles(path.resolve(__dirname, `templates/${ folder }`))
-  .map(x => path.relative(path.resolve(__dirname, 'templates'), x))
+	.map(x => path.relative(path.resolve(__dirname, 'templates'), x))
 
 module.exports = class extends Generator {
 
@@ -48,10 +48,38 @@ module.exports = class extends Generator {
 				validate: validateMinLengthFactory(3),
 				store: true,
 			},
+			{
+				type: 'list',
+				name: 'addRouting',
+				message: promptColor(`Add routing:`),
+				default: 'yes',
+				choices: ['yes', 'no'],
+				store: true,
+			},
+			{
+				type: 'list',
+				name: 'addLayout',
+				message: promptColor(`Add layout:`),
+				default: 'yes',
+				choices: ['yes', 'no'],
+				store: true,
+			},
+			{
+				type: 'list',
+				name: 'usePhaser',
+				message: promptColor(`Add phaser:`),
+				default: 'yes',
+				choices: ['yes', 'no'],
+				store: true,
+			},
 		];
 
 		this.props = await this.prompt(prompts);
 		this.config.save();
+	}
+
+	initializing() {
+		this.composeWith(require.resolve('../react'), {});
 	}
 
 	configuring() {
@@ -63,14 +91,15 @@ module.exports = class extends Generator {
 		this.fs.extendJSON(this.destinationPath('package.json'), {
 			scripts: {
 				[`${ appName }:analyze`]: `cross-env APP=${ appName } npm run analyze`,
+				[`${ appName }:build:dev`]: `cross-env APP=${ appName } npm run build:dev`,
+				[`${ appName }:build:prod`]: `cross-env APP=${ appName } npm run build:prod`,
 				[`${ appName }:check`]: `npm run lint && cross-env CHECK_TYPESCRIPT=true npm run ${ appName }:test`,
-				[`${ appName }:tdd`]: `cross-env APP=${ appName } npm run tdd`,
-				[`${ appName }:test`]: `cross-env APP=${ appName } npm run test`,
+				[`${ appName }:di`]: `cross-env APP=${ appName } DI=true npm run serve`,
 				[`${ appName }:start`]: `http-server ./dist/${ appName }`,
 				[`${ appName }:serve`]: `cross-env APP=${ appName } npm run serve`,
 				[`${ appName }:serve:expose`]: `cross-env EXPOSE=ngrok npm run ${ appName }:serve`,
-				[`${ appName }:build:dev`]: `cross-env APP=${ appName } npm run build:dev`,
-				[`${ appName }:build:prod`]: `cross-env APP=${ appName } npm run build:prod`,
+				[`${ appName }:tdd`]: `cross-env APP=${ appName } npm run tdd`,
+				[`${ appName }:test`]: `cross-env APP=${ appName } npm run test`,
 				[`${ appName }:xi18n`]: `cross-env APP=${ appName } ts-node ./scripts/extract.ts`,
 			},
 			apps: {
@@ -111,8 +140,8 @@ module.exports = class extends Generator {
 
 	async writing() {
 		this.log(`\n${ progressColor(`ADD-APP`) } Generating files...\n`);
-		const { promptValues: { author, usePhaser } } = this.config.getAll();
-		const { appName, appTitle, appDescription, appUrl } = this.props;
+		const { promptValues: { author, useReact } } = this.config.getAll();
+		const { appName, appTitle, appDescription, appUrl, addRouting, addLayout, usePhaser } = this.props;
 
 		// copy ejs templates without processing
 		[
@@ -124,29 +153,48 @@ module.exports = class extends Generator {
 			);
 		});
 
+		this.log(`\n${ progressColor(`ADD-APP`) } Template setup: \n`);
+		console.log({ usePhaser, useReact, addRouting, addLayout });
+
 		// copy templates with processing ejs templates fragments
 		[
-			...listTemplates('app'),
+			'app/app.module.ts',
+			'app/ie.ts',
+			'app/preloader.ts',
 			...listTemplates('assets'),
-			...listTemplates('components/core'),
-			...listTemplates('components/language'),
-			...listTemplates('components/layouts'),
-			...listTemplates('components/loader'),
-			...listTemplates('components/menu'),
-			...listTemplates('components/theme'),
-			...listTemplates('components/views'),
+			...(useReact === 'yes' ? [
+				'app/app.tsx',
+				...(addRouting === 'yes' ? [
+					'app/app.routing.tsx',
+					...listTemplates('components/views/configuration-view'),
+					...listTemplates('components/views/intro-view'),
+				] : []),
+				...(addLayout === 'yes' ? [
+					...listTemplates('components/layouts'),
+					...listTemplates('components/ui/core'),
+					...listTemplates('components/ui/language'),
+					...listTemplates('components/ui/loader'),
+					...listTemplates('components/ui/menu'),
+					...(usePhaser === 'yes' ? listTemplates('components/ui/phaser-view') : []),
+					...listTemplates('components/ui/theme'),
+				] : []),
+				...listTemplates('src/theme'),
+				...listTemplates('src/themes'),
+			] : [
+				'app/app.ts',
+			]),
 			...listTemplates('data'),
 			...listTemplates('locales'),
-			...listTemplates('src'),
+			...listTemplates('src/i18n'),
+			...listTemplates('src/sound-director'),
+			...listTemplates('src/ui'),
 			...listTemplates('styles'),
 			// 'locales',
 			// 'styles',
+			'di.ts',
 			'main.test.ts',
 			'main.ts',
-			...(usePhaser === 'yes' ? [
-				'phaser.ts',
-				...listTemplates('components/phaser-view'),
-			] : []),
+			...(usePhaser === 'yes' ? listTemplates('src/phaser') : []),
 		].filter(Boolean).forEach((path) => {
 			this.fs.copyTpl(
 				this.templatePath(path),
@@ -154,7 +202,10 @@ module.exports = class extends Generator {
 				{
 					author,
 					appName,
+					addRouting: addRouting === 'yes',
+					addLayout: addLayout === 'yes',
 					usePhaser: usePhaser === 'yes',
+					useReact: useReact === 'yes',
 					appTitle,
 					appUrl,
 					appDescription,
@@ -170,7 +221,10 @@ module.exports = class extends Generator {
 			{
 				author,
 				appName,
+				addRouting: addRouting === 'yes',
+				addLayout: addLayout === 'yes',
 				usePhaser: usePhaser === 'yes',
+				useReact: useReact === 'yes',
 				appTitle,
 				appUrl,
 				appDescription,

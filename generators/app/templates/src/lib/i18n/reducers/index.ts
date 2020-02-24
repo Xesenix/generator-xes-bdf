@@ -1,7 +1,7 @@
 import { INITIALIZE } from 'lib/data-store';
 import { IValueAction, LanguageType } from 'lib/interfaces';
 
-import { I18nAction, II18nState } from '../i18n.interfaces';
+import { I18nAction, II18nState } from '../interfaces';
 
 import {
 	// prettier-ignore

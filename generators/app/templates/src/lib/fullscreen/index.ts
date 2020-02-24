@@ -1,3 +1,2 @@
-export * from './fullscreen.interfaces';
-export * from './fullscreen.module';
+export * from './interfaces';
 export * from './fullscreen';

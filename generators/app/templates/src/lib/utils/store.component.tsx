@@ -1,4 +1,4 @@
-import { isEqual } from 'lodash';
+import isEqual from 'lodash-es/isEqual';
 import * as React from 'react';
 import { Store } from 'redux';
 
@@ -6,16 +6,21 @@ import { filterByKeys } from './filter-keys';
 
 export interface IStoreComponentInternalProps<S> {
 	store: Store<S>;
+	bindToStore: (keys: (keyof S)[]) => S;
 }
 
 export const diStoreComponentDependencies = {
 	store: {
 		dependencies: ['data-store'],
 	},
+	bindToStore: {
+		dependencies: ['data-store:bind'],
+	},
 };
 
 /**
  * Base react component updating when any of provided store keys updates.
+ * @deprecated use useStore
  */
 export abstract class StoreComponent<P extends IStoreComponentInternalProps<S>, S extends object, SS = any> extends React.Component<P, S, SS> {
 	protected unsubscribeDataStore?: any;

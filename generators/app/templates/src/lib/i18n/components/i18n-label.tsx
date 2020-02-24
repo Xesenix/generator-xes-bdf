@@ -4,7 +4,7 @@ import { hot } from 'react-hot-loader';
 import { connectToInjector } from 'lib/di';
 import { LanguageType } from 'lib/interfaces';
 
-import { II18nLanguagesState, II18nTranslation } from '../i18n.interfaces';
+import { II18nLanguagesState, II18nTranslation } from '../interfaces';
 
 /** Component public properties required to be provided by parent component. */
 export interface II18nLabelExternalProps {
@@ -32,14 +32,12 @@ const diDecorator = connectToInjector<II18nLabelExternalProps, II18nLabelInterna
 	bindToStore: {
 		dependencies: ['data-store:bind'],
 	},
-
 });
 
 type II18nLabelProps = II18nLabelExternalProps & II18nLabelInternalProps;
 
 function I18nLabel(props: II18nLabelProps) {
 	const {
-		// prettier-ignore
 		__,
 		bindToStore,
 		render,

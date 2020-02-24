@@ -4,7 +4,7 @@ import { ISoundtrackPlayer } from './interfaces';
 import { lazyPhaserSoundtrackManagerPluginProvider } from './phaser/soundtrack-manager-plugin.provider';
 import { SoundtrackPlayer } from './services/soundtrack-player.service';
 
-export class SoundScapeModule {
+export default class SoundScapeModule {
 	public static register(app: IApplication) {
 		app.bind<SoundScapeModule>('sound-scape:module').toConstantValue(new SoundScapeModule(app));
 	}
@@ -18,6 +18,6 @@ export class SoundScapeModule {
 			.to(SoundtrackPlayer)
 			.inSingletonScope();
 
-		this.app.bind('soundtrack-manager-plugin:provider').toProvider(lazyPhaserSoundtrackManagerPluginProvider);
+		this.app.bind('phaser:plugins').toProvider(lazyPhaserSoundtrackManagerPluginProvider);
 	}
 }

@@ -6,6 +6,7 @@ import { ICreateSetAction, LanguageType } from 'lib/interfaces';
 
 import { ICreateSetLanguageReadyAction } from './actions';
 import { i18n } from './i18n';
+import { II18nTranslation, ILanguageDescriptor } from './interfaces';
 
 export type SetLanguageReadyActionType = (locale: LanguageType, value: boolean) => void;
 
@@ -27,14 +28,15 @@ const syncLocaleWithStore = (store: Store<any, any>, setLanguageReady: SetLangua
 	}
 
 	// This needs to be know at build time to prepare bundles with translations.
-	return import(/* webpackChunkName: "locales-" */ `${process.env.LOCALES_DIR}/messages.${language}.po`).then(
-		(content) => {
-			i18n.addTranslations(language, 'messages', content);
-			i18n.setLocale(language);
-			setLanguageReady(language, true);
-		},
-		(err) => Promise.reject(`ERROR while loading locales path: '${localesPath}/messages.${language}.po'`),
-	);
+	return import(/* webpackChunkName: "locales-" */ `${process.env.LOCALES_DIR}/messages.${language}.po`)
+		.then(
+			(content) => {
+				i18n.addTranslations(language, 'messages', content);
+				i18n.setLocale(language);
+				setLanguageReady(language, true);
+			},
+			(err) => Promise.reject(`ERROR while loading locales path: '${localesPath}/messages.${language}.po'`),
+		);
 };
 
 export function I18nBootProvider({ container }: interfaces.Context) {
@@ -45,6 +47,17 @@ export function I18nBootProvider({ container }: interfaces.Context) {
 		.get<IDataStoreProvider<any, any>>('data-store:provider')()
 		.then((store: Store<any, any>) => {
 			console.debug('I18nBootProvider:boot');
+
+			if (!container.isBound('i18n:available-languages')) {
+				console.debug('I18nBootProvider:use default available languages');
+				container.bind<ILanguageDescriptor[]>('i18n:available-languages').toConstantValue([
+					{
+						i18nLabel: (__: II18nTranslation) => __('english'),
+						i18nShortLabel: (__: II18nTranslation) => __('EN'),
+						locale: 'en' as LanguageType,
+					},
+				]);
+			}
 
 			const createSetCurrentLanguageAction = container.get<ICreateSetAction<LanguageType>>('data-store:action:create:set-current-language');
 			container.bind('i18n:actions')
@@ -60,6 +73,6 @@ export function I18nBootProvider({ container }: interfaces.Context) {
 			const sync = syncLocaleWithStore(store, setLanguageReadyAction);
 			store.subscribe(sync);
 
-			return sync();
+			return sync().catch(console.error);
 		});
 }

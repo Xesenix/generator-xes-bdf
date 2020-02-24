@@ -1,6 +1,6 @@
 import { IValueAction } from 'lib/interfaces';
 
-import { ThemesNames } from '../theme.interfaces';
+import { ThemesNames } from '../interfaces';
 
 export const SET_THEME = 'UI_SET_THEME';
 

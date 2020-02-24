@@ -1,4 +1,4 @@
-import { throttle } from 'lodash';
+import throttle from 'lodash-es/throttle';
 import { Store } from 'redux';
 
 import { createClassProvider } from 'lib/di';
@@ -66,6 +66,7 @@ export const UIManagerPluginProvider = createClassProvider('ui-manager-plugin', 
 	}
 
 	private scaleGameView({ innerWidth, innerHeight }) {
+		console.log('UIManagerPlugin:onresize', innerWidth, innerHeight, this.game);
 		if (this.scaleMode === Phaser.Scale.NONE) {
 			this.game.scale.resize(Math.min(this.game.scale.width, innerWidth), Math.min(this.game.scale.height, innerHeight));
 		} else {

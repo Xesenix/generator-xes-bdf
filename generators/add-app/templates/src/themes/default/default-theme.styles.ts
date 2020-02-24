@@ -1,4 +1,5 @@
 import { PaletteOptions } from '@material-ui/core/styles/createPalette';
+
 import { IAppTheme, IAppThemeOptions } from 'theme';
 
 export default (
@@ -12,7 +13,6 @@ export default (
 			h1: {
 				fontWeight: 'bold',
 			},
-			useNextVariants: true,
 		},
 		palette: {
 			secondary: {
@@ -33,22 +33,6 @@ export default (
 			container: {
 				wrapper: {
 					maxWidth: '1200px',
-				},
-			},
-		},
-		overrides: {
-			MuiToolbar: {
-				root: {
-					justifyContent: 'center',
-					[breakpoints.down('sm')]: {
-						justifyContent: 'flex-end',
-					},
-				},
-			},
-
-			TopMenuButton: {
-				root: {
-					margin: '0 8px',
 				},
 			},
 		},

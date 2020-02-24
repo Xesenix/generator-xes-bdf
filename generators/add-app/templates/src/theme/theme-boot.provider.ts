@@ -11,7 +11,7 @@ import {
 	IAppThemesDescriptors,
 	IThemeState,
 	ThemesNames,
-} from './theme.interfaces';
+} from './interfaces';
 
 export function ThemeBootProvider({ container }: interfaces.Context) {
 	const console: Console = container.get<Console>('debug:console');

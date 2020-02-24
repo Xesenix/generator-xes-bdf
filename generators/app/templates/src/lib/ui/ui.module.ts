@@ -22,7 +22,7 @@ import { UIBootProvider } from './ui-boot.provider';
 /**
  * Connect application fullscreen state with datastore.
  */
-export class UIModule {
+export default class UIModule {
 	public static register(app: IApplication) {
 		// define logic needed to bootstrap module
 		app.bind('boot').toProvider(UIBootProvider);

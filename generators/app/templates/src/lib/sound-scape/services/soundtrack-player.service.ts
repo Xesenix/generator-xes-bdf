@@ -1,6 +1,6 @@
+import { IAudioTrack } from 'lib/audio';
 import { inject } from 'lib/di';
 import { IEventEmitter } from 'lib/interfaces';
-import { IAudioTrack } from 'lib/sound';
 
 import { IScheduledSoundtrack, ISoundtrack } from '../interfaces';
 
@@ -19,7 +19,11 @@ export class SoundtrackPlayer {
 		this.eventsManager = eventsManager;
 	}
 
-	public scheduleIntroAt(soundtrack: ISoundtrack, when: number = 0, layer: number = 0): IScheduledSoundtrack | null {
+	public scheduleIntroAt(
+		soundtrack: ISoundtrack,
+		when: number = 0,
+		layer: number = 0,
+	): IScheduledSoundtrack | null {
 		const introStart = soundtrack.intro.start;
 		const introDuration = soundtrack.intro.duration;
 
@@ -51,7 +55,12 @@ export class SoundtrackPlayer {
 		return null;
 	}
 
-	public scheduleLoopAt(soundtrack: ISoundtrack, when: number = 0, duration: number = 0, layer: number = 0): IScheduledSoundtrack | null {
+	public scheduleLoopAt(
+		soundtrack: ISoundtrack,
+		when: number = 0,
+		duration: number = 0,
+		layer: number = 0,
+	): IScheduledSoundtrack | null {
 		const loopStart = soundtrack.loop.start;
 		const loopEnd = soundtrack.loop.end;
 		const loopDuration = loopEnd - loopStart;
@@ -115,7 +124,11 @@ export class SoundtrackPlayer {
 		return null;
 	}
 
-	public scheduleOutroAt(soundtrack: ISoundtrack, when: number = 0, layer: number = 0): IScheduledSoundtrack | null {
+	public scheduleOutroAt(
+		soundtrack: ISoundtrack,
+		when: number = 0,
+		layer: number = 0,
+	): IScheduledSoundtrack | null {
 		const outroStart = soundtrack.outro.start;
 		const outroEnd = soundtrack.outro.end;
 		const outroDuration = outroEnd - outroStart;
@@ -154,7 +167,11 @@ export class SoundtrackPlayer {
 	 * @param duration amount of time to play scheduled soundtrack
 	 * @param [layer=0] soundtrack layer
 	 */
-	public scheduleAfterLast(soundtrack: ISoundtrack, duration: number = 0, layer: number = 0): void {
+	public scheduleAfterLast(
+		soundtrack: ISoundtrack,
+		duration: number = 0,
+		layer: number = 0,
+	): void {
 		const last = this.getLastScheduledSoundtrack(layer);
 		let when = this.getClosestInterruptionTime(last, this.context.currentTime);
 		const soundtrackChanged = !last || last.soundtrack.name !== soundtrack.name;
@@ -190,7 +207,11 @@ export class SoundtrackPlayer {
 	 * @param duration amount of time to play scheduled soundtrack
 	 * @param [layer=0] soundtrack layer
 	 */
-	public scheduleNext(soundtrack: ISoundtrack, duration: number = 0, layer: number = 0): void {
+	public scheduleNext(
+		soundtrack: ISoundtrack,
+		duration: number = 0,
+		layer: number = 0,
+	): void {
 		let extended = false;
 		this.clearSoundtracksAfter(0, layer);
 
@@ -270,7 +291,10 @@ export class SoundtrackPlayer {
 	 * @param scheduled soundtrack descriptor
 	 * @returns audio context time at which we can interrupt
 	 */
-	private getClosestInterruptionTime(descriptor: IScheduledSoundtrack | null, when: number = 0): number {
+	private getClosestInterruptionTime(
+		descriptor: IScheduledSoundtrack | null,
+		when: number = 0,
+	): number {
 		if (!descriptor) {
 			return this.context.currentTime;
 		}

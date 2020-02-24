@@ -1,6 +1,6 @@
 import { Container } from 'inversify';
 
-export class DebugModule {
+export default class DebugModule {
 	public static register(container: Container) {
 		// console
 		const noop = () => {};
@@ -30,6 +30,6 @@ export class DebugModule {
 			container.bind<Console>(`debug:console:${key}`).toConstantValue(process.env.DEBUG === 'true' && value === 'true' ? console : noopConsole);
 		});
 
-		container.bind<Console>('debug:console').toConstantValue(process.env.DEBUG ? console : noopConsole);
+		container.bind<Console>('debug:console').toConstantValue(process.env.DEBUG === 'true' ? console : noopConsole);
 	}
 }

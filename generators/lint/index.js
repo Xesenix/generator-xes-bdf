@@ -17,7 +17,7 @@ module.exports = class extends Generator {
 			{
 				type: 'list',
 				name: 'indentStyle',
-				message: promptColor('Indentation style: '),
+				message: promptColor('Indentation style: '), // spaces don't work best with jsdocs
 				default: 'tab',
 				choices: ['tab', 'space'],
 				validate: validateNotEmpty,
@@ -48,13 +48,13 @@ module.exports = class extends Generator {
 
 	async writing() {
 		this.log(`\n${ progressColor(`LINT`) } Downloading ${ scriptColor('.gitignore') }\n`);
-		const ignoreContent = await getIgnoredPaths();
+		// const ignoreContent = await getIgnoredPaths();
 
-		this.log(`\n${ progressColor(`LINT`) } Initializing ${ scriptColor('.prettierignore') }\n`);
-		this.fs.write(
-			this.destinationPath('.prettierignore'),
-			ignoreContent,
-		);
+		// this.log(`\n${ progressColor(`LINT`) } Initializing ${ scriptColor('.prettierignore') }\n`);
+		// this.fs.write(
+		// 	this.destinationPath('.prettierignore'),
+		// 	ignoreContent,
+		// );
 	}
 
 	configuring() {
@@ -83,8 +83,7 @@ module.exports = class extends Generator {
 		this.fs.extendJSON(this.destinationPath('package.json'), {
 			scripts: {
 				"lint": "tslint -p ./",
-				"lint:fix": "npm run prettier && tslint -p ./ --fix",
-				"prettier": "prettier --write \"**/*.{js,jsx,ts,tsx}\"",
+				"lint:fix": "tslint -p ./ --fix",
 				"pre-commit": "lint:fix",
 			},
 		});
@@ -111,7 +110,7 @@ module.exports = class extends Generator {
 		this.npmInstall([
 			'tslint',
 			'eslint',
-			'prettier',
+			// 'prettier',
 			'tslint-react',
 			'tslint-config-prettier',
 			'tslint-eslint-rules',

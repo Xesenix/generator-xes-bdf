@@ -1,10 +1,9 @@
-import Enzyme from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16';
 import 'reflect-metadata';
 
-Enzyme.configure({ adapter: new Adapter() });
-
-const excludeRegexp: RegExp = /\..*\/(main|index)\./;
+/**
+ * Exclude entry point scripts that execute arbitrary code.
+ */
+const excludeRegexp: RegExp = /\.\/[a-z0-9-_\.]/;
 /**
  * We need to load all test files to be included in karma. And all others to generate test coverage.
  * @see https://github.com/webpack-contrib/karma-webpack#alternative-usage
@@ -15,11 +14,6 @@ contextMain
 	.filter((p: string) => !excludeRegexp.test(p))
 	.forEach(contextMain);
 
-require('../src/lib/main.test');
-
 // add libraries that need to work with main application
-// {
-//   const contextLib = require.context('../path/to/lib', true, /\.(t|j)sx?$/);
-//   contextLib.keys().filter((p: string) => !excludeRegexp.test(p)).forEach(contextLib);
-// }
+require('../src/lib/main.test');
 // ...

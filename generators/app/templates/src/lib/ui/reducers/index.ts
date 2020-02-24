@@ -1,7 +1,7 @@
 import { INITIALIZE } from 'lib/data-store';
 import { IValueAction } from 'lib/interfaces';
 
-import { IUIState } from '../ui.interfaces';
+import { IUIState } from '../interfaces';
 
 import {
 	// prettier-ignore

@@ -7,7 +7,7 @@ import { DataStoreProvider, IDataStoreProvider } from './data-store.provider';
 import { useStore } from './use-store';
 
 // prettier-ignore
-export class DataStoreModule {
+export default class DataStoreModule {
 	public static register<T extends object, A extends Action>(
 		// prettier-ignore
 		app: IApplication,
@@ -24,6 +24,7 @@ export class DataStoreModule {
 		});
 		app.bind<IDataStoreProvider<T, A>>('data-store:provider').toProvider(DataStoreProvider);
 
+		/** This should not be injected via useInjector */
 		app.bind<Promise<(keys: (keyof T)[]) => T>>('data-store:bind').toDynamicValue(async ({ container }: interfaces.Context) => {
 			const store = await container.get<IDataStoreProvider<T, A>>('data-store:provider')();
 			return (keys: (keyof T)[]) => useStore<T, A>(store, keys);
