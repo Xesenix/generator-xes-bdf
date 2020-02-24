@@ -189,8 +189,6 @@ module.exports = class extends Generator {
 			...listTemplates('src/sound-director'),
 			...listTemplates('src/ui'),
 			...listTemplates('styles'),
-			// 'locales',
-			// 'styles',
 			'di.ts',
 			'main.test.ts',
 			'main.ts',

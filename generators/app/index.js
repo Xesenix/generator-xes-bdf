@@ -64,26 +64,10 @@ module.exports = class extends Generator {
 				type: 'input',
 				name: 'author',
 				message: promptColor('Author: '),
-				default: 'Xesenix',
+				default: '',
 				validate: validateMinLengthFactory(3),
 				store: true,
 			},
-			// {
-			//   type: 'list',
-			//   name: 'typescript',
-			//   message: promptColor(`Typescript:`),
-			//   default: 'yes',
-			//   choices: ['yes', 'no'],
-			//   store: true,
-			// },
-			// {
-			//   type: 'list',
-			//   name: 'styles',
-			//   message: promptColor(`Styles:`),
-			//   default: 'scss',
-			//   choices: ['scss', 'css', 'jss'],
-			//   store: true,
-			// },
 			{
 				type: 'list',
 				name: 'usePhaser',
@@ -118,17 +102,17 @@ module.exports = class extends Generator {
 			version: '0.0.0',
 			author: this.props.author,
 			scripts: {
-				'tsc': 'tsc -p tsconfig.json --diagnostics --pretty',
-				'report-coverage': 'cat ./coverage/lcov.info | coveralls',
 				'analyze': 'cross-env ANALYZE=true npm run build:prod',
-				'tdd': 'cross-env BABEL_ENV=test ENV=test karma start',
-				'test': 'cross-env BABEL_ENV=test ENV=test karma start --single-run',
-				'start': 'http-server ./dist',
-				'serve': 'cross-env ENV=development HMR=true webpack-dev-server --config webpack.config.js',
-				"expose": "ngrok http --host-header=rewrite 8080",
 				'build:dev': 'cross-env ENV=development parallel-webpack --config webpack.config.js',
 				'build:prod': 'cross-env ENV=production webpack --config webpack.config.js',
+				'report-coverage': 'cat ./coverage/lcov.info | coveralls',
+				'serve': 'cross-env ENV=development HMR=true webpack-dev-server --config webpack.config.js',
+				'start': 'http-server ./dist',
+				'tdd': 'cross-env BABEL_ENV=test ENV=test karma start',
+				'test': 'cross-env BABEL_ENV=test ENV=test karma start --single-run',
+				'tsc': 'tsc -p tsconfig.json --diagnostics --pretty',
 				'xi18n': 'ts-node ./scripts/extract.ts',
+				"expose": "ngrok http --host-header=rewrite 8080",
 			},
 		});
 	}
@@ -165,7 +149,8 @@ module.exports = class extends Generator {
 			...listTemplates('src/lib/ui'),
 			...listTemplates('src/lib/user'),
 			...listTemplates('src/lib/utils'),
-		].filter(Boolean).forEach((path) => {
+    ]
+    .filter(Boolean).forEach((path) => {
 			this.fs.copyTpl(
 				this.templatePath(path),
 				this.destinationPath(path),
@@ -190,19 +175,19 @@ module.exports = class extends Generator {
 		this.log(`\n${ progressColor(`APP`) } Running ${ scriptColor('npm -D install') }...\n`);
 
 		this.npmInstall([
+			'@babel/plugin-transform-runtime',
+			'compression-webpack-plugin',
+			'compression',
 			'cross-env',
-			'xes-webpack-core',
-			'typescript',
-			'ts-node',
-			// locales?
+			'ngrock-webpack-plugin',
 			'node-gettext',
 			'po-gettext-loader',
-			'compression',
-			'compression-webpack-plugin',
-			'ngrock-webpack-plugin',
+			'ts-node',
+			'typescript',
 			'webpack-pwa-manifest',
 			'workbox-webpack-plugin',
-			'@babel/plugin-transform-runtime',
+			'xes-webpack-core',
+			// locales?
 		], { saveDev: true });
 
 		this.log(`\n${ progressColor(`APP`) } Running ${ scriptColor('npm install') }...\n`);
@@ -213,30 +198,25 @@ module.exports = class extends Generator {
 			'inversify-vanillajs-helpers',
 			// fullscreen
 			'fscreen',
-			// jss material
-			'@material-ui/core',
-			'@material-ui/icons',
-			'@material-ui/lab',
-			'@material-ui/styles',
 			// datastore?
+			'immer',
 			'redux',
 			'redux-thunk',
 			'redux-logger',
 			'redux-localstorage-simple',
 			...(usePhaser === 'yes' ? ['phaser'] : []),
-			'immer',
 			// others
 			'core-js', // @see https://github.com/babel/babel/issues/9449
 			'eventemitter3', // fast event emitter
 			'html-decoder',
+			'lodash-es',
 			'lodash',
+			'math-random-seed',
 			'polished',
 			'reflect-metadata',
-			'webpack', // @see https://github.com/webpack/webpack/issues/8656
 			'terser-webpack-plugin',
 			'ts-loader',
-			'lodash-es',
-			'math-random-seed',
+			'webpack', // @see https://github.com/webpack/webpack/issues/8656
 		]);
 	}
 };

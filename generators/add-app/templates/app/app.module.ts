@@ -14,8 +14,8 @@ export default class AppModule extends BaseAppModule implements IApplication {
 		return Promise.all<{ default: IRegistrable }>([
 			import('i18n/i18n.module'),
 			import(/* webpackChunkName: "ui" */ 'lib/data-store/data-store.module'),
-			import(/* webpackChunkName: "ui" */ 'ui/ui.module'),
-			import(/* webpackChunkName: "ui" */ 'lib/i18n/i18n.module'),<% if (addLayout) { %>
+			import(/* webpackChunkName: "ui" */ 'lib/i18n/i18n.module'),
+			import(/* webpackChunkName: "ui" */ 'ui/ui.module'),<% if (addLayout) { %>
 			import(/* webpackChunkName: "ui" */ 'lib/fullscreen/fullscreen.module'),
 			import(/* webpackChunkName: "ui" */ 'theme/theme.module'),
 			import(/* webpackChunkName: "ui" */ 'themes/default/default-theme.module'),<% } %>

@@ -11,15 +11,15 @@ function runNotSupportedBrowserApp(root: HTMLElement) {
 }
 
 async function runStyledPreloadApp({
-	root,
+	labelFormatter = (label: string) => label.replace(/(\.[a-z0-9]*)/, ''),
 	loadApp,
 	progressFormatter = (loaded: number, total: number) => total > 0 ? `${(100 * loaded / total).toFixed(0)}%` : `${loaded}`,
-	labelFormatter = (label: string) => label.replace(/(\.[a-z0-9]*)/, ''),
+	root,
 }: {
-	root: HTMLElement;
+	labelFormatter?: (label: string) => string;
 	loadApp: () => Promise<new (root: HTMLElement, document: Document, window: Window) => IApplication>,
 	progressFormatter?: (loaded: number, total: number) => string;
-	labelFormatter?: (label: string) => string;
+	root: HTMLElement;
 }) {
 	const renderProgress = (progress: IPreloadProgress) => {
 		root.innerHTML = '';
@@ -32,7 +32,6 @@ async function runStyledPreloadApp({
 	const app: IApplication = new AppModule(root, document, window);
 	app.get<IEventEmitter>('event-manager').on('app:boot', clearPreload);
 
-	// loading other application modules
 	return app.run();
 }
 

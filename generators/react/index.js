@@ -33,9 +33,13 @@ module.exports = class extends Generator {
 			if (useReact === 'yes') {
 				this.log(`\n${ progressColor(`REACT`) } Running ${ scriptColor('npm install') }...\n`);
 				this.npmInstall([
-					'react-hot-loader',
-					'react-loadable',
 					'@hot-loader/react-dom',
+					'@material-ui/core',
+					'@material-ui/icons',
+					'@material-ui/lab',
+					'@material-ui/styles',
+					'enzyme-adapter-react-16',
+					'enzyme',
 					'hoist-non-react-statics',
 					'react-dom',
 					'react-hot-loader',
@@ -43,8 +47,6 @@ module.exports = class extends Generator {
 					'react-router-dom',
 					'react-router',
 					'react',
-					'enzyme',
-					'enzyme-adapter-react-16',
 				]);
 			} else {
 				this.log(`\n${ progressColor(`REACT`) } Skiping ${ scriptColor('npm install') }...\n`);
