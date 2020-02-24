@@ -9,7 +9,7 @@ import AppModule from './app/app.module';
 const root: HTMLElement = document.getElementById('app') || document.body;
 const app = new AppModule(root, document, window);
 
-app.boot().then(() => {
+app.run().then(() => {
 	ReactDOM.render(
 		React.createElement(ReportContainerComponent, { app }),
 		document.getElementById('app'),
