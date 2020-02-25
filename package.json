@@ -1,6 +1,6 @@
 {
   "name": "generator-xes-bdf",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "description": "Generating projects that use xes-core as base library for application configuration.",
   "homepage": "",
   "author": {
