@@ -109,7 +109,7 @@ module.exports = class extends Generator {
 		// linter for fixing code according to .editorconfig setup
 		this.npmInstall([
 			'tslint',
-			'eslint',
+			// 'eslint',
 			// 'prettier',
 			'tslint-react',
 			'tslint-config-prettier',
