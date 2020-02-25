@@ -18,9 +18,9 @@ module.exports = (config) => {
 		// required by Phaser 3
 		'CANVAS_RENDERER': JSON.stringify(true),
 		'WEBGL_RENDERER': JSON.stringify(true),
-  }));<% } %><% if (useReact) { %>
+	}));<% } %><% if (useReact) { %>
 
-  if (process.env.ENV === 'development') {
+	if (process.env.ENV === 'development') {
 		config.resolve.alias = {
 			'react-dom': '@hot-loader/react-dom',
 		};

@@ -149,8 +149,8 @@ module.exports = class extends Generator {
 			...listTemplates('src/lib/ui'),
 			...listTemplates('src/lib/user'),
 			...listTemplates('src/lib/utils'),
-    ]
-    .filter(Boolean).forEach((path) => {
+		]
+		.filter(Boolean).forEach((path) => {
 			this.fs.copyTpl(
 				this.templatePath(path),
 				this.destinationPath(path),

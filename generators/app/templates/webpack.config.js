@@ -51,9 +51,9 @@ const configureWebpack = (config) => {
 			use: 'ts-loader',
 			exclude: /node_modules/,
 		};
-  }
+	}
 
-  if (process.env.ENV === 'production') {
+	if (process.env.ENV === 'production') {
 		config.plugins.push(new CompressionPlugin());
 		// if you are using moment you can reduce amount of locales here
 		config.plugins.push(new webpackBase.ContextReplacementPlugin(/moment[\/\\]locale$/, /(en|pl)$/));
