@@ -1,10 +1,11 @@
-<% if(useReact) { %>if import Enzyme from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16';
 import 'reflect-metadata';
+<% if (useReact) { %>import Enzyme from 'enzyme';
+import Adapter from 'enzyme-adapter-react-16';
 
 Enzyme.configure({ adapter: new Adapter() });
 
-<% } %>const excludeRegexp: RegExp = /.*\/(main|index|interfaces)\./;
+<% } %>
+const excludeRegexp: RegExp = /.*\/(main|index|interfaces)\./;
 
 const filter = (contextLib) => contextLib
 	.keys()
