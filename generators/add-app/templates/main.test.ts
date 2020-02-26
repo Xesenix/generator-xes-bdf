@@ -15,5 +15,5 @@ contextMain
 	.forEach(contextMain);
 
 // add libraries that need to work with main application
-require('../src/lib/main.test');
+require('lib/main.test');
 // ...

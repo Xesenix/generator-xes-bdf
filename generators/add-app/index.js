@@ -9,7 +9,7 @@ const { listFiles } = require('../../helpers/functions');
 const promptColor = chalk.magenta;
 const progressColor = chalk.blue;
 const scriptColor = chalk.keyword('lime');
-const rootSrcPath = '';
+const rootSrcPath = 'applications/';
 
 const listTemplates = (folder) => listFiles(path.resolve(__dirname, `templates/${ folder }`))
 	.map(x => path.relative(path.resolve(__dirname, 'templates'), x))
@@ -153,8 +153,8 @@ module.exports = class extends Generator {
 			);
 		});
 
-		this.log(`\n${ progressColor(`ADD-APP`) } Template setup: \n`);
-		console.log({ usePhaser, useReact, addRouting, addLayout });
+		this.log(`\n${ progressColor(`ADD-APP`) } Template setup:`);
+		console.log({ usePhaser, useReact, addRouting, addLayout }, '\n');
 
 		// copy templates with processing ejs templates fragments
 		[
@@ -189,6 +189,7 @@ module.exports = class extends Generator {
 			...listTemplates('src/sound-director'),
 			...listTemplates('src/ui'),
 			...listTemplates('styles'),
+			'app.yo-rc.json',
 			'di.ts',
 			'main.test.ts',
 			'main.ts',
@@ -228,6 +229,8 @@ module.exports = class extends Generator {
 				appDescription,
 			},
 		);
+
+		this.fs.extendJSON(this.destinationPath(`${ rootSrcPath }${ appName }/app.yo-rc.json`), { ...this.props, useReact })
 	}
 
 	end() {

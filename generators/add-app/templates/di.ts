@@ -6,6 +6,8 @@ import ReportContainerComponent from 'lib/di/component/report-container';
 
 import AppModule from './app/app.module';
 
+import './styles/di.scss';
+
 const root: HTMLElement = document.getElementById('app') || document.body;
 const app = new AppModule(root, document, window);
 

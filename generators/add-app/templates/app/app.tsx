@@ -94,9 +94,16 @@ function App(props: IAppProps) {
 
 export default hot(module)(diDecorator(App));
 <% } else { %>
+
+import '../styles/app.scss';
+
 function App() {
 	return (
-		<h1><%= appTitle %></h1>
+		<>
+			<img src="assets/thumb.png"/>
+			<h1><%= appTitle %></h1>
+			<p><%= appDescription %></p>
+		</>
 	);
 }
 

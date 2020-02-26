@@ -2,7 +2,7 @@
 	padding: 10px 20px;
 	font-family: monospace;
 	font-size: 12px;
-	color: lime;
+	color: #f8efd9;
 	background-color: rgba(#000, .5);
 }
 
@@ -11,11 +11,12 @@
 	width: 100%;
 	height: 100%;
 	max-width: 800px;
-	align-content: center;
+	align-content: start;
 	justify-content: center;
-	background-color: #333;
-	color: #ddd;
+	background-color: rgba(#fff, .05);
+	color: #f8efd9;
 	text-align: center;
+	text-shadow: 0 5px 5px #000;
 	font-family: "Oswald", "Helvetica", "Arial", sans-serif;
 
 	img {
