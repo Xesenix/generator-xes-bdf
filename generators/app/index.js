@@ -132,7 +132,10 @@ module.exports = class extends Generator {
 			'src/lib/index.ts',
 			'src/lib/interfaces.ts',
 			'src/lib/main.test.ts',
-			...(usePhaser === 'yes' ? listTemplates('src/lib/phaser') : []),
+			...(usePhaser === 'yes' ? [
+				'src/types/phaser.d.ts',
+				listTemplates('src/lib/phaser'),
+			] : []),
 			...listTemplates('src/lib/audio'), // sound
 			...listTemplates('src/lib/core'),
 			...listTemplates('src/lib/data-store'), // redux

@@ -4,7 +4,7 @@ import * as React from 'react';
 import { hot } from 'react-hot-loader';
 
 import { connectToDI } from 'lib/di';
-import { IPhaserGameProvider } from 'phaser/game.provider';
+import { IPhaserGameProvider } from 'phaser/phaser-game.provider';
 
 import { styles } from './phaser-view.styles';
 

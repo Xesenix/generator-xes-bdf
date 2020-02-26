@@ -33,6 +33,7 @@ module.exports = class extends Generator {
 			if (useReact === 'yes') {
 				this.log(`\n${ progressColor(`REACT`) } Running ${ scriptColor('npm install') }...\n`);
 				this.npmInstall([
+					'@types/react-router',
 					'@hot-loader/react-dom',
 					'@material-ui/core',
 					'@material-ui/icons',
