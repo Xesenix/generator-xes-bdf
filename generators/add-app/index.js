@@ -72,6 +72,22 @@ module.exports = class extends Generator {
 				choices: ['yes', 'no'],
 				store: true,
 			},
+			{
+				type: 'list',
+				name: 'usePixi',
+				message: promptColor(`Add pixi:`),
+				default: 'yes',
+				choices: ['yes', 'no'],
+				store: true,
+			},
+			{
+				type: 'list',
+				name: 'useSound',
+				message: promptColor(`Add sound manager:`),
+				default: 'yes',
+				choices: ['yes', 'no'],
+				store: true,
+			},
 		];
 
 		this.props = await this.prompt(prompts);
@@ -141,7 +157,7 @@ module.exports = class extends Generator {
 	async writing() {
 		this.log(`\n${ progressColor(`ADD-APP`) } Generating files...\n`);
 		const { promptValues: { author, useReact } } = this.config.getAll();
-		const { appName, appTitle, appDescription, appUrl, addRouting, addLayout, usePhaser } = this.props;
+		const { appName, appTitle, appDescription, appUrl, addRouting, addLayout, usePhaser, usePixi, useSound } = this.props;
 
 		// copy ejs templates without processing
 		[
@@ -205,9 +221,12 @@ module.exports = class extends Generator {
 					addLayout: addLayout === 'yes',
 					usePhaser: usePhaser === 'yes',
 					useReact: useReact === 'yes',
+					usePixi: usePixi === 'yes',
+					useSound: useSound === 'yes',
 					appTitle,
 					appUrl,
 					appDescription,
+					rootSrcPath,
 				},
 			);
 		});
@@ -224,9 +243,12 @@ module.exports = class extends Generator {
 				addLayout: addLayout === 'yes',
 				usePhaser: usePhaser === 'yes',
 				useReact: useReact === 'yes',
+				usePixi: usePixi === 'yes',
+				useSound: useSound === 'yes',
 				appTitle,
 				appUrl,
 				appDescription,
+				rootSrcPath,
 			},
 		);
 
