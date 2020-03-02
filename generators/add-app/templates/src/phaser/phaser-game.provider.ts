@@ -39,6 +39,7 @@ export function PhaserGameProvider(context: interfaces.Context) {
 				Phaser,
 				IntroScene,
 				plugins,
+				forceNew,
 			});
 
 			if (!forceNew && game !== null) {
@@ -49,10 +50,12 @@ export function PhaserGameProvider(context: interfaces.Context) {
 				game.scale.getParentBounds();
 				game.scale.refresh();
 
-				return Promise.resolve(game);
+				return game;
 			}
 
-			const backgroundColor: any = 0x000000;
+			const backgroundColor: any = 0x340000;
+			const screenWidth = 800;
+			const screenHeight = 600;
 
 			/** @see https://github.com/photonstorm/phaser/blob/master/src/boot/Config.js */
 			const fps: Phaser.Types.Core.FPSConfig = {
@@ -67,11 +70,11 @@ export function PhaserGameProvider(context: interfaces.Context) {
 
 			const render: Phaser.Types.Core.RenderConfig = {
 				// resolution: 1,
-				antialias: false,
+				// antialias: true,
+				// roundPixels: true,
 				// autoResize: true,
 				// backgroundColor,
-				pixelArt: true, // => antialias: false, roundPixels: true
-				roundPixels: true,
+				pixelArt: false, // => antialias: false, roundPixels: true
 				transparent: false,
 				clearBeforeRender: false,
 				premultipliedAlpha: true,
@@ -84,8 +87,8 @@ export function PhaserGameProvider(context: interfaces.Context) {
 				audio: {
 					noAudio: true,
 				} as Phaser.Types.Core.AudioConfig,
-				width: 768,
-				height: 300,
+				width: screenWidth,
+				height: screenHeight,
 				type: Phaser.CANVAS, // AUTO, CANVAS, WEBGL, HEADLESS
 				parent,
 				disableContextMenu: true,
@@ -113,8 +116,8 @@ export function PhaserGameProvider(context: interfaces.Context) {
 				scene: [IntroScene],
 				scale: {
 					mode: Phaser.Scale.WIDTH_CONTROLS_HEIGHT,
-					width: 768,
-					height: 300,
+					width: screenWidth,
+					height: screenHeight,
 				},
 			};
 
@@ -123,7 +126,7 @@ export function PhaserGameProvider(context: interfaces.Context) {
 			try {
 				console.debug('PhaserGameProvider:game', game);
 
-				return Promise.resolve(game as Phaser.Game);
+				return game as Phaser.Game;
 			} catch (error) {
 				console.debug('PhaserGameProvider:error', parent, error);
 				return Promise.reject(error);

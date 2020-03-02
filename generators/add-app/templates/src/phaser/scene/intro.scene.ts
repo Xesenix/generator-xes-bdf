@@ -11,6 +11,8 @@ export const IntroSceneProvider = createClassProvider('intro-scene', [
 	Phaser,
 	console: Console,
 ) => class IntroScene extends Phaser.Scene {
+	private logo: Phaser.GameObjects.Image;
+
 	constructor() {
 		super({
 			key: 'intro',
@@ -20,17 +22,24 @@ export const IntroSceneProvider = createClassProvider('intro-scene', [
 	public preload(): void {
 		console.log('IntroScene:preload');
 
-		this.load.image('bg', 'assets/bg.png');
+		this.load.image('logo', 'assets/thumb.png');
 	}
 
 	public create(): void {
-		const bg = this.add.image(384, 150, 'bg');
-		bg.setOrigin(0.5, 0.5);
+		console.log('IntroScene:create', this);
+
+		this.logo = this.add.image(this.game.config.width / 2 , this.game.config.height / 2 , 'logo');
+		this.logo.setOrigin(0.5, 0.5);
 	}
 
 	public destroy(): void {
+		console.log('IntroScene:destroy');
 	}
 
 	public update(time: number, delta: number): void {
+		const speed = 140 / 60000;
+		const scale = 0.75 - 0.25 * Math.sin(4 * 1000 / 60 * speed * Date.now() / 180 * Math.PI);
+		this.logo.angle = 30 * Math.sin(time / 1000);
+		this.logo.setScale(scale);
 	}
 });

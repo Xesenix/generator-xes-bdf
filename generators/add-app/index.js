@@ -191,7 +191,6 @@ module.exports = class extends Generator {
 					...listTemplates('components/ui/language'),
 					...listTemplates('components/ui/loader'),
 					...listTemplates('components/ui/menu'),
-					...(usePhaser === 'yes' ? listTemplates('components/ui/phaser-view') : []),
 					...listTemplates('components/ui/theme'),
 				] : []),
 				...listTemplates('src/theme'),
