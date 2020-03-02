@@ -38,7 +38,8 @@ function IntroViewComponent(props: IIntroViewProps) {
 			</Typography>
 			<Typography align="center" className={classes.description} component="p" variant="h5">
 				{__( `<%= appDescription %>` )}
-			</Typography>
+			</Typography><% if (usePixi) { %>
+			<PixiComponent className={classes.screen}/><% } %>
 		</Paper>
 	);
 }

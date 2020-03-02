@@ -209,6 +209,7 @@ module.exports = class extends Generator {
 			'di.ts',
 			'main.test.ts',
 			'main.ts',
+			...(usePixi === 'yes' ? listTemplates('src/pixi') : []),
 			...(usePhaser === 'yes' ? listTemplates('src/phaser') : []),
 		].filter(Boolean).forEach((path) => {
 			this.fs.copyTpl(

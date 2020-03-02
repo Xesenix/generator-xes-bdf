@@ -18,7 +18,8 @@ export default class AppModule extends BaseAppModule implements IApplication {
 			import(/* webpackChunkName: "ui" */ 'ui/ui.module'),<% if (addLayout) { %>
 			import(/* webpackChunkName: "ui" */ 'lib/fullscreen/fullscreen.module'),
 			import(/* webpackChunkName: "ui" */ 'theme/theme.module'),
-			import(/* webpackChunkName: "ui" */ 'themes/default/default-theme.module'),<% } %>
+			import(/* webpackChunkName: "ui" */ 'themes/default/default-theme.module'),<% } %><% if (usePixi) { %>
+			import(/* webpackChunkName: "pixi" */ 'pixi/pixi.module'),<% } %>
 		] as any);
 	}
 
