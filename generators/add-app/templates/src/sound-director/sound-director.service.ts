@@ -6,6 +6,8 @@ import { inject } from 'lib/di/decorators';
 import { IEventEmitter } from 'lib/interfaces';
 import { ISoundtrack, ISoundtrackPlayer } from 'lib/sound-scape/interfaces';
 
+type SoundtrackMode = 'ambient' | 'action';
+
 @inject([
 	'event-manager',
 	'data-store',
@@ -13,11 +15,11 @@ import { ISoundtrack, ISoundtrackPlayer } from 'lib/sound-scape/interfaces';
 	'audio-loader:provider',
 	'sound-scape:soundtrack-player',
 	{ type: 'soundtrack', named: 'ambient', },
-	{ type: 'soundtrack', named: 'action', },
 ])
 export class SoundDirectorService {
-	private mode: 'idle' | 'action' = 'idle';
+	private mode: SoundtrackMode = 'ambient';
 	private unsubscribe?: () => void;
+	private soundtracks: { [modeName in SoundtrackMode]?: ISoundtrack };
 
 	constructor(
 		private em: IEventEmitter,
@@ -25,35 +27,29 @@ export class SoundDirectorService {
 		private audioMixer: IStateAwareAudioMixer,
 		private audioLoaderProvider: IAudioFileLoaderProvider,
 		private soundtrackPlayer: ISoundtrackPlayer,
-		private ambient: ISoundtrack,
-		private action: ISoundtrack,
+		ambient: ISoundtrack,
 	) {
-
+		this.soundtracks = { ambient };
 	}
 
-
 	public start() {
-		this.em.on('mode:change', (mode: 'idle' | 'action') => {
-			if (mode !== this.mode) {
-				if (mode === 'action') {
-					this.enterActionMode();
-				} else {
-					this.enterIdleMode();
-				}
-			}
+		this.em.on('mode:change', (mode: SoundtrackMode) => {
+			this.enterMode(mode);
 		});
 
 		this.unsubscribe = this.store.subscribe(this.syncWithState);
 		this.syncWithState();
 
-		return this.audioLoaderProvider().then((audioLoader: IAudioFileLoader) => {
-			// TODO: define in dependency injection
-			audioLoader.add('soundtrack', 'assets/soundtrack.ogg');
+		return this.audioLoaderProvider()
+			.then((audioLoader: IAudioFileLoader) => {
+				// TODO: define in dependency injection
+				audioLoader.add('soundtrack', 'assets/soundtrack.ogg');
 
-			return audioLoader.loadAll();
-		}).then(() => {
-			this.soundtrackPlayer.scheduleAfterLast(this.ambient, 0);
-		});
+				return audioLoader.loadAll();
+			})
+			.then(() => {
+				this.soundtrackPlayer.scheduleAfterLast(this.soundtracks.ambient, 0);
+			});
 	}
 
 	public end() {
@@ -62,17 +58,10 @@ export class SoundDirectorService {
 		}
 	}
 
-	private enterIdleMode() {
-		if (this.mode !== 'idle') {
-			this.soundtrackPlayer.scheduleNext(this.ambient, 0);
-			this.mode = 'idle';
-		}
-	}
-
-	private enterActionMode() {
-		if (this.mode !== 'action') {
-			this.soundtrackPlayer.scheduleNext(this.action, 0);
-			this.mode = 'action';
+	private enterMode(modeName: SoundtrackMode = 'ambient') {
+		if (this.mode !== modeName) {
+			this.soundtrackPlayer.scheduleNext(this.soundtracks[modeName], 0);
+			this.mode = modeName;
 		}
 	}
 

@@ -15,35 +15,14 @@ const ambient: ISoundtrack = {
 	},
 	loop: {
 		start: note140 * 0,
-		end: note140 * 56,
-		duration: note140 * 56,
+		end: note140 * 0,
+		duration: note140 * 18,
 		interruptionStep: note140 * 2,
 	},
 	outro: {
 		start: note140 * 0,
 		end: note140 * 0,
 		duration: note140 * 0,
-	},
-};
-
-const action: ISoundtrack = {
-	key: 'soundtrack',
-	name: 'action',
-	intro: {
-		start: note140 * 56,
-		end: note140 * 60,
-		duration: note140 * 4,
-	},
-	loop: {
-		start: note140 * 60,
-		end: note140 * 88,
-		duration: note140 * 28,
-		interruptionStep: note140 * 4,
-	},
-	outro: {
-		start: note140 * 88,
-		end: note140 * 92,
-		duration: note140 * 4,
 	},
 };
 
@@ -60,6 +39,5 @@ export default class SoundDirectorModule {
 
 		app.bind<SoundDirectorService>('sound-director').to(SoundDirectorService);
 		app.bind<ISoundtrack>('soundtrack').toConstantValue(ambient).whenTargetNamed('ambient');
-		app.bind<ISoundtrack>('soundtrack').toConstantValue(action).whenTargetNamed('action');
 	}
 }

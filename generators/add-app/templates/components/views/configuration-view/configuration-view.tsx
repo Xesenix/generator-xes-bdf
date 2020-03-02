@@ -16,8 +16,8 @@ import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 
 import { ConfigureUILink } from 'components/ui/core/navigation-links';
-
-import SoundConfigurationComponent from './sound/sound-configuration';
+<% if (useSound) { %>
+import SoundConfigurationComponent from './sound/sound-configuration';<% } %>
 import UIConfigurationComponent from './ui/ui-configuration';
 
 import { useStyles } from './configuration-view.styles';
@@ -54,13 +54,13 @@ export function ConfigurationViewComponent(props: IConfigurationViewProps) {
 				scrollButtons={ matches ? 'on' : 'off' }
 				value={location.pathname}
 				variant="scrollable"
-			>
+			><% if (useSound) { %>
 				<Tab
 					component={Link}
 					label={__('Sound configuration')}
-					to="/config"
-					value="/config"
-				/>
+					to="/config/sound"
+					value="/config/sound"
+				/><% } %>
 				<Tab
 					component={ConfigureUILink}
 					label={__('User interface configuration')}
@@ -73,12 +73,12 @@ export function ConfigurationViewComponent(props: IConfigurationViewProps) {
 				key={location.pathname.split('/')[2]}
 			>
 				<Container className={classes.section}>
-					<Switch>
+					<Switch><% if (useSound) { %>
 						<Route
 							exact
-							path="/config"
+							path="/config/sound"
 							component={SoundConfigurationComponent}
-						/>
+						/><% } %>
 						<Route
 							exact
 							path="/config/ui"

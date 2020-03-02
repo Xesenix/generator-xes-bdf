@@ -199,10 +199,13 @@ module.exports = class extends Generator {
 			] : [
 				'app/app.ts',
 			]),
+			...(useSound === 'yes' ? [
+				'assets/soundtrack.ogg',
+				...listTemplates('src/sound-director'),
+			] : []),
 			...listTemplates('data'),
 			...listTemplates('locales'),
 			...listTemplates('src/i18n'),
-			...listTemplates('src/sound-director'),
 			...listTemplates('src/ui'),
 			...listTemplates('styles'),
 			'app.yo-rc.json',

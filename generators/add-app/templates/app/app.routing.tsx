@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { hot } from 'react-hot-loader';
-import { Route, Switch } from 'react-router-dom';
+import { Redirect, Route, Switch } from 'react-router-dom';
 
 import Loader from 'components/ui/loader/loader';
 import LoaderErrorView from 'components/ui/loader/loader-error-view';
@@ -28,6 +28,14 @@ function AppRouting(): React.ReactElement {
 				exact
 				path="/"
 			/>
+			<Route
+				component={IntroView}
+				exact
+				path="/"
+			/>
+			<Route exact path="/config">
+				<Redirect to="/config/<%= useSound ? 'sound' : 'ui' %>"/>
+			</Route>
 			<Route
 				component={ConfigurationView}
 				path="/config"

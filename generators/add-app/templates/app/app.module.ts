@@ -19,7 +19,11 @@ export default class AppModule extends BaseAppModule implements IApplication {
 			import(/* webpackChunkName: "ui" */ 'lib/fullscreen/fullscreen.module'),
 			import(/* webpackChunkName: "ui" */ 'theme/theme.module'),
 			import(/* webpackChunkName: "ui" */ 'themes/default/default-theme.module'),<% } %><% if (usePixi) { %>
-			import(/* webpackChunkName: "pixi" */ 'pixi/pixi.module'),<% } %>
+			import(/* webpackChunkName: "pixi" */ 'pixi/pixi.module'),<% } %><% if (useSound) { %>
+			import(/* webpackChunkName: "audio" */ 'lib/audio/audio.module'),
+			import(/* webpackChunkName: "audio" */ 'lib/audio/audio-loader.module'),
+			import(/* webpackChunkName: "audio" */ 'lib/sound-scape/sound-scape.module'),
+			import(/* webpackChunkName: "audio" */ 'sound-director/sound-director.module'),<% } %>
 		] as any);
 	}
 

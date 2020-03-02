@@ -119,7 +119,16 @@ class MenuComponent extends StoreComponent<IMenuProps, IMenuState> {
 						key="config"
 						label={__('Configuration')}
 					/>
-				) : null}
+				) : (
+					<MenuItem
+						// prettier-ignore
+						color="primary"
+						component={IntroLink}
+						Icon={theme.icons.config}
+						key="config"
+						label={__('Back')}
+					/>
+				)}
 
 				<MenuItem
 					// prettier-ignore
@@ -130,7 +139,7 @@ class MenuComponent extends StoreComponent<IMenuProps, IMenuState> {
 					key="fullscreen"
 					label={__('Fullscreen')}
 					onClick={this.toggleFullScreen}
-				/>
+				/><% if (useSound) { %>
 
 				<MenuItem
 					// prettier-ignore
@@ -140,15 +149,7 @@ class MenuComponent extends StoreComponent<IMenuProps, IMenuState> {
 					Icon={theme.icons.muteOff}
 					label={__('Mute')}
 					onClick={this.toggleMute}
-				/>
-				<MenuItem
-					// prettier-ignore
-					active={compactMode}
-					activeColor="secondary"
-					color="default"
-					label={__('Compact')}
-					onClick={this.toggleCompactMode}
-				/>
+				/><% } %>
 
 				<LanguageSelectorComponent MenuItem={MenuItem} />
 			</>
@@ -159,19 +160,13 @@ class MenuComponent extends StoreComponent<IMenuProps, IMenuState> {
 		const { dispatchSetFullscreenAction, store } = this.props;
 		const { fullscreen = false } = store ? store.getState() : {};
 		dispatchSetFullscreenAction(!fullscreen);
-	}
+	}<% if (useSound) { %>
 
 	private toggleMute = (): void => {
 		const { dispatchCreateSetMutedAction, store } = this.props;
 		const { mute = false } = store ? store.getState() : {};
 		dispatchCreateSetMutedAction(!mute);
-	}
-
-	private toggleCompactMode = (): void => {
-		const { dispatchCreateSetCompactModeAction, store } = this.props;
-		const { compactMode = false } = store ? store.getState() : {};
-		dispatchCreateSetCompactModeAction(!compactMode);
-	}
+	}<% } %>
 }
 
 export default hot(module)(withRouter(diDecorator(MenuComponent)));
