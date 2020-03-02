@@ -15,7 +15,7 @@ import {
 import { IAppTheme } from 'theme';
 
 // elements
-import { ConfigLink } from 'components/ui/core/navigation-links';
+import { ConfigLink, IntroLink } from 'components/ui/core/navigation-links';
 
 import LanguageSelectorComponent from './language-selector/language-selector';
 
@@ -101,7 +101,6 @@ class MenuComponent extends StoreComponent<IMenuProps, IMenuState> {
 		} = this.props;
 		const {
 			// prettier-ignore
-			compactMode,
 			fullscreen,
 			mute,
 		} = this.state;

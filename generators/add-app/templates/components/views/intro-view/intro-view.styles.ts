@@ -36,6 +36,10 @@ export const useStyles = makeStyles((theme: Theme) => {
 			padding: '0 24px',
 			textAlign: 'justify',
 		},
+		screen: {
+			maxWidth: '800px',
+			maxHeight: '600px',
+		},
 		cta: {
 			justifySelf: 'center',
 			padding: '0 24px',

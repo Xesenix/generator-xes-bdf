@@ -38,7 +38,11 @@ export default abstract class BaseAppModule extends Container implements IApplic
 		// tslint:disable:max-line-length
 		console.log(
 			'%c  ★★★ Black Dragon Framework ★★★  ',
-			'display: block; line-height: 3rem; border-bottom: 5px double #a02060; font-family: fantasy; font-size: 2rem; color: #f02060; background-color: #000;',
+			'display: block; line-height: 3rem; font-family: fantasy; font-size: 2rem; color: #f02060; background-color: #000;',
+		);
+		console.log(
+			'%c                          main                             ',
+			'display: block; line-height: 2rem; border-bottom: 5px double #a02060; font-family: Consolas; font-size: 1rem; color: #f02060; background-color: #000;',
 		);
 		console.log(
 			`%c  author: ${process.env.APP.templateData.author.padEnd(37)}\n%c     app: ${process.env.APP.templateData.title.padEnd(37)}`,
@@ -54,7 +58,7 @@ export default abstract class BaseAppModule extends Container implements IApplic
 
 	public boot(): Promise<void[]> {
 		const console = this.get<Console>('debug:console');
-		const providers = this.getAll<() => Promise<void>>('boot');
+		const providers = this.isBound('boot') ? this.getAll<() => Promise<void>>('boot') : [];
 		let progress = 0;
 
 		return Promise.all(
