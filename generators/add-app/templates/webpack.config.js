@@ -44,15 +44,15 @@ module.exports = (config) => {
 				icons: [
 					{
 						sizes: [16],
-						src: path.resolve('./<%= appName %>/assets/icons/favicon-16x16.png'),
+						src: path.resolve('./<%= `${rootSrcPath}${appName}` %>/assets/icons/favicon-16x16.png'),
 					},
 					{
 						sizes: [32],
-						src: path.resolve('./<%= appName %>/assets/icons/favicon-32x32.png'),
+						src: path.resolve('./<%= `${rootSrcPath}${appName}` %>/assets/icons/favicon-32x32.png'),
 					},
 					{
 						sizes: [256, 512, 1024],
-						src: path.resolve('./<%= appName %>/assets/icons/favicon-32x32.png'),
+						src: path.resolve('./<%= `${rootSrcPath}${appName}` %>/assets/icons/favicon-32x32.png'),
 					},
 				],
 				name: packageConfig.name,
