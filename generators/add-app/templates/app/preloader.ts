@@ -9,16 +9,18 @@ function PreloadComponent(
 ) {
 	const loaders = Object.entries(progress);
 	return renderHtml({
+		key: 0,
 		tag: 'div',
 		attributes: { class: 'preload' },
 		children: [
 			{
+				key: 0,
 				tag: 'div',
 				attributes: { class: 'content' },
 				children: [
-					{ tag: 'img', attributes: { src: 'assets/thumb.png' } },
-					{ tag: 'h1', children: ['Collecting tools'] },
-					{ tag: 'h2', children: ['Please wait while application is loading'] },
+					{ key: 0, tag: 'img', attributes: { src: 'assets/thumb.png' } },
+					{ key: 1, tag: 'h1', children: ['Collecting tools'] },
+					{ key: 2, tag: 'h2', children: ['Please wait while application is loading'] },
 					loaders.length > 0
 						? {
 							tag: 'div',

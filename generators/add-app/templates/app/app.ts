@@ -9,12 +9,20 @@ export default (app: Container) => {
 	const root = app.get<HTMLElement>('ui:root');
 	root.innerHTML = '';
 	root.appendChild(renderHtml({
-		tag: 'h1',
-		attributes: { class: 'app' },
+		key: 0,
+		tag: 'div',
+		attributes: { class: '' },
 		children: [
-			{ tag: 'img', attributes: { src: 'assets/thumb.png' } },
-			{ tag: 'h1', children: [`<%= appTitle %>`] },
-			{ tag: 'p', children: [`<%= appDescription %>`] },
+			{ key: 0, tag: 'img', attributes: { src: 'assets/thumb.png' } },
+			{
+				key: 1,
+				tag: 'div',
+				attributes: { class: 'content' },
+				children: [
+					{ key: 0, tag: 'h1', children: [`<%= appTitle %>`] },
+					{ key: 1, tag: 'p', children: [`<%= appDescription %>`] },
+				],
+			},
 		],
 	}));
 }

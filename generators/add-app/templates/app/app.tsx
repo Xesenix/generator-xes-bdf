@@ -101,8 +101,10 @@ function App() {
 	return (
 		<>
 			<img src="assets/thumb.png"/>
-			<h1><%= appTitle %></h1>
-			<p><%= appDescription %></p>
+			<div className="content">
+				<h1><%= appTitle %></h1>
+				<p><%= appDescription %></p>
+			</div>
 		</>
 	);
 }
