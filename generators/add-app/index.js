@@ -66,14 +66,6 @@ module.exports = class extends Generator {
 			},
 			{
 				type: 'list',
-				name: 'usePixi',
-				message: promptColor(`Add pixi:`),
-				default: 'yes',
-				choices: ['yes', 'no'],
-				store: true,
-			},
-			{
-				type: 'list',
 				name: 'useSound',
 				message: promptColor(`Add sound manager:`),
 				default: 'yes',
@@ -89,6 +81,7 @@ module.exports = class extends Generator {
 	initializing() {
 		this.composeWith(require.resolve('../react'), {});
 		this.composeWith(require.resolve('../phaser'), { deps: false });
+		this.composeWith(require.resolve('../pixi'), { deps: false });
 		this.composeWith(require.resolve('../npm'), {});
 	}
 
@@ -159,6 +152,7 @@ module.exports = class extends Generator {
 			promptValues: {
 				author,
 				useReact,
+				usePixi,
 				usePhaser,
 			},
 		} = this.config.getAll();
