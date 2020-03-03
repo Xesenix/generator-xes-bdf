@@ -1,7 +1,7 @@
 'use strict';
-const Generator = require('yeoman-generator');
 const chalk = require('chalk');
 
+const Generator = require('../sub-generator');
 const { getIgnoredPaths } = require('../../helpers/functions');
 
 const promptColor = chalk.magenta;
@@ -12,15 +12,18 @@ module.exports = class extends Generator {
 	async prompting() {
 		this.log(`\n${ progressColor(`GIT`) } General configuration:\n`);
 
-		const prompts = [
-			{
+		const { initGit } = await this.prompt([
+				{
 				type: 'list',
 				name: 'initGit',
 				message: promptColor(`Initialize git: `),
 				default: 'yes',
 				choices: ['yes', 'no'],
 				store: true,
-			},
+			}
+		]);
+
+		const { initGitIgnore = 'no' } = initGit === 'yes' ? await this.prompt([
 			{
 				type: 'list',
 				name: 'initGitIgnore',
@@ -29,9 +32,21 @@ module.exports = class extends Generator {
 				choices: ['yes', 'no'],
 				store: true,
 			},
-		];
+		]) : {};
 
-		this.props = await this.prompt(prompts);
+		this.props = { initGit, initGitIgnore };
+	}
+
+	async configuring() {
+		if (this.options.deps) {
+			this.composeWith(require.resolve('../npm'), {});
+		}
+
+		if (this.props.initGit !== 'yes') {
+			return;
+		}
+		this.log(`${ progressColor(`GIT`) } Initializing git...`);
+		this.spawnCommandSync('git', ['init']);
 	}
 
 	async writing() {
