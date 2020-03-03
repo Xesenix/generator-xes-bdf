@@ -18,7 +18,10 @@ import Loader from 'components/ui/loader/loader';
 import LoaderErrorView from 'components/ui/loader/loader-error-view';
 import { IMenuExternalProps } from 'components/ui/menu/menu';<% if (addRouting) { %>
 
-import AppRouting from './app.routing';<% } %>
+import AppRouting from './app.routing';<% } else { %>
+<% if (usePhaser) { %>
+import PhaserViewComponent from 'phaser/components/phaser-view';<% } %><% if (usePixi) { %>
+import PixiComponent from 'pixi/components/pixi';<% } } %>
 
 const SmallLoader = () => <Loader size={48}/>;
 const BigLoader = () => <Loader size={128}/>;
@@ -70,9 +73,17 @@ function App(props: IAppProps) {
 		'language',
 		'languages',
 	]);
-
-	<% if (addRouting) { %>const content = <AppRouting /><% } else { %>const content = <h1><%= appTitle %></h1><% } %>;
-
+<% if (addRouting) { %>
+	const content = <AppRouting />
+<% } else { %>
+	const content = (
+		<>
+			<h1><%= appTitle %></h1><% if (usePixi) { %>
+			<PixiComponent /><% } %><% if (usePhaser) { %>
+			<PhaserViewComponent keepInstanceOnRemove={true}/><% } %>
+		</>
+	);
+<% } %>;
 	return (
 		<MuiThemeProvider theme={getTheme()}>
 			<CssBaseline />
@@ -94,6 +105,9 @@ function App(props: IAppProps) {
 
 export default hot(module)(diDecorator(App));
 <% } else { %>
+<% if (usePhaser) { %>
+import PhaserViewComponent from 'phaser/components/phaser-view';<% } %><% if (usePixi) { %>
+import PixiComponent from 'pixi/components/pixi';<% } %>
 
 import '../styles/app.scss';
 
@@ -103,7 +117,9 @@ function App() {
 			<img src="assets/thumb.png"/>
 			<div className="content">
 				<h1><%= appTitle %></h1>
-				<p><%= appDescription %></p>
+				<p><%= appDescription %></p><% if (usePixi) { %>
+			<PixiComponent /><% } %><% if (usePhaser) { %>
+			<PhaserViewComponent keepInstanceOnRemove={true}/><% } %>
 			</div>
 		</>
 	);
