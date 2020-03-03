@@ -37,6 +37,7 @@ module.exports = class extends Generator {
 		this.composeWith(require.resolve('../lint'), {});
 		this.composeWith(require.resolve('../git'), {});
 		this.composeWith(require.resolve('../react'), {});
+		this.composeWith(require.resolve('../phaser'), { deps: false });
 	}
 
 	async prompting() {
@@ -66,14 +67,6 @@ module.exports = class extends Generator {
 				message: promptColor('Author: '),
 				default: '',
 				validate: validateMinLengthFactory(3),
-				store: true,
-			},
-			{
-				type: 'list',
-				name: 'usePhaser',
-				message: promptColor(`Add phaser:`),
-				default: 'yes',
-				choices: ['yes', 'no'],
 				store: true,
 			},
 		];
@@ -118,8 +111,14 @@ module.exports = class extends Generator {
 	}
 
 	async writing() {
-		const { promptValues: { author, usePhaser, useReact, projectDescription } } = this.config.getAll();
-		this.log(`\n${ progressColor(`APP`) } Copying files...\n`);
+		const {
+			promptValues: {
+				author,
+				projectDescription,
+				useReact, // required here to setup testing environment src/main.test.ts
+			},
+		} = this.config.getAll();
+		this.log(`${ progressColor(`APP`) } Copying files...`);
 
 		[
 			'.babelrc',
@@ -132,10 +131,6 @@ module.exports = class extends Generator {
 			'src/lib/index.ts',
 			'src/lib/interfaces.ts',
 			'src/lib/main.test.ts',
-			...(usePhaser === 'yes' ? [
-				'src/types/phaser.d.ts',
-				listTemplates('src/lib/phaser'),
-			] : []),
 			...listTemplates('src/lib/audio'), // sound
 			...listTemplates('src/lib/core'),
 			...listTemplates('src/lib/data-store'), // redux
@@ -159,7 +154,6 @@ module.exports = class extends Generator {
 				this.destinationPath(path),
 				{
 					author,
-					usePhaser: usePhaser === 'yes',
 					useReact: useReact === 'yes',
 					projectDescription,
 				},
@@ -168,7 +162,7 @@ module.exports = class extends Generator {
 	}
 
 	install() {
-		const { promptValues: { npmInstall, usePhaser } } = this.config.getAll();
+		const { promptValues: { npmInstall } } = this.config.getAll();
 
 		if (npmInstall !== 'yes') {
 			this.log(`\n${ progressColor(`APP`) } Skiping npm ${ scriptColor('npm -D install') }...\n`);
@@ -207,7 +201,6 @@ module.exports = class extends Generator {
 			'redux-thunk',
 			'redux-logger',
 			'redux-localstorage-simple',
-			...(usePhaser === 'yes' ? ['phaser'] : []),
 			// others
 			'core-js', // @see https://github.com/babel/babel/issues/9449
 			'eventemitter3', // fast event emitter

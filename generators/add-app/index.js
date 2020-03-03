@@ -66,14 +66,6 @@ module.exports = class extends Generator {
 			},
 			{
 				type: 'list',
-				name: 'usePhaser',
-				message: promptColor(`Add phaser:`),
-				default: 'yes',
-				choices: ['yes', 'no'],
-				store: true,
-			},
-			{
-				type: 'list',
 				name: 'usePixi',
 				message: promptColor(`Add pixi:`),
 				default: 'yes',
@@ -96,11 +88,17 @@ module.exports = class extends Generator {
 
 	initializing() {
 		this.composeWith(require.resolve('../react'), {});
+		this.composeWith(require.resolve('../phaser'), { deps: false });
 	}
 
 	configuring() {
 		const { promptValues: { author } } = this.config.getAll();
-		const { appName, appTitle, appDescription, appUrl } = this.props;
+		const {
+			appName,
+			appTitle,
+			appDescription,
+			appUrl,
+		} = this.props;
 
 		this.log(`\n${ progressColor(`ADD-APP`) } Configuring ${ scriptColor('package.json') }...\n`);
 
@@ -155,9 +153,23 @@ module.exports = class extends Generator {
 	}
 
 	async writing() {
-		this.log(`\n${ progressColor(`ADD-APP`) } Generating files...\n`);
-		const { promptValues: { author, useReact } } = this.config.getAll();
-		const { appName, appTitle, appDescription, appUrl, addRouting, addLayout, usePhaser, usePixi, useSound } = this.props;
+		this.log(`${ progressColor(`ADD-APP`) } Generating files:`);
+		const {
+			promptValues: {
+				author,
+				useReact,
+				usePhaser,
+			},
+		} = this.config.getAll();
+		const {
+			appName,
+			appTitle,
+			appDescription,
+			appUrl,
+			addRouting,
+			addLayout,
+			useSound,
+		} = this.props;
 
 		// copy ejs templates without processing
 		[
