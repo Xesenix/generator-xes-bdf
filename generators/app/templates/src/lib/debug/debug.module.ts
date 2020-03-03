@@ -18,12 +18,13 @@ export default class DebugModule {
 		 * Extracted environmental setup for debuging as process.env.KEY is replaced during build and not available as object after that.
 		 */
 		const debugConfig = {
-			DEBUG_REDUX: process.env.DEBUG_REDUX,
 			DEBUG_DI: process.env.DEBUG_DI,
-			DEBUG_STORE: process.env.DEBUG_STORE,
-			DEBUG_PHASER: process.env.DEBUG_PHASER,
 			DEBUG_PHASER_SOUND: process.env.DEBUG_PHASER_SOUND,
+			DEBUG_PHASER: process.env.DEBUG_PHASER,
+			DEBUG_PIXI: process.env.DEBUG_PIXI,
+			DEBUG_REDUX: process.env.DEBUG_REDUX,
 			DEBUG_SOUND: process.env.DEBUG_SOUND,
+			DEBUG_STORE: process.env.DEBUG_STORE,
 		};
 
 		Object.entries(debugConfig).forEach(([key, value]) => {
