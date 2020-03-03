@@ -10,13 +10,13 @@ const scriptColor = chalk.keyword('lime');
 
 module.exports = class extends Generator {
 	async prompting() {
-		this.log(`\n${ progressColor(`REACT`) } General configuration...\n`);
+		this.log(`\n${ progressColor(`REACT`) } General configuration:\n`);
 
 		const prompts = [
 			{
 				type: 'list',
 				name: 'useReact',
-				message: promptColor(`Add react:`),
+				message: promptColor(`Add React?`),
 				default: 'yes',
 				choices: ['yes', 'no'],
 				store: true,

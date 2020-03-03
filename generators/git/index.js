@@ -10,7 +10,7 @@ const scriptColor = chalk.keyword('lime');
 
 module.exports = class extends Generator {
 	async prompting() {
-		this.log(`\n${ progressColor(`GIT`) } General configuration...\n`);
+		this.log(`\n${ progressColor(`GIT`) } General configuration:\n`);
 
 		const prompts = [
 			{
@@ -39,34 +39,26 @@ module.exports = class extends Generator {
 			return;
 		}
 
-		this.log(`\n${ progressColor(`GIT`) } Downloading ${ scriptColor('.gitignore') }\n`);
+		this.log(`${ progressColor(`GIT`) } Downloading ${ scriptColor('.gitignore') }...`);
 		const ignoreContent = await getIgnoredPaths();
 
-		this.log(`\n${ progressColor(`GIT`) } Initializing ${ scriptColor('.gitignore') }\n`);
+		this.log(`${ progressColor(`GIT`) } Initializing ${ scriptColor('.gitignore') }...`);
 		this.fs.write(
 			this.destinationPath('.gitignore'),
 			ignoreContent,
 		);
 	}
 
-	configuring() {
-		if (this.props.initGit !== 'yes') {
-			return;
-		}
-		this.log(`\n${ progressColor(`GIT`) } Initializing git...\n`);
-		this.spawnCommandSync('git', ['init']);
-	}
-
-	install() {
+	async install() {
 		const { promptValues: { npmInstall } } = this.config.getAll();
 
 		if (npmInstall === 'yes') {
-			this.log(`\n${ progressColor(`GIT`) } Running ${ scriptColor('npm install') }...\n`);
+			this.log(`${ progressColor(`GIT`) } Adding dependencies to ${ scriptColor('package.json') }...`);
 			this.npmInstall([
 				'husky',
 			], { saveDev: true });
 		} else {
-			this.log(`\n${ progressColor(`GIT`) } Skiping ${ scriptColor('npm install') }...\n`);
+			this.log(`${ progressColor(`GIT`) } Skiping adding dependencies ${ scriptColor('package.json') }...`);
 		}
 	}
 };

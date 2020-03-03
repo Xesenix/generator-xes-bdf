@@ -46,7 +46,7 @@ module.exports = class extends Generator {
 			yosay(`Welcome to the ${ chalk.red('Black Dragon Framework') } generator!`)
 		);
 
-		this.log(`\n${ progressColor(`APP`) } General configuration...\n`);
+		this.log(`\n${ progressColor(`APP`) } General configuration:\n`);
 		const prompts = [
 			{
 				type: 'input',
@@ -76,7 +76,7 @@ module.exports = class extends Generator {
 	}
 
 	async configuring() {
-		this.log(`\n${ progressColor(`APP`) } Adding basic scripts to ${ scriptColor('package.json') }...\n`);
+		this.log(`${ progressColor(`APP`) } Adding basic scripts to ${ scriptColor('package.json') }...`);
 
 		this.fs.extendJSON(this.destinationPath('package.json'), {
 			name: this.props.name,
@@ -154,11 +154,11 @@ module.exports = class extends Generator {
 		const { promptValues: { npmInstall } } = this.config.getAll();
 
 		if (npmInstall !== 'yes') {
-			this.log(`\n${ progressColor(`APP`) } Skiping npm ${ scriptColor('npm -D install') }...\n`);
+			this.log(`${ progressColor(`APP`) } Skiping dev dependencies ${ scriptColor('npm') }...`);
 			return;
 		}
 
-		this.log(`\n${ progressColor(`APP`) } Running ${ scriptColor('npm -D install') }...\n`);
+		this.log(`${ progressColor(`APP`) } Adding dev dependencies to  ${ scriptColor('npm') }...`);
 
 		this.npmInstall([
 			'@babel/plugin-transform-runtime',
@@ -176,7 +176,7 @@ module.exports = class extends Generator {
 			// locales?
 		], { saveDev: true });
 
-		this.log(`\n${ progressColor(`APP`) } Running ${ scriptColor('npm install') }...\n`);
+		this.log(`${ progressColor(`APP`) } Adding dependencies to ${ scriptColor('package.json') }...`);
 
 		this.npmInstall([
 			'@types/inversify',

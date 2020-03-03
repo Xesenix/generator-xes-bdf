@@ -17,7 +17,7 @@ const listTemplates = (folder) => listFiles(path.resolve(__dirname, `templates/$
 module.exports = class extends Generator {
 
 	async prompting() {
-		this.log(`\n${ progressColor(`ADD-APP`) } Adding new application...\n`);
+		this.log(`\n${ progressColor(`ADD-APP`) } Adding new application:`);
 
 		const prompts = [
 			{
@@ -51,7 +51,7 @@ module.exports = class extends Generator {
 			{
 				type: 'list',
 				name: 'addRouting',
-				message: promptColor(`Add routing:`),
+				message: promptColor(`Add routing modules?`),
 				default: 'yes',
 				choices: ['yes', 'no'],
 				store: true,
@@ -59,7 +59,7 @@ module.exports = class extends Generator {
 			{
 				type: 'list',
 				name: 'addLayout',
-				message: promptColor(`Add layout:`),
+				message: promptColor(`Add layout modules?`),
 				default: 'yes',
 				choices: ['yes', 'no'],
 				store: true,
@@ -67,7 +67,7 @@ module.exports = class extends Generator {
 			{
 				type: 'list',
 				name: 'useSound',
-				message: promptColor(`Add sound manager:`),
+				message: promptColor(`Add audio modules?`),
 				default: 'yes',
 				choices: ['yes', 'no'],
 				store: true,
@@ -94,7 +94,7 @@ module.exports = class extends Generator {
 			appUrl,
 		} = this.props;
 
-		this.log(`\n${ progressColor(`ADD-APP`) } Configuring ${ scriptColor('package.json') }...\n`);
+		this.log(`${ progressColor(`ADD-APP`) } Configuring ${ scriptColor('package.json') }...`);
 
 		this.fs.extendJSON(this.destinationPath('package.json'), {
 			scripts: {
@@ -176,8 +176,7 @@ module.exports = class extends Generator {
 			);
 		});
 
-		this.log(`\n${ progressColor(`ADD-APP`) } Template setup:`);
-		console.log({ usePhaser, useReact, addRouting, addLayout }, '\n');
+		this.log(`${ progressColor(`ADD-APP`) } Template setup:`);
 
 		// copy templates with processing ejs templates fragments
 		[
@@ -267,10 +266,10 @@ module.exports = class extends Generator {
 
 	end() {
 		const { appName } = this.props;
-		this.log(`\n${ progressColor(`ADD-APP`) } Fixing files according to linters...\n`);
+		this.log(`${ progressColor(`ADD-APP`) } Fixing files according to linters:`);
 		this.spawnCommandSync('npm', ['run', 'lint:fix']);
 
-		this.log(`\n${ progressColor(`ADD-APP`) } Extracting translation segments...\n`);
+		this.log(`${ progressColor(`ADD-APP`) } Extracting translation segments:`);
 		this.spawnCommandSync('npm', ['run', `${ appName }:xi18n`]);
 	}
 };

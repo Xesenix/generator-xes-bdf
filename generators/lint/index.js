@@ -1,8 +1,7 @@
 'use strict';
-const Generator = require('yeoman-generator');
 const chalk = require('chalk');
 
-const { getIgnoredPaths } = require('../../helpers/functions');
+const Generator = require('../sub-generator');
 const validateNotEmpty = require('../../validators/not-empty');
 
 const promptColor = chalk.magenta;
@@ -11,7 +10,7 @@ const scriptColor = chalk.keyword('lime');
 
 module.exports = class extends Generator {
 	async prompting() {
-		this.log(`\n${ progressColor(`LINT`) } General configuration...\n`);
+		this.log(`\n${ progressColor(`LINT`) } General configuration:\n`);
 
 		const prompts = [
 			{
@@ -46,40 +45,29 @@ module.exports = class extends Generator {
 		this.props = await this.prompt(prompts);
 	}
 
-	async writing() {
-		this.log(`\n${ progressColor(`LINT`) } Downloading ${ scriptColor('.gitignore') }\n`);
-		// const ignoreContent = await getIgnoredPaths();
-
-		// this.log(`\n${ progressColor(`LINT`) } Initializing ${ scriptColor('.prettierignore') }\n`);
-		// this.fs.write(
-		// 	this.destinationPath('.prettierignore'),
-		// 	ignoreContent,
-		// );
-	}
-
-	configuring() {
-		this.log(`\n${ progressColor(`LINT`) } Setting up ${ scriptColor('.editorconfig') }...\n`);
+	async configuring() {
+		this.log(`${ progressColor(`LINT`) } Setting up ${ scriptColor('.editorconfig') }...`);
 		this.fs.copyTpl(
 			this.templatePath('.editorconfig'),
 			this.destinationPath('.editorconfig'),
-			{ ...this.props },
+			this.props,
 		);
 
-		this.log(`\n${ progressColor(`LINT`) } Setting up ${ scriptColor('tslint.json') }...\n`);
+		this.log(`${ progressColor(`LINT`) } Setting up ${ scriptColor('tslint.json') }...`);
 		this.fs.copyTpl(
 			this.templatePath('tslint.json'),
 			this.destinationPath('tslint.json'),
-			{ ...this.props },
+			this.props,
 		);
 
-		this.log(`\n${ progressColor(`LINT`) } Setting up ${ scriptColor('.prettierrc') }...\n`);
+		this.log(`${ progressColor(`LINT`) } Setting up ${ scriptColor('.prettierrc') }...`);
 		this.fs.copyTpl(
 			this.templatePath('.prettierrc.json'),
 			this.destinationPath('.prettierrc.json'),
-			{ ...this.props },
+			this.props,
 		);
 
-		this.log(`\n${ progressColor(`LINT`) } Adding ${ scriptColor('lint:*') } scripts...\n`);
+		this.log(`${ progressColor(`LINT`) } Adding ${ scriptColor('lint:*') } scripts...`);
 		this.fs.extendJSON(this.destinationPath('package.json'), {
 			scripts: {
 				"lint": "tslint -p ./",
@@ -88,7 +76,7 @@ module.exports = class extends Generator {
 			},
 		});
 
-		this.log(`\n${ progressColor(`LINT`) } Add linting fixing hook on ${ scriptColor('pre-commit') }...\n`);
+		this.log(`${ progressColor(`LINT`) } Add linting fixing hook on ${ scriptColor('pre-commit') }...`);
 		this.fs.extendJSON(this.destinationPath('package.json'), {
 			scripts: {
 				'pre-commit': 'lint:fix',
@@ -96,15 +84,15 @@ module.exports = class extends Generator {
 		});
 	}
 
-	install() {
+	async install() {
 		const { promptValues: { npmInstall } } = this.config.getAll();
 
 		if (npmInstall !== 'yes') {
-			this.log(`\n${ progressColor(`LINT`) } Skiping ${ scriptColor('npm install') }...\n`);
+			this.log(`${ progressColor(`LINT`) } Skiping adding dependencies ${ scriptColor('package.json') }...`);
 			return;
 		}
 
-		this.log(`\n${ progressColor(`LINT`) } Running ${ scriptColor('npm install') }...\n`);
+		this.log(`${ progressColor(`LINT`) } Adding dev dependencies to ${ scriptColor('package.json') }...`);
 
 		// linter for fixing code according to .editorconfig setup
 		this.npmInstall([
@@ -118,7 +106,7 @@ module.exports = class extends Generator {
 	}
 
 	end() {
-		this.log(`\n${ progressColor(`LINT`) } Fixing files according to linters...\n`);
+		this.log(`${ progressColor(`LINT`) } Fixing files according to linters...`);
 		this.spawnCommandSync('npm', ['run', 'lint:fix']);
 	}
 };
