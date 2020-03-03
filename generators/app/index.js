@@ -38,6 +38,7 @@ module.exports = class extends Generator {
 		this.composeWith(require.resolve('../git'), {});
 		this.composeWith(require.resolve('../react'), {});
 		this.composeWith(require.resolve('../phaser'), { deps: false });
+		this.composeWith(require.resolve('../npm'), {});
 	}
 
 	async prompting() {
@@ -75,18 +76,6 @@ module.exports = class extends Generator {
 	}
 
 	async configuring() {
-		this.log(`\n${ progressColor(`APP`) } confirm configuration...\n`);
-		await this.prompt([
-			{
-				type: 'list',
-				name: 'npmInstall',
-				message: promptColor(`Install dependencies:`),
-				default: 'yes',
-				choices: ['yes', 'no'],
-				store: true,
-			},
-		]);
-
 		this.log(`\n${ progressColor(`APP`) } Adding basic scripts to ${ scriptColor('package.json') }...\n`);
 
 		this.fs.extendJSON(this.destinationPath('package.json'), {

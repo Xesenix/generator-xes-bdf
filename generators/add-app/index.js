@@ -89,6 +89,7 @@ module.exports = class extends Generator {
 	initializing() {
 		this.composeWith(require.resolve('../react'), {});
 		this.composeWith(require.resolve('../phaser'), { deps: false });
+		this.composeWith(require.resolve('../npm'), {});
 	}
 
 	configuring() {
