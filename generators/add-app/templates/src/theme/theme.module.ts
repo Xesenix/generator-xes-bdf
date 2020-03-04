@@ -6,6 +6,7 @@ import { II18nTranslation } from 'lib/i18n';
 import { IApplication, ICreateSetAction } from 'lib/interfaces';
 
 import { createSetThemeAction } from './actions';
+import { createAppTheme } from './create-theme';
 import {
 	// prettier-ignore
 	IAppTheme,
@@ -26,11 +27,7 @@ export default class ThemeModule {
 
 		// define logic needed to bootstrap module
 		app.bind('boot').toProvider(ThemeBootProvider);
-		app.bind<IThemeBuilder>('theme:create-theme')
-			.toProvider(() => () =>
-				import(/* webpackChunkName: "theme" */ './create-theme')
-					.then(({ createAppTheme }) => createAppTheme),
-			);
+		app.bind<IThemeBuilder>('theme:create-theme').toConstantValue(createAppTheme);
 
 		app.bind<Promise<IAppThemesDescriptors>>('theme:theme-descriptors:provider')
 			.toProvider(({ container }: interfaces.Context) => () => resolveDependencies<IAppThemesDescriptors>(container, [
@@ -54,7 +51,7 @@ export default class ThemeModule {
 		app.bind<Promise<() => IAppTheme>>('theme:get-theme')
 			.toProvider(({ container }: interfaces.Context) => () => resolveDependencies<() => IAppTheme>(container, [
 				'data-store',
-				'theme:create-theme()',
+				'theme:create-theme',
 			], (
 				store: Store<IThemeState, any>,
 				createTheme: IThemeBuilder,
@@ -99,7 +96,7 @@ export default class ThemeModule {
 	) {
 		app.bind<Promise<IAppThemeDescriptor>>('theme:theme:provider')
 			.toProvider(({ container }: interfaces.Context) => () => resolveDependencies<IAppThemeDescriptor>(container, [
-				'theme:create-theme()',
+				'theme:create-theme',
 			], (
 				createTheme: IThemeBuilder,
 			) => ({
