@@ -3,9 +3,9 @@
 
 ## About application template
 
-This generator allows you to fast create multi application project. Each application can be individually setup to use features like
+This generator allows you to fast create multi application project. Each application can be individually setup to use features like:
 
-### Features
+### Features:
 
 #### Preloader template 
 It will track loading of lazy loaded modules in application booting phase:
@@ -20,22 +20,22 @@ Where you can setup if you want use just entry component with basic routing or s
 #### Canvas/WebGL libraries
 You will get basic configuration for phaser, pixi js or both libraries at once.
 
-### Theming
+#### Theming
 If you choose to use [react] with basic layout you will get templating modules and configuration panel to choose current theme for user.
 
-### Audio
+#### Audio
 This generator comes with quite powerful library for handling soundtrack. It will allow you to change soundtrack based on user actions check [source code in this project][example-use] for more details how to achieve that. Also you will get basic sound configuration panel connected to data store.
 
-### Translations
+#### Translations
 You will be able to extract translations with `xi18n` scripts into [POEditor] files where you will be able to translate any string of your application.
 
-### Unit test
+#### Unit test
 You can write unit tests for your code inside `spec` files. Templates adds basic configuration [jasmine] and [karma].
 
-### Environmental configuration
+#### Environmental configuration
 You can use cascading set of environmental configuration files `default.env` > `appname.env` > `appname.environmentname.env`. Variables will be available inside code via `process.env.VARIABLE_NAME`.
 
-### Extensible
+#### Extensible
 
 This project uses [typescript], [webpack] with [babel] and [inversify] for handling most of code core functionalities. Templates mostly rely on [react] and [jss] mostly [material-ui] but can be replaced with any other templating and styling solution.
 
