@@ -74,7 +74,7 @@ function App(props: IAppProps) {
 		'languages',
 	]);
 <% if (addRouting) { %>
-	const content = <AppRouting />
+	const content = <AppRouting />;
 <% } else { %>
 	const content = (
 		<>
@@ -83,7 +83,7 @@ function App(props: IAppProps) {
 			<PhaserViewComponent keepInstanceOnRemove={true}/><% } %>
 		</>
 	);
-<% } %>;
+<% } %>
 	return (
 		<MuiThemeProvider theme={getTheme()}>
 			<CssBaseline />

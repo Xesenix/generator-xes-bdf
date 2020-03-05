@@ -1,8 +1,8 @@
 import { Application } from '@pixi/app';
 import { IApplication } from 'lib/interfaces';
 
-import { ScaleManagerPlugin } from './plugins/scale-manager';
 import { PixiRendererProvider } from './pixi-renderer.provider';
+import { ScaleManagerPlugin } from './plugins/scale-manager';
 
 export default class PixiModule {
 	public static register(app: IApplication) {

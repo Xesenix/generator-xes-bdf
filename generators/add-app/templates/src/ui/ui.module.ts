@@ -6,7 +6,7 @@ import { DIContext } from 'lib/di';
 import { IApplication, ICreateSetAction, IEventEmitter } from 'lib/interfaces';
 import BaseUIModule from 'lib/ui/ui.module';
 
-import { createSetCompactModeAction, createSetDrawerOpenAction } from './actions';
+import { createSetDrawerOpenAction } from './actions';
 import { reducer } from './reducers';
 import { UIBootProvider } from './ui-boot.provider';
 
@@ -36,7 +36,6 @@ export default class UIModule extends BaseUIModule {
 		});
 
 		// redux action creators
-		app.bind<ICreateSetAction<boolean>>('data-store:action:create:set-compact-mode').toConstantValue(createSetCompactModeAction);
 		app.bind<ICreateSetAction<boolean>>('data-store:action:create:set-drawer-open').toConstantValue(createSetDrawerOpenAction);
 
 		// add data store keys that should be persisted between page refresh

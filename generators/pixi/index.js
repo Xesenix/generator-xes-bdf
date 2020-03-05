@@ -2,7 +2,6 @@
 const chalk = require('chalk');
 
 const Generator = require('../sub-generator');
-const { getIgnoredPaths } = require('../../helpers/functions');
 
 const promptColor = chalk.magenta;
 const progressColor = chalk.blue;

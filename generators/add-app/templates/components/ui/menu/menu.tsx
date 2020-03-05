@@ -38,7 +38,6 @@ export interface IMenuExternalProps {
 /** Internal component properties include properties injected via dependency injection. */
 interface IMenuInternalProps extends IStoreComponentInternalProps<IMenuState> {
 	__: II18nTranslation;
-	dispatchCreateSetCompactModeAction: (value: boolean) => void;
 	dispatchCreateSetMutedAction: (value: boolean) => void;
 	dispatchSetFullscreenAction: (value: boolean) => void;
 	getTheme: () => IAppTheme;
@@ -69,10 +68,6 @@ const diDecorator = connectToInjector<IMenuExternalProps, IMenuInternalProps>({
 	dispatchCreateSetMutedAction: {
 		dependencies: ['ui:actions@setMuted'],
 		value: (setMuted: (value: boolean) => void) => Promise.resolve(setMuted),
-	},
-	dispatchCreateSetCompactModeAction: {
-		dependencies: ['ui:actions@setCompactMode'],
-		value: (setCompactMode: (value: boolean) => void) => Promise.resolve(setCompactMode),
 	},
 	getTheme: {
 		dependencies: ['theme:get-theme()'],
@@ -123,7 +118,7 @@ class MenuComponent extends StoreComponent<IMenuProps, IMenuState> {
 						// prettier-ignore
 						color="primary"
 						component={IntroLink}
-						Icon={theme.icons.config}
+						Icon={theme.icons.undo}
 						key="config"
 						label={__('Back')}
 					/>

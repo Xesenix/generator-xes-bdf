@@ -20,7 +20,7 @@ export function ThemeBootProvider({ container }: interfaces.Context) {
 	return () => resolveDependencies(container, [
 		// prettier-ignore
 		'data-store:provider()',
-		'theme:create-theme()',
+		'theme:create-theme',
 	], async (
 		// prettier-ignore
 		store: Store<IThemeState, any>,

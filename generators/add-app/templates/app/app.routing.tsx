@@ -28,11 +28,6 @@ function AppRouting(): React.ReactElement {
 				exact
 				path="/"
 			/>
-			<Route
-				component={IntroView}
-				exact
-				path="/"
-			/>
 			<Route exact path="/config">
 				<Redirect to="/config/<%= useSound ? 'sound' : 'ui' %>"/>
 			</Route>

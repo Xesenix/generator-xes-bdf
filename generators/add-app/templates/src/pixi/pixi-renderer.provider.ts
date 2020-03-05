@@ -1,16 +1,15 @@
 import { Application } from '@pixi/app';
 import { interfaces } from 'inversify';
 
-import { Renderer } from '@pixi/core'; // Renderer is the class that is going to register plugins
-import { BatchRenderer } from '@pixi/core'; // BatchRenderer is the "plugin" for drawing sprites
-import { TickerPlugin } from '@pixi/ticker'; // TickerPlugin is the plugin for running an update loop (it's for the application class)
-// And just for convenience let's register Loader plugin in order to use it right from Application instance like app.loader.add(..) etc.
+import { SCALE_MODES } from '@pixi/constants';
+import { BatchRenderer, Renderer } from '@pixi/core';
 import { AppLoaderPlugin } from '@pixi/loaders';
 import { settings } from '@pixi/settings';
-import { ALPHA_MODES, FORMATS, MIPMAP_MODES, SCALE_MODES, TARGETS, TYPES, WRAP_MODES } from '@pixi/constants';
+import { TickerPlugin } from '@pixi/ticker';
 
 import { createClassProvider } from 'lib/di';
 
+import { ScaleManagerPlugin } from './plugins/scale-manager';
 import IntroScene from './scene/intro';
 
 function scaleToFitWidth(element, innerWidth, innerHeight, screenWidth, screenHeight) {
@@ -74,5 +73,5 @@ export function PixiRendererProvider(context: interfaces.Context) {
 
 			return app;
 		})(context)();
-	}
+	};
 }
