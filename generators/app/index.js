@@ -113,6 +113,7 @@ module.exports = class extends Generator {
 			'.babelrc',
 			'default.env',
 			'example.env',
+			'production.env',
 			'karma.conf.js',
 			'tsconfig.json',
 			'webpack.config.js',

@@ -272,6 +272,25 @@ module.exports = class extends Generator {
 				usePhaser,
 			},
 		);
+
+		this.fs.copyTpl(
+			this.templatePath('example.env'),
+			this.destinationPath(`${ appName }.env`),
+			{
+				author,
+				appName,
+				addRouting: addRouting === 'yes',
+				addLayout: addLayout === 'yes',
+				usePhaser: usePhaser === 'yes',
+				useReact: useReact === 'yes',
+				usePixi: usePixi === 'yes',
+				useSound: useSound === 'yes',
+				appTitle,
+				appUrl,
+				appDescription,
+				rootSrcPath,
+			},
+		);
 	}
 
 	end() {
