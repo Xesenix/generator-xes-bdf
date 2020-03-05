@@ -44,7 +44,7 @@ module.exports = class extends Generator {
 				this.log(`${ progressColor(`PIXI`) } Adding dependencies to ${ scriptColor('package.json') }...`);
 				this.npmInstall([
 					'@types/pixi.js',
-					'pixi.js'
+					'pixi.js',
 				]);
 			} else {
 				this.log(`${ progressColor(`PIXI`) } Skiping adding dependencies ${ scriptColor('package.json') }...`);

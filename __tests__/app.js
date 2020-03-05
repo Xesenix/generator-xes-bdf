@@ -7,10 +7,14 @@ describe('generator-xes-bdf:app', () => {
 	beforeAll(() => {
 		return helpers
 			.run(path.join(__dirname, '../generators/app'))
-			.withPrompts({ someAnswer: true });
+			.withPrompts({
+				someAnswer: true,
+			});
 	});
 
 	it('creates files', () => {
-		assert.file(['dummyfile.txt']);
+		assert.file([
+			'dummyfile.txt',
+		]);
 	});
 });

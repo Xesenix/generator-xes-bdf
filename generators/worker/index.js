@@ -32,7 +32,7 @@ module.exports = class extends Generator {
 			if (useWorker === 'yes') {
 				this.log(`${ progressColor(`WORKER`) } Adding dependencies to ${ scriptColor('package.json') }...`);
 				this.npmInstall([
-					'worker-loader'
+					'worker-loader',
 				]);
 			} else {
 				this.log(`${ progressColor(`WORKER`) } Skiping adding dependencies ${ scriptColor('package.json') }...`);

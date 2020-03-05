@@ -13,14 +13,14 @@ module.exports = class extends Generator {
 		this.log(`\n${ progressColor(`GIT`) } General configuration:\n`);
 
 		const { initGit } = await this.prompt([
-				{
+			{
 				type: 'list',
 				name: 'initGit',
 				message: promptColor(`Initialize git: `),
 				default: 'yes',
 				choices: ['yes', 'no'],
 				store: true,
-			}
+			},
 		]);
 
 		const { initGitIgnore = 'no' } = initGit === 'yes' ? await this.prompt([

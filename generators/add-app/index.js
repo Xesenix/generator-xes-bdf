@@ -116,7 +116,7 @@ module.exports = class extends Generator {
 					'rootDir': `${ rootSrcPath }${ appName }`,
 					'outDir': `dist/${ appName }`,
 					'main': [
-						'main.ts'
+						'main.ts',
 					],
 					'moduleImportPaths': [
 						rootSrcPath,
@@ -141,9 +141,9 @@ module.exports = class extends Generator {
 						`${ rootSrcPath }${ appName }/styles`,
 						`${ rootSrcPath }styles`,
 					],
-					'vendor': []
-				}
-			}
+					'vendor': [],
+				},
+			},
 		});
 	}
 
@@ -262,7 +262,16 @@ module.exports = class extends Generator {
 			},
 		);
 
-		this.fs.extendJSON(this.destinationPath(`${ rootSrcPath }${ appName }/app.yo-rc.json`), { ...this.props, useReact })
+		this.fs.extendJSON(
+			this.destinationPath(`${ rootSrcPath }${ appName }/app.yo-rc.json`),
+			{
+				...this.props,
+				author,
+				useReact,
+				usePixi,
+				usePhaser,
+			},
+		);
 	}
 
 	end() {
