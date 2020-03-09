@@ -25,8 +25,13 @@ const getIgnoredPaths = async () => {
 	const { data } = await axios.get('https://raw.githubusercontent.com/github/gitignore/master/Node.gitignore');
 
 	return data + `
+.vscode
+
 # xes-bdf build directory
 dist/
+
+# skip local configuration files
+*.env
 `;
 }
 
