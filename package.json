@@ -1,83 +1,93 @@
 {
-  "name": "generator-xes-bdf",
-  "version": "0.9.4",
-  "description": "Generating projects that use xes-webpack-core as base library for application configuration.",
-  "homepage": "",
-  "author": {
-    "name": "Paweł Kapalla",
-    "email": "js@xesenix.pl",
-    "url": "http://xesenix.pl"
-  },
-  "files": [
-    "generators",
-    "helpers",
-    "validators"
-  ],
-  "main": "generators/index.js",
-  "keywords": [
-    "webpack",
-    "babel",
-    "typescript",
-    "karma",
-    "jasmine",
-    "yeoman-generator"
-  ],
-  "devDependencies": {
-    "coveralls": "^3.0.9",
-    "eslint": "^5.16.0",
-    "eslint-config-standard": "^12.0.0",
-    "eslint-config-xo": "^0.24.2",
-    "eslint-plugin-import": "^2.20.1",
-    "eslint-plugin-node": "^8.0.1",
-    "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-standard": "^4.0.1",
-    "husky": "^4.2.3",
-    "jest": "^25.1.0",
-    "lint-staged": "^10.0.7",
-    "yeoman-assert": "^3.1.0",
-    "yeoman-test": "^2.1.0"
-  },
-  "engines": {
-    "npm": ">= 4.0.0"
-  },
-  "dependencies": {
-    "@types/axios": "^0.14.0",
-    "@types/chalk": "^2.2.0",
-    "@types/fs-extra": "^8.1.0",
-    "@types/yeoman-generator": "^3.1.4",
-    "axios": "^0.18.1",
-    "babel-eslint": "^10.0.3",
-    "chalk": "^3.0.0",
-    "editorconfig": "^0.15.3",
-    "fs-extra": "^8.1.0",
-    "yeoman-generator": "^4.5.0",
-    "yosay": "^2.0.1"
-  },
-  "jest": {
-    "testEnvironment": "node"
-  },
-  "lint-staged": {
-    "*.js": [
-      "eslint --fix",
-      "git add"
-    ],
-    "*.json": [
-      "git add"
-    ]
-  },
-  "eslintConfig": {
-    "extends": [
-      "xo"
-    ],
-    "env": {
-      "jest": true,
-      "node": true
-    }
-  },
-  "scripts": {
-    "pretest": "eslint .",
-    "precommit": "lint-staged",
-    "test": "jest"
-  },
-  "license": "ISC"
+	"name": "generator-xes-bdf",
+	"version": "0.9.4",
+	"description": "Generating projects that use xes-webpack-core as base library for application configuration.",
+	"homepage": "",
+	"author": {
+		"name": "Paweł Kapalla",
+		"email": "js@xesenix.pl",
+		"url": "http://xesenix.pl"
+	},
+	"files": [
+		"generators",
+		"helpers",
+		"validators"
+	],
+	"keywords": [
+		"webpack",
+		"babel",
+		"typescript",
+		"karma",
+		"jasmine",
+		"yeoman-generator",
+		"react",
+		"inversify",
+		"material-ui",
+		"phaser",
+		"pixi.js"
+	],
+	"devDependencies": {
+		"@types/jest": "^25.1.3",
+		"@types/npm": "^2.0.31",
+		"coveralls": "^3.0.9",
+		"eslint": "^5.16.0",
+		"eslint-config-standard": "^12.0.0",
+		"eslint-config-xo": "^0.24.2",
+		"eslint-plugin-import": "^2.20.1",
+		"eslint-plugin-node": "^8.0.1",
+		"eslint-plugin-promise": "^4.2.1",
+		"eslint-plugin-standard": "^4.0.1",
+		"husky": "^4.2.3",
+		"jest": "^25.1.0",
+		"lint-staged": "^10.0.7",
+		"yeoman-assert": "^3.1.0",
+		"yeoman-test": "^2.1.0"
+	},
+	"engines": {
+		"npm": ">= 4.0.0"
+	},
+	"dependencies": {
+		"@types/axios": "^0.14.0",
+		"@types/chalk": "^2.2.0",
+		"@types/fs-extra": "^8.1.0",
+		"@types/yeoman-generator": "^3.1.4",
+		"axios": "^0.18.1",
+		"babel-eslint": "^10.0.3",
+		"chalk": "^3.0.0",
+		"editorconfig": "^0.15.3",
+		"fs-extra": "^8.1.0",
+		"yeoman-generator": "^4.5.0",
+		"yosay": "^2.0.1"
+	},
+	"jest": {
+		"testEnvironment": "node",
+		"testPathIgnorePatterns": [
+			"/node_modules/",
+			"/templates/"
+		]
+	},
+	"lint-staged": {
+		"*.js": [
+			"eslint --fix",
+			"git add"
+		],
+		"*.json": [
+			"git add"
+		]
+	},
+	"eslintConfig": {
+		"extends": [
+			"xo"
+		],
+		"env": {
+			"jest": true,
+			"node": true
+		}
+	},
+	"scripts": {
+		"pretest": "eslint .",
+		"precommit": "lint-staged",
+		"test": "jest"
+	},
+	"license": "ISC"
 }
