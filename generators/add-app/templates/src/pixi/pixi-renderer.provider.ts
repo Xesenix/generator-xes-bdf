@@ -10,22 +10,8 @@ import { TickerPlugin } from '@pixi/ticker';
 import { createClassProvider } from 'lib/di';
 
 import { ScaleManagerPlugin } from './plugins/scale-manager';
+import { coverParentKeepAspectRatio } from './scaling/cover-parent-keep-aspect-ratio';
 import IntroScene from './scene/intro';
-
-function scaleToFitWidth(element, innerWidth, innerHeight, screenWidth, screenHeight) {
-	element.style.width = '0px';
-	element.style.height = '0px';
-
-	if (element.parentElement) {
-		const width = Math.min(element.parentElement.clientWidth, innerWidth);
-		element.style.width = width + 'px';
-		element.style.height = Math.floor(screenHeight / screenWidth * width) + 'px';
-	} else {
-		const width = Math.min(screenWidth, innerWidth);
-		element.style.width = screenWidth + 'px';
-		element.style.height = Math.floor(screenHeight / screenWidth * width) + 'px';
-	}
-}
 
 // singleton
 let app: Application;
@@ -58,11 +44,12 @@ export function PixiRendererProvider(context: interfaces.Context) {
 
 			app = new Application({
 				autoResize: true,
+				autoDensity: true,
 				resolution: window.devicePixelRatio,
-				// custom
-				scaling: scaleToFitWidth,
 				width: screenWidth,
 				height: screenHeight,
+				// custom
+				scaling: coverParentKeepAspectRatio,
 			});
 
 			app.renderer.backgroundColor = 0x340000;

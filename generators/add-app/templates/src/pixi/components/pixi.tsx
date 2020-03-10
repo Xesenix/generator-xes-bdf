@@ -1,9 +1,10 @@
+import { Application } from '@pixi/app';
 import * as React from 'react';
 import { hot } from 'react-hot-loader';
 
-import { Application } from '@pixi/app';
 import { connectToInjector } from 'lib/di';
 import { II18nTranslation } from 'lib/i18n';
+import { IEventEmitter } from 'lib/interfaces';
 
 import { useStyles } from './pixi.styles';
 
@@ -15,6 +16,7 @@ export interface IPixiExternalProps {
 interface IPixiInternalProps {
 	__: II18nTranslation;
 	pixi: Application;
+	em: IEventEmitter;
 }
 
 type IPixiProps = IPixiExternalProps & IPixiInternalProps;
@@ -39,23 +41,25 @@ function PixiComponent(props: IPixiProps): React.ReactElement {
 	} = props;
 	const classes = useStyles();
 
-	const canvas = React.useRef<HTMLDivElement>(null);
+	const container = React.useRef<HTMLDivElement>(null);
 
 	React.useLayoutEffect(() => {
-		if (canvas !== null) {
-			canvas.current.append(pixi.view);
+		if (container !== null && container.current) {
+			container.current.append(pixi.view);
 			em.emit('pixi:view:mounted', pixi);
 		}
 
 		return () => {
-			if (canvas !== null) {
-				canvas.current.remove(pixi.view);
+			if (container !== null) {
+				if (container.current) {
+					container.current.remove();
+				}
 				em.emit('pixi:view:dismounted', pixi);
 			}
 		};
-	}, [canvas, em, pixi]);
+	}, [container, em, pixi]);
 
-	return <div className={classes.root} ref={canvas}/>;
+	return <div className={classes.root} ref={container}/>;
 }
 
 export default hot(module)(diDecorator(PixiComponent));

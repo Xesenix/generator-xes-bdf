@@ -19,6 +19,9 @@ function LoadScene(app: Application) {
 		const scale = 0.75 - 0.25 * Math.sin(4 * 1000 / 60 * speed * time / 180 * Math.PI);
 		sprite.rotation = 30 * Math.sin(time / 1000) / 180 * Math.PI;
 		sprite.scale.set(scale);
+
+		sprite.x = app.screen.width * 0.5;
+		sprite.y = app.screen.height * 0.5;
 	});
 }
 

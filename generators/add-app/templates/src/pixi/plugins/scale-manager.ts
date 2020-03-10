@@ -23,12 +23,12 @@ export class ScaleManagerPlugin {
 			const app: Application = this;
 
 			em.on('pixi:view:mounted', () => {
-				scaling(app.view, window.innerWidth, window.innerHeight, width, height);
+				scaling(app, window.innerWidth, window.innerHeight, width, height);
 			});
 
 			window.addEventListener('resize', (event) => {
 				const { innerWidth, innerHeight } = event.currentTarget;
-				scaling(app.view, innerWidth, innerHeight, width, height);
+				scaling(app, innerWidth, innerHeight, width, height);
 			});
 		};
 
