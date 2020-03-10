@@ -74,7 +74,12 @@ module.exports = class extends Generator {
 			},
 		];
 
-		this.props = await this.prompt(prompts);
+		this.props = await this.prompt(prompts).then((props) => ({
+			...props,
+			addRouting: props.addRouting === 'yes',
+			addLayout: props.addLayout === 'yes',
+			useSound: props.useSound === 'yes',
+		}));
 		this.config.save();
 	}
 
@@ -166,6 +171,20 @@ module.exports = class extends Generator {
 			addLayout,
 			useSound,
 		} = this.props;
+		const context = {
+			author,
+			appName,
+			addRouting,
+			addLayout,
+			usePhaser: usePhaser === 'yes',
+			useReact: useReact === 'yes',
+			usePixi: usePixi === 'yes',
+			useSound,
+			appTitle,
+			appUrl,
+			appDescription,
+			rootSrcPath,
+		};
 
 		// copy ejs templates without processing
 		[
@@ -187,12 +206,12 @@ module.exports = class extends Generator {
 			...listTemplates('assets'),
 			...(useReact === 'yes' ? [
 				'app/app.tsx',
-				...(addRouting === 'yes' ? [
+				...(addRouting ? [
 					'app/app.routing.tsx',
 					...listTemplates('components/views/configuration-view'),
 					...listTemplates('components/views/intro-view'),
 				] : []),
-				...(addLayout === 'yes' ? [
+				...(addLayout ? [
 					...listTemplates('components/layouts'),
 					...listTemplates('components/ui/core'),
 					...listTemplates('components/ui/language'),
@@ -205,7 +224,7 @@ module.exports = class extends Generator {
 			] : [
 				'app/app.ts',
 			]),
-			...(useSound === 'yes' ? [
+			...(useSound ? [
 				'assets/soundtrack.ogg',
 				...listTemplates('src/sound-director'),
 			] : []),
@@ -224,20 +243,7 @@ module.exports = class extends Generator {
 			this.fs.copyTpl(
 				this.templatePath(path),
 				this.destinationPath(`${ rootSrcPath }${ appName }/${ path }`),
-				{
-					author,
-					appName,
-					addRouting: addRouting === 'yes',
-					addLayout: addLayout === 'yes',
-					usePhaser: usePhaser === 'yes',
-					useReact: useReact === 'yes',
-					usePixi: usePixi === 'yes',
-					useSound: useSound === 'yes',
-					appTitle,
-					appUrl,
-					appDescription,
-					rootSrcPath,
-				},
+				context
 			);
 		});
 
@@ -246,50 +252,18 @@ module.exports = class extends Generator {
 		this.fs.copyTpl(
 			this.templatePath('webpack.config.js'),
 			this.destinationPath(`webpack.${ appName }.config.js`),
-			{
-				author,
-				appName,
-				addRouting: addRouting === 'yes',
-				addLayout: addLayout === 'yes',
-				usePhaser: usePhaser === 'yes',
-				useReact: useReact === 'yes',
-				usePixi: usePixi === 'yes',
-				useSound: useSound === 'yes',
-				appTitle,
-				appUrl,
-				appDescription,
-				rootSrcPath,
-			},
+			context
 		);
 
 		this.fs.extendJSON(
 			this.destinationPath(`${ rootSrcPath }${ appName }/app.yo-rc.json`),
-			{
-				...this.props,
-				author,
-				useReact,
-				usePixi,
-				usePhaser,
-			},
+			context
 		);
 
 		this.fs.copyTpl(
 			this.templatePath('example.env'),
 			this.destinationPath(`${ appName }.env`),
-			{
-				author,
-				appName,
-				addRouting: addRouting === 'yes',
-				addLayout: addLayout === 'yes',
-				usePhaser: usePhaser === 'yes',
-				useReact: useReact === 'yes',
-				usePixi: usePixi === 'yes',
-				useSound: useSound === 'yes',
-				appTitle,
-				appUrl,
-				appDescription,
-				rootSrcPath,
-			},
+			context
 		);
 	}
 

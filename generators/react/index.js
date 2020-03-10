@@ -22,14 +22,15 @@ module.exports = class extends Generator {
 			},
 		];
 
-		this.props = await this.prompt(prompts);
+		this.props = await this.prompt(prompts)
+			.then(({ useReact }) => ({ useReact: useReact === 'yes' }));
 	}
 
 	configuring() {
 		if (this.options.deps) {
 			const { useReact } = this.props;
 
-			if (useReact === 'yes') {
+			if (useReact) {
 				this.composeWith(require.resolve('../npm'), {});
 			}
 		}
@@ -39,7 +40,7 @@ module.exports = class extends Generator {
 		const { useReact } = this.props;
 		const { promptValues: { npmInstall } } = this.config.getAll();
 
-		if (npmInstall === 'yes' && useReact === 'yes') {
+		if (npmInstall === 'yes' && useReact) {
 			this.log(`${ progressColor(`REACT`) } Adding dependencies to ${ scriptColor('package.json') }...`);
 			this.npmInstall([
 				'@types/react-router',

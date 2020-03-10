@@ -27,14 +27,15 @@ module.exports = class extends Generator {
 			},
 		];
 
-		this.props = await this.prompt(prompts);
+		this.props = await this.prompt(prompts)
+			.then(({ usePhaser }) => ({ usePhaser: usePhaser === 'yes' }));
 	}
 
 	configuring() {
 		if (this.options.deps) {
 			const { usePhaser } = this.props;
 
-			if (usePhaser === 'yes') {
+			if (usePhaser) {
 				this.composeWith(require.resolve('../npm'), {});
 			}
 		}
@@ -43,7 +44,7 @@ module.exports = class extends Generator {
 	async writing() {
 		const { usePhaser } = this.props;
 
-		if (usePhaser === 'yes') {
+		if (usePhaser) {
 			this.log(`${ progressColor(`PHASER`) } Copying files...`);
 
 			[
@@ -55,7 +56,7 @@ module.exports = class extends Generator {
 					this.templatePath(path),
 					this.destinationPath(path),
 					{
-						usePhaser: usePhaser === 'yes',
+						usePhaser,
 					},
 				);
 			});
@@ -69,7 +70,7 @@ module.exports = class extends Generator {
 
 		const { promptValues: { npmInstall } } = this.config.getAll();
 
-		if (npmInstall === 'yes' && usePhaser === 'yes') {
+		if (npmInstall === 'yes' && usePhaser) {
 			this.log(`${ progressColor(`PHASER`) } Adding dependencies to ${ scriptColor('package.json') }...`);
 			this.npmInstall([
 				'phaser',

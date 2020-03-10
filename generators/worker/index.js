@@ -22,14 +22,15 @@ module.exports = class extends Generator {
 			},
 		];
 
-		this.props = await this.prompt(prompts);
+		this.props = await this.prompt(prompts)
+			.then(({ useWorker }) => ({ useWorker: useWorker === 'yes' }));
 	}
 
 	async install() {
 		const { promptValues: { npmInstall, useWorker } } = this.config.getAll();
 
 		if (npmInstall === 'yes') {
-			if (useWorker === 'yes') {
+			if (useWorker) {
 				this.log(`${ progressColor(`WORKER`) } Adding dependencies to ${ scriptColor('package.json') }...`);
 				this.npmInstall([
 					'worker-loader',

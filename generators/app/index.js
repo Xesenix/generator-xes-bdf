@@ -102,11 +102,14 @@ module.exports = class extends Generator {
 	async writing() {
 		const {
 			promptValues: {
-				author,
-				projectDescription,
 				useReact, // required here to setup testing environment src/main.test.ts
 			},
 		} = this.config.getAll();
+		const {
+			author,
+			projectDescription,
+		} = this.props;
+
 		this.log(`${ progressColor(`APP`) } Copying files...`);
 
 		[

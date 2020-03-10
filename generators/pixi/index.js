@@ -22,14 +22,15 @@ module.exports = class extends Generator {
 			},
 		];
 
-		this.props = await this.prompt(prompts);
+		this.props = await this.prompt(prompts)
+			.then(({ usePixi }) => ({ usePixi: usePixi === 'yes' }));
 	}
 
 	configuring() {
 		if (this.options.deps) {
 			const { usePixi } = this.props;
 
-			if (usePixi === 'yes') {
+			if (usePixi) {
 				this.composeWith(require.resolve('../npm'), {});
 			}
 		}
@@ -40,7 +41,7 @@ module.exports = class extends Generator {
 		const { promptValues: { npmInstall } } = this.config.getAll();
 
 		if (npmInstall === 'yes') {
-			if (usePixi === 'yes') {
+			if (usePixi) {
 				this.log(`${ progressColor(`PIXI`) } Adding dependencies to ${ scriptColor('package.json') }...`);
 				this.npmInstall([
 					'@types/pixi.js',
