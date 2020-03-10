@@ -6,27 +6,27 @@ import { hot } from 'react-hot-loader';
 import { connectToDI } from 'lib/di';
 import { IPhaserGameProvider } from 'phaser/phaser-game.provider';
 
-import { styles } from './phaser-view.styles';
+import { styles } from './phaser.styles';
 
 let game: Phaser.Game | null;
 let gameContainer: HTMLDivElement | null;
 
 /** Component public properties required to be provided by parent component. */
-export interface IPhaserViewExternalProps {
+export interface IPhaserExternalProps {
 	keepInstanceOnRemove: boolean;
 }
 
 /** Internal component properties include properties injected via dependency injection. */
-interface IPhaserViewInternalProps {
+interface IPhaserInternalProps {
 	di: Container | null;
 }
 
 /** Internal component state. */
-interface IPhaserViewState {}
+interface IPhaserState {}
 
-type IPhaserViewProps = IPhaserViewExternalProps & IPhaserViewInternalProps & WithStyles<typeof styles>;
+type IPhaserProps = IPhaserExternalProps & IPhaserInternalProps & WithStyles<typeof styles>;
 
-class PhaserViewComponent extends React.PureComponent<IPhaserViewProps, IPhaserViewState> {
+class PhaserComponent extends React.PureComponent<IPhaserProps, IPhaserState> {
 	constructor(props) {
 		super(props);
 		this.state = {};
@@ -69,4 +69,4 @@ class PhaserViewComponent extends React.PureComponent<IPhaserViewProps, IPhaserV
 	}
 }
 
-export default hot(module)(withStyles(styles)(connectToDI(PhaserViewComponent)));
+export default hot(module)(withStyles(styles)(connectToDI(PhaserComponent)));
