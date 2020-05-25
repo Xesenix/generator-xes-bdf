@@ -4,9 +4,6 @@ import { hot } from 'react-hot-loader';
 // elements
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
-<% if (usePhaser) { %>
-import PhaserComponent from 'phaser/components/phaser';<% } %><% if (usePixi) { %>
-import PixiComponent from 'pixi/components/pixi';<% } %>
 
 import { connectToInjector } from 'lib/di';
 import { II18nTranslation } from 'lib/i18n';
@@ -41,9 +38,7 @@ function IntroViewComponent(props: IIntroViewProps) {
 			</Typography>
 			<Typography align="center" className={classes.description} component="p" variant="h5">
 				{__( `<%= appDescription %>` )}
-			</Typography><% if (usePixi) { %>
-			<PixiComponent className={classes.screen}/><% } %><% if (usePhaser) { %>
-			<PhaserComponent className={classes.screen} keepInstanceOnRemove={true}/><% } %>
+			</Typography>
 		</Paper>
 	);
 }

@@ -20,8 +20,8 @@ import { IMenuExternalProps } from 'components/ui/menu/menu';<% if (addRouting) 
 
 import AppRouting from './app.routing';<% } else { %>
 <% if (usePhaser) { %>
-import PixiComponent from 'pixi/components/pixi';<% } } %>
 import PhaserViewComponent from 'lib/phaser/components/phaser-view';<% } %><% if (usePixi) { %>
+import PixiComponent from 'lib/pixi/components/pixi';<% } } %>
 
 const SmallLoader = () => <Loader size={48}/>;
 const BigLoader = () => <Loader size={128}/>;
@@ -106,8 +106,8 @@ function App(props: IAppProps) {
 export default hot(module)(diDecorator(App));
 <% } else { %>
 <% if (usePhaser) { %>
-import PixiComponent from 'pixi/components/pixi';<% } %>
 import PhaserViewComponent from 'lib/phaser/components/phaser-view';<% } %><% if (usePixi) { %>
+import PixiComponent from 'lib/pixi/components/pixi';<% } %>
 
 import '../styles/app.scss';
 

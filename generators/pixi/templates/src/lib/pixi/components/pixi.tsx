@@ -26,7 +26,7 @@ const diDecorator = connectToInjector<IPixiExternalProps, IPixiInternalProps>({
 		dependencies: ['i18n:translate'],
 	},
 	pixi: {
-		dependencies: ['pixi:provider()'],
+		dependencies: ['pixi:application:provider()'],
 	},
 	em: {
 		dependencies: ['event-manager'],
@@ -51,9 +51,10 @@ function PixiComponent(props: IPixiProps): React.ReactElement {
 
 		return () => {
 			if (container !== null) {
-				if (container.current) {
-					container.current.remove();
+				if (pixi.view.parentElement) {
+					pixi.view.parentElement.removeChild(pixi.view);
 				}
+
 				em.emit('pixi:view:dismounted', pixi);
 			}
 		};

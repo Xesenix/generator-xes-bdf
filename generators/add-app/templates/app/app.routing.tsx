@@ -23,6 +23,11 @@ const PhaserView = LazyLoaderFactory(
 	() => import(/* webpackChunkName: "game" */ 'lib/phaser/components/phaser'),
 	BigLoader,
 	LoaderErrorView,
+);<% } %><% if (usePixi) { %>
+const PixiView = LazyLoaderFactory(
+	() => import(/* webpackChunkName: "game" */ 'lib/pixi/components/pixi'),
+	BigLoader,
+	LoaderErrorView,
 );<% } %>
 
 function AppRouting(): React.ReactElement {
@@ -43,6 +48,10 @@ function AppRouting(): React.ReactElement {
 			<Route
 				component={PhaserView}
 				path="/phaser/play"
+			/><% } %><% if (usePixi) { %>
+			<Route
+				component={PixiView}
+				path="/pixi/play"
 			/><% } %>
 		</Switch>
 	);
