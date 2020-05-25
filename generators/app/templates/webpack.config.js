@@ -1,6 +1,8 @@
 const chalk = require('chalk');
 const fs = require('fs');
 
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+
 const CompressionPlugin = require('compression-webpack-plugin');
 const NgrockWebpackPlugin = require('ngrock-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
@@ -59,8 +61,11 @@ const configureWebpack = (config) => {
 		config.plugins.push(new webpackBase.ContextReplacementPlugin(/moment[\/\\]locale$/, /(en|pl)$/));
 
 		config.optimization.minimizer = [
-			...config.optimization.minimizer || [],
+			//...config.optimization.minimizer || [],
+			// TODO: replace UglifyJsPlugin in xes-webpack-core as it doesn't support es6 code
+			// which may be in external dependencies
 			new TerserPlugin(),
+			new OptimizeCSSAssetsPlugin({}),
 		];
 	}
 
