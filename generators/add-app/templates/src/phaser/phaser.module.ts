@@ -2,7 +2,7 @@ import { interfaces } from 'inversify';
 
 import { IApplication } from 'lib/interfaces';
 
-import { IPhaserGameProvider, PhaserGameProvider } from './phaser-game.provider';
+import { IPhaserApplicationProvider, PhaserApplicationProvider } from './providers/phaser-application.provider';
 import { IntroSceneProvider } from './scene/intro.scene';
 
 // TODO: move to interfaces
@@ -19,17 +19,19 @@ export default class PhaserModule {
 				import(/* webpackChunkName: "phaser" */ './phaser')
 					.then(({ default: Phaser }) => Phaser),
 			);
-		app.bind<IPhaserGameProvider>('phaser:game-provider').toProvider(PhaserGameProvider);
-		app.bind('phaser:scene:intro:provider').toProvider(IntroSceneProvider);
+		app.bind<IPhaserApplicationProvider>('phaser:application:provider').toProvider(PhaserApplicationProvider);
+
 		app.bind('phaser:plugins')
 			.toProvider((context: interfaces.Context) => () =>
-				import(/* webpackChunkName: "phaser" */ 'lib/phaser/ui-manager.plugin')
-					.then(async ({ UIManagerPluginProvider }) => await UIManagerPluginProvider(context)())
+				import(/* webpackChunkName: "phaser" */ 'lib/phaser/plugins/ui-manager.plugin')
+					.then(({ UIManagerPluginProvider: provider }) => provider(context)())
 					.then((UIManagerPlugin) => ({
 						key: 'ui:manager',
 						start: true,
 						plugin: UIManagerPlugin,
 					})),
 			);
+
+		app.bind('phaser:scene:intro:provider').toProvider(IntroSceneProvider);
 	}
 }

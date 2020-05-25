@@ -15,7 +15,11 @@ import {
 import { IAppTheme } from 'theme';
 
 // elements
-import { ConfigLink, IntroLink } from 'components/ui/core/navigation-links';
+import {
+	ConfigLink,
+	IntroLink,<% if (usePhaser) { %>
+	PhaserLink,<% } %>
+} from 'components/ui/core/navigation-links';
 
 import LanguageSelectorComponent from './language-selector/language-selector';
 
@@ -123,7 +127,15 @@ class MenuComponent extends StoreComponent<IMenuProps, IMenuState> {
 						label={__('Back')}
 					/>
 				)}
-
+<% if (usePhaser) { %>
+				<MenuItem
+					// prettier-ignore
+					color="primary"
+					component={PhaserLink}
+					key="phaser"
+					label={__('Phaser')}
+				/>
+<% } %>
 				<MenuItem
 					// prettier-ignore
 					active={fullscreen}

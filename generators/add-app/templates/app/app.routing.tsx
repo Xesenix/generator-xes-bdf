@@ -18,7 +18,12 @@ const ConfigurationView = LazyLoaderFactory(
 	() => import(/* webpackChunkName: "config" */ 'components/views/configuration-view/configuration-view'),
 	BigLoader,
 	LoaderErrorView,
-);
+);<% if (usePhaser) { %>
+const PhaserView = LazyLoaderFactory(
+	() => import(/* webpackChunkName: "game" */ 'lib/phaser/components/phaser'),
+	BigLoader,
+	LoaderErrorView,
+);<% } %>
 
 function AppRouting(): React.ReactElement {
 	return (
@@ -34,7 +39,11 @@ function AppRouting(): React.ReactElement {
 			<Route
 				component={ConfigurationView}
 				path="/config"
-			/>
+			/><% if (usePhaser) { %>
+			<Route
+				component={PhaserView}
+				path="/phaser/play"
+			/><% } %>
 		</Switch>
 	);
 }

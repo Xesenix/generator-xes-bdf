@@ -51,15 +51,15 @@ module.exports = class extends Generator {
 				'src/types/phaser.d.ts',
 				...listTemplates('src/lib/phaser'),
 			].filter(Boolean)
-			.forEach((path) => {
-				this.fs.copyTpl(
-					this.templatePath(path),
-					this.destinationPath(path),
-					{
-						usePhaser,
-					},
-				);
-			});
+				.forEach((path) => {
+					this.fs.copyTpl(
+						this.templatePath(path),
+						this.destinationPath(path),
+						{
+							usePhaser,
+						},
+					);
+				});
 		} else {
 			this.log(`${ progressColor(`PHASER`) } Skiping copy templates...`);
 		}

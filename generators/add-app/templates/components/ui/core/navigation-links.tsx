@@ -27,4 +27,9 @@ export const IntroLink = React.forwardRef((props, ref: any) => {
 export const ConfigureUILink = React.forwardRef((props, ref: any) => {
 	return <RouterLink to="/config/ui" {...props} innerRef={ref}/>;
 }) as React.FunctionComponent;
+}) as React.FunctionComponent;<% if (usePhaser) { %>
 
+export const PhaserLink = React.forwardRef((props: any, ref: React.Ref<any>) => {
+	return <RouterLink to="/phaser/play" {...props} innerRef={ref}/>;
+
+});<% } %>

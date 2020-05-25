@@ -34,6 +34,11 @@ export const IntroSceneProvider = createClassProvider('intro-scene', [
 
 	public destroy(): void {
 		console.log('IntroScene:destroy');
+
+		if (this.logo) {
+			this.logo.destroy();
+			this.logo = null;
+		}
 	}
 
 	public update(time: number, delta: number): void {
