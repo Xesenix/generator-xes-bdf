@@ -1,11 +1,16 @@
 'use strict';
 const chalk = require('chalk');
+const path = require('path');
 
 const Generator = require('../sub-generator');
+const { listFiles } = require('../../helpers/functions');
 
 const promptColor = chalk.magenta;
 const progressColor = chalk.blue;
 const scriptColor = chalk.keyword('lime');
+
+const listTemplates = (folder) => listFiles(path.resolve(__dirname, `templates/${ folder }`))
+	.map(x => path.relative(path.resolve(__dirname, 'templates'), x))
 
 module.exports = class extends Generator {
 	async prompting() {
@@ -24,6 +29,28 @@ module.exports = class extends Generator {
 
 		this.props = await this.prompt(prompts)
 			.then(({ useWorker }) => ({ useWorker: useWorker === 'yes' }));
+	}
+
+	async writing() {
+		const { useWorker } = this.props;
+
+		if (useWorker) {
+			this.log(`${ progressColor(`WORKER`) } Copying files...`);
+
+			listTemplates('src')
+				.filter(Boolean)
+				.forEach((path) => {
+					this.fs.copyTpl(
+						this.templatePath(path),
+						this.destinationPath(path),
+						{
+							useWorker,
+						},
+					);
+				});
+		} else {
+			this.log(`${ progressColor(`WORKER`) } Skiping copy templates...`);
+		}
 	}
 
 	async install() {
