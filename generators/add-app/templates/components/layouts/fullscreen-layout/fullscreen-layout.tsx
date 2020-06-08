@@ -3,6 +3,7 @@ import { hot } from 'react-hot-loader';
 import { RouteComponentProps, withRouter } from 'react-router';
 
 import { connectToInjector } from 'lib/di';
+import { IEventEmitter } from 'lib/interfaces';
 import {
 	// prettier-ignore
 	diStoreComponentDependencies,
@@ -37,6 +38,7 @@ export interface IFullscreenLayoutExternalProps {
 /** Internal component properties include properties injected via dependency injection. */
 interface IFullscreenLayoutInternalProps extends IStoreComponentInternalProps<IFullscreenLayoutState>  {
 	dispatchSetDrawerOpenAction: (value: boolean) => void;
+	em: IEventEmitter;
 }
 
 /** Internal component state. */
@@ -52,6 +54,9 @@ const diDecorator = connectToInjector<IFullscreenLayoutExternalProps, IFullscree
 		dependencies: ['ui:actions@setDrawerOpen'],
 		value: (setDrawerOpen: (value: boolean) => void) => Promise.resolve(setDrawerOpen),
 	},
+	em: {
+		dependencies: ['event-manager'],
+	},
 });
 
 function FullscreenLayoutComponent(props: IFullscreenLayoutProps) {
@@ -60,6 +65,7 @@ function FullscreenLayoutComponent(props: IFullscreenLayoutProps) {
 		bindToStore,
 		content = null,
 		dispatchSetDrawerOpenAction,
+		em,
 		loading = false,
 		location,
 		Menu,
@@ -75,6 +81,10 @@ function FullscreenLayoutComponent(props: IFullscreenLayoutProps) {
 	const toggleDrawer = React.useCallback((): void => {
 		dispatchSetDrawerOpenAction(!drawerOpen);
 	}, [dispatchSetDrawerOpenAction, drawerOpen]);
+
+	const onTransitionEnd = React.useCallback((): void => {
+		em.emit('layout:transition:end');
+	}, [em]);
 
 	return (
 		<>
@@ -117,6 +127,7 @@ function FullscreenLayoutComponent(props: IFullscreenLayoutProps) {
 					direction="left"
 					in={true}
 					key={location.pathname.split('/')[1]}
+					onEntered={onTransitionEnd}
 				>
 					<div className={classes.container}>{content}</div>
 				</Slide>

@@ -47,11 +47,11 @@ function AppRouting(): React.ReactElement {
 			/><% if (usePhaser) { %>
 			<Route
 				component={PhaserView}
-				path="/phaser/play"
+				path="/game/play"
 			/><% } %><% if (usePixi) { %>
 			<Route
 				component={PixiView}
-				path="/pixi/play"
+				path="/game/play"
 			/><% } %>
 		</Switch>
 	);

@@ -42,9 +42,13 @@ export const IntroSceneProvider = createClassProvider('intro-scene', [
 	}
 
 	public update(time: number, delta: number): void {
+		const { width, height } = this.game.renderer;
 		const speed = 140 / 60000;
 		const scale = 0.75 - 0.25 * Math.sin(4 * 1000 / 60 * speed * Date.now() / 180 * Math.PI);
+
 		this.logo.angle = 30 * Math.sin(time / 1000);
 		this.logo.setScale(scale);
+		this.logo.x = width * 0.5;
+		this.logo.y = height * 0.5;
 	}
 });

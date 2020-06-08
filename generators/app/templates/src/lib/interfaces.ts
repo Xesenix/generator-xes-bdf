@@ -22,8 +22,10 @@ export interface IValueAction<T> extends Action {
 export type ICreateSetAction<T> = (value: T) => IValueAction<T>;
 
 export interface IEventEmitter {
-	emit(name: string, payload?: any): void;
-	on(name: string, cb: (...params: any[]) => any): void;
+	emit<T = string>(name: T, payload?: any): void;
+	once<T = string>(name: T, cb: (...params: any[]) => any, context?: any): void;
+	on<T = string>(name: T, cb: (...params: any[]) => any, context?: any): void;
+	removeListener<T = string>(name: T, cb: (...params: any[]) => any, context?: any): void;
 }
 
 export type LanguageType = 'en' | 'pl';

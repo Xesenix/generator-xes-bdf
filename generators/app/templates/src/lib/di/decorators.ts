@@ -72,6 +72,11 @@ export function createProvider<T = any>(
 	const cacheResult: (cb: (ctx: ii.Context) => any) => any = cache ? memoize : (cb: (ctx: ii.Context) => any) => cb;
 	return cacheResult(({ container }: ii.Context) => async () => {
 		const console = container.get<Console>('debug:console:DEBUG_DI');
+
+		if (singleton && container.isBound(key)) {
+			return container.get(key);
+		}
+
 		console.debug('annotation:injectDecorator', {
 			key,
 			dependencies,

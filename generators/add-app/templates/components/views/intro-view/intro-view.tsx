@@ -34,10 +34,10 @@ function IntroViewComponent(props: IIntroViewProps) {
 	return (
 		<Paper className={classes.root} elevation={0}>
 			<Typography align="center" className={classes.title} component="h1" variant="h1">
-				{__( `<%= appTitle %>` )}
+				{__(`<%= appTitle %>`)}
 			</Typography>
 			<Typography align="center" className={classes.description} component="p" variant="h5">
-				{__( `<%= appDescription %>` )}
+				{__(`<%= appDescription %>`)}
 			</Typography>
 		</Paper>
 	);

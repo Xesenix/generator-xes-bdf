@@ -109,6 +109,7 @@ export const UIManagerPluginProvider = createClassProvider('phaser:ui-manager-pl
 			}
 
 			if (this.game.scale.scaleMode === Phaser.Scale.NONE) {
+				// TODO: extract as configuration option
 				const scaler: string = 'cover-resize';
 
 				this.game.scale.setParentSize(0, 0);

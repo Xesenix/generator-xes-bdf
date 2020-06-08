@@ -3,55 +3,47 @@ import { Store } from 'redux';
 
 import { createClassProvider } from 'lib/di';
 
-export type IPhaserGameProvider = (forceNew?: boolean) => Promise<Phaser.Game>;
+export type IPhaserApplicationProvider = (forceNew?: boolean) => Promise<Phaser.Game>;
+
+declare const process: any;
 
 // singleton
-let game: Phaser.Game | null = null;
+let app: Phaser.Game | null = null;
 
-export function PhaserGameProvider(context: interfaces.Context) {
+export function PhaserApplicationProvider(context: interfaces.Context) {
 	const console: Console = context.container.get<Console>('debug:console:DEBUG_PHASER');
-	console.debug('PhaserGameProvider');
+	console.debug('PhaserApplicationProvider');
 
 	return (forceNew: boolean = false): Promise<Phaser.Game> => {
-		console.debug('PhaserGameProvider:provide');
+		console.debug('PhaserApplicationProvider:provide');
+
+		if (!forceNew && app !== null) {
+			return Promise.resolve(app);
+		}
 
 		// preload phaser module that is needed by subsequential modules
 		// TODO: convert to observable so it can return progress on loading
 		// prettier-ignore
-		return createClassProvider('phaser:game', [
+		return createClassProvider('phaser:app', [
 			// prettier-ignore
 			'data-store:provider()',
-			'phaser:container',
 			'phaser:provider()',
 			'phaser:scene:intro:provider()',
 			'phaser:plugins[]()',
 		], async (
 			// prettier-ignore
 			store: Store,
-			parent,
 			Phaser,
 			IntroScene,
 			plugins,
 		) => {
-			console.debug('PhaserGameProvider:injected', {
+			console.debug('PhaserApplicationProvider:injected', {
 				store,
-				parent,
 				Phaser,
 				IntroScene,
 				plugins,
 				forceNew,
 			});
-
-			if (!forceNew && game !== null) {
-				console.debug('PhaserGameProvider:swap parent', game);
-				parent.appendChild(game.canvas);
-				// fix canvas size after changing parent component
-				game.scale.parent = parent;
-				game.scale.getParentBounds();
-				game.scale.refresh();
-
-				return game;
-			}
 
 			const backgroundColor: any = 0x340000;
 			const screenWidth = 800;
@@ -90,17 +82,16 @@ export function PhaserGameProvider(context: interfaces.Context) {
 				width: screenWidth,
 				height: screenHeight,
 				type: Phaser.CANVAS, // AUTO, CANVAS, WEBGL, HEADLESS
-				parent,
 				disableContextMenu: true,
 				fps,
 				render,
 				backgroundColor,
 				callbacks: {
-					preBoot: (x) => {
-						console.log('=== PRE BOOT', x);
+					preBoot: (game) => {
+						console.log('=== PRE BOOT', game);
 					},
-					postBoot: (x) => {
-						console.log('=== POST BOOT', x);
+					postBoot: (game) => {
+						console.log('=== POST BOOT', game);
 					},
 				},
 				loader,
@@ -114,21 +105,29 @@ export function PhaserGameProvider(context: interfaces.Context) {
 					],
 				},
 				scene: [IntroScene],
+				/*
+				 * @see https://rexrainbow.github.io/phaser3-rex-notes/docs/site/scalemanager/
+				 */
 				scale: {
-					mode: Phaser.Scale.WIDTH_CONTROLS_HEIGHT,
+					// autoCenter: Phaser.Scale.CENTER_BOTH, // NO_CENTER CENTER_BOTH CENTER_HORIZONTALLY CENTER_VERTICALLY
+					// Phaser incorrectly scales view port to parent container
+					// use Phaser.Scale.NONE separate system for scaling
+					mode: Phaser.Scale.NONE, // NONE FIT ENVELOP WIDTH_CONTROLS_HEIGHT HEIGHT_CONTROLS_WIDTH RESIZE
 					width: screenWidth,
 					height: screenHeight,
 				},
+				title: process.env.APP.templateData.title,
+				version: process.env.PACKAGE.version,
 			};
 
-			game = new Phaser.Game(config);
-
 			try {
-				console.debug('PhaserGameProvider:game', game);
+				console.debug('PhaserApplicationProvider:app', app);
 
-				return game as Phaser.Game;
+				app = new Phaser.Game(config);
+
+				return app as Phaser.Game;
 			} catch (error) {
-				console.debug('PhaserGameProvider:error', parent, error);
+				console.debug('PhaserApplicationProvider:error', parent, error);
 				return Promise.reject(error);
 			}
 		})(context)();

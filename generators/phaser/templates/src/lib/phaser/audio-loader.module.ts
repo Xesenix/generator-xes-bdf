@@ -8,6 +8,6 @@ export default class PhaserAudioLoaderModule {
 		app.bind<IAudioFileLoaderProvider>('audio-loader:provider')
 			.toProvider((context: interfaces.Context) => () =>
 				import(/* webpackChunkName: "phaser-audio" */ './audio/audio-loader.service')
-					.then(async ({ PhaserAudioLoaderServiceProvider: provider }) => await provider(context)()));
+					.then(({ PhaserAudioLoaderServiceProvider: provider }) => provider(context)()));
 	}
 }

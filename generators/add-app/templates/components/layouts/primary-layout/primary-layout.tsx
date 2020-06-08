@@ -3,6 +3,7 @@ import { hot } from 'react-hot-loader';
 import { RouteComponentProps, withRouter } from 'react-router';
 
 import { connectToInjector } from 'lib/di';
+import { IEventEmitter } from 'lib/interfaces';
 import {
 	// prettier-ignore
 	diStoreComponentDependencies,
@@ -37,6 +38,7 @@ export interface IPrimaryLayoutExternalProps {
 /** Internal component properties include properties injected via dependency injection. */
 interface IPrimaryLayoutInternalProps extends IStoreComponentInternalProps<IPrimaryLayoutState> {
 	dispatchSetDrawerOpenAction: (value: boolean) => void;
+	em: IEventEmitter;
 }
 
 /** Internal component state. */
@@ -52,6 +54,9 @@ const diDecorator = connectToInjector<IPrimaryLayoutExternalProps, IPrimaryLayou
 		dependencies: ['ui:actions@setDrawerOpen'],
 		value: (setDrawerOpen: (value: boolean) => void) => Promise.resolve(setDrawerOpen),
 	},
+	em: {
+		dependencies: ['event-manager'],
+	},
 });
 
 function PrimaryLayoutComponent(props: IPrimaryLayoutProps) {
@@ -60,6 +65,7 @@ function PrimaryLayoutComponent(props: IPrimaryLayoutProps) {
 		bindToStore,
 		content = null,
 		dispatchSetDrawerOpenAction,
+		em,
 		loading = false,
 		location,
 		Menu,
@@ -75,6 +81,10 @@ function PrimaryLayoutComponent(props: IPrimaryLayoutProps) {
 	const toggleDrawer = React.useCallback((): void => {
 		dispatchSetDrawerOpenAction(!drawerOpen);
 	}, [dispatchSetDrawerOpenAction, drawerOpen]);
+
+	const onTransitionEnd = React.useCallback((): void => {
+		em.emit('layout:transition:end');
+	}, [em]);
 
 	return (
 		<>
@@ -116,6 +126,7 @@ function PrimaryLayoutComponent(props: IPrimaryLayoutProps) {
 					direction="left"
 					in={true}
 					key={location.pathname.split('/')[1]}
+					onEntered={onTransitionEnd}
 				>
 					<div className={classes.container}>{content}</div>
 				</Slide>

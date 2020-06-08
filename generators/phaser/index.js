@@ -47,10 +47,8 @@ module.exports = class extends Generator {
 		if (usePhaser) {
 			this.log(`${ progressColor(`PHASER`) } Copying files...`);
 
-			[
-				'src/types/phaser.d.ts',
-				...listTemplates('src/lib/phaser'),
-			].filter(Boolean)
+			listTemplates('src')
+				.filter(Boolean)
 				.forEach((path) => {
 					this.fs.copyTpl(
 						this.templatePath(path),

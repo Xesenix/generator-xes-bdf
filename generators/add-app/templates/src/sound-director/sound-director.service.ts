@@ -19,7 +19,7 @@ type SoundtrackMode = 'ambient' | 'action';
 export class SoundDirectorService {
 	private mode: SoundtrackMode = 'ambient';
 	private unsubscribe?: () => void;
-	private soundtracks: { [modeName in SoundtrackMode]?: ISoundtrack };
+	private soundtracks: { [modeName in SoundtrackMode]: ISoundtrack };
 
 	constructor(
 		private em: IEventEmitter,

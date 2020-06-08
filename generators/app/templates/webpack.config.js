@@ -61,7 +61,7 @@ const configureWebpack = (config) => {
 		config.plugins.push(new webpackBase.ContextReplacementPlugin(/moment[\/\\]locale$/, /(en|pl)$/));
 
 		config.optimization.minimizer = [
-			//...config.optimization.minimizer || [],
+			// ...config.optimization.minimizer || [],
 			// TODO: replace UglifyJsPlugin in xes-webpack-core as it doesn't support es6 code
 			// which may be in external dependencies
 			new TerserPlugin(),

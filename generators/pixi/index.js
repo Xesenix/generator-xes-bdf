@@ -47,10 +47,8 @@ module.exports = class extends Generator {
 		if (usePixi) {
 			this.log(`${ progressColor(`PIXI`) } Copying files...`);
 
-			[
-				'src/types/pixi.d.ts',
-				...listTemplates('src/lib/pixi'),
-			].filter(Boolean)
+			listTemplates('src')
+				.filter(Boolean)
 				.forEach((path) => {
 					this.fs.copyTpl(
 						this.templatePath(path),

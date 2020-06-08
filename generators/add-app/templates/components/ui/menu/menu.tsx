@@ -124,7 +124,7 @@ class MenuComponent extends StoreComponent<IMenuProps, IMenuState> {
 						color="primary"
 						component={IntroLink}
 						Icon={theme.icons.undo}
-						key="config"
+						key="game"
 						label={__('Back')}
 					/>
 				)}<% if (usePhaser) { %>
@@ -160,6 +160,7 @@ class MenuComponent extends StoreComponent<IMenuProps, IMenuState> {
 					ActiveIcon={theme.icons.muteOn}
 					color="default"
 					Icon={theme.icons.muteOff}
+					key="mute"
 					label={__('Mute')}
 					onClick={this.toggleMute}
 				/><% } %>
