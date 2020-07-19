@@ -51,7 +51,7 @@ function PhaserComponent(props: IPhaserProps): React.ReactElement {
 		return () => {
 			if (container !== null) {
 				if (container.current) {
-					container.current.remove();
+					container.current.removeChild(app.canvas);
 				}
 				em.emit('phaser:view:dismounted', app);
 			}
