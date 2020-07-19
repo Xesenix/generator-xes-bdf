@@ -19,9 +19,9 @@ export const ConfigureUILink = React.forwardRef((props: any, ref: React.Ref<any>
 }) as React.FunctionComponent;<% if (usePhaser) { %>
 
 export const PhaserLink = React.forwardRef((props: any, ref: React.Ref<any>) => {
-	return <RouterLink to="/game/play" {...props} innerRef={ref}/>;
+	return <RouterLink to="/game/play/phaser" {...props} innerRef={ref}/>;
 });<% } %><% if (usePixi) { %>
 
 export const PixiLink = React.forwardRef((props: any, ref: React.Ref<any>) => {
-	return <RouterLink to="/game/play" {...props} innerRef={ref}/>;
+	return <RouterLink to="/game/play/pixi" {...props} innerRef={ref}/>;
 });<% } %>
