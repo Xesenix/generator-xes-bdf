@@ -150,6 +150,16 @@ module.exports = class extends Generator {
 				},
 			},
 		});
+
+		const tsconfigFilepath = this.destinationPath('tsconfig.json');
+
+		const addPaths = `"*": [                                  /* Automatic add applications paths */`;
+		const tsconfig = this.fs.read(tsconfigFilepath).replace(
+			addPaths,
+			`${addPaths}\n\t\t\t\t"./applications/${ appName }/src/*",\n\t\t\t\t"./applications/${ appName }/*",`
+		)
+
+		this.fs.write(tsconfigFilepath, tsconfig);
 	}
 
 	async writing() {
