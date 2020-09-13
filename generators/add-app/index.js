@@ -152,14 +152,17 @@ module.exports = class extends Generator {
 		});
 
 		const tsconfigFilepath = this.destinationPath('tsconfig.json');
+		let tsconfig = this.fs.read(tsconfigFilepath)
 
-		const addPaths = `"*": [                                  /* Automatic add applications paths */`;
-		const tsconfig = this.fs.read(tsconfigFilepath).replace(
-			addPaths,
-			`${addPaths}\n\t\t\t\t"./applications/${ appName }/src/*",\n\t\t\t\t"./applications/${ appName }/*",`
-		)
+		if (tsconfig.indexOf(`./applications/${ appName }/src/*`) === -1) {
+			const addPaths = `"*": [                                  /* Automatic add applications paths */`;
+			tsconfig = tsconfig.replace(
+				addPaths,
+				`${addPaths}\n\t\t\t\t"./applications/${ appName }/src/*",\n\t\t\t\t"./applications/${ appName }/*",`
+			)
 
-		this.fs.write(tsconfigFilepath, tsconfig);
+			this.fs.write(tsconfigFilepath, tsconfig);
+		}
 	}
 
 	async writing() {

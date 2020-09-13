@@ -25,6 +25,8 @@ export interface IEventEmitter {
 	emit<T = string>(name: T, payload?: any): void;
 	once<T = string>(name: T, cb: (...params: any[]) => any, context?: any): void;
 	on<T = string>(name: T, cb: (...params: any[]) => any, context?: any): void;
+	addEventListener<T = string>(name: T, cb: (...params: any[]) => any);
+	removeEventListener(cb: (...params: any[]) => any): void;
 	removeListener<T = string>(name: T, cb: (...params: any[]) => any, context?: any): void;
 }
 

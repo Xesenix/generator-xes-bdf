@@ -25,7 +25,7 @@ export default class AppModule extends BaseAppModule implements IApplication {
 			import(/* webpackChunkName: "audio" */ 'lib/audio/audio-loader.module'),
 			import(/* webpackChunkName: "audio" */ 'lib/sound-scape/sound-scape.module'),
 			import(/* webpackChunkName: "audio" */ 'sound-director/sound-director.module'),<% } %>
-		] as any);
+		] as Promise<{ default: any }>[]);
 	}
 
 	protected start(): Promise<{ default: any }> {
