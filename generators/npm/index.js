@@ -21,5 +21,6 @@ module.exports = class extends Generator {
 		];
 
 		this.props = await this.prompt(prompts);
+		Object.entries(this.props).forEach(([key, value]) => this.config.set(key, value));
 	}
 };

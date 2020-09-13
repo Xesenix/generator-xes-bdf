@@ -29,6 +29,7 @@ module.exports = class extends Generator {
 
 		this.props = await this.prompt(prompts)
 			.then(({ useWorker }) => ({ useWorker: useWorker === 'yes' }));
+		Object.entries(this.props).forEach(([key, value]) => this.config.set(key, value));
 	}
 
 	async writing() {

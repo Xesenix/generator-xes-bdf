@@ -80,6 +80,8 @@ module.exports = class extends Generator {
 			addLayout: props.addLayout === 'yes',
 			useSound: props.useSound === 'yes',
 		}));
+		// TODO: https://github.com/yeoman/yeoman-test/issues/45
+		Object.entries(this.props).forEach(([key, value]) => this.config.set(key, value));
 		this.config.save();
 	}
 

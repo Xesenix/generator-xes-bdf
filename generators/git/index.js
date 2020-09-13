@@ -35,6 +35,7 @@ module.exports = class extends Generator {
 		]) : {};
 
 		this.props = { initGit, initGitIgnore };
+		Object.entries(this.props).forEach(([key, value]) => this.config.set(key, value));
 	}
 
 	async configuring() {
